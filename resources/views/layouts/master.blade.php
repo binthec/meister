@@ -17,7 +17,7 @@
 		<script src="/js/bootstrap.js"></script>
 
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/i18n/jquery.ui.datepicker-ja.min.js"></script><!-- datepicker用JS -->
-		<script type="text/javascript" src="/js/exdate.js"></script><!-- exdate用JS -->
+		<script type="text/javascript" src="/js/moment.js"></script><!-- moment.js -->
 
 	</head>
 	<body>

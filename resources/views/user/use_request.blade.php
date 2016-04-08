@@ -3,73 +3,109 @@
 @section('content')
 <div class="row">
 	<div class="col col-md-offset-2 col-md-8">
-		<h2>ユーザ情報編集</h2>
+		<h2>有給消化登録</h2>
 
-		<form method="post" action="/user/edit/{{ $user->id }}" class="form-horizontal well">
+		<form method="post" action="/user/use_request" class="form-horizontal well">
 			{{-- CSRF対策--}}
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
 			<div class="form-group">
 				<label for="ID" class="col-md-2 control-label">ID</label>
-				<div class="col-md-8 form-control-static">{{ $user->id }}</div>
+				<div class="col-md-8 form-control-static">{{ Auth::user()->id }}</div>
 			</div>
 			<div class="form-group">
 				<label for="ID" class="col-md-2 control-label">名前</label>
-				<div class="col-md-8 form-inline">
-					<input type="text" class="form-control" placeholder="姓" name="family_name" id="family_name" value="{{ $user->family_name }}"></input>
-					<input type="text" class="form-control" placeholder="名" name="first_name" id="first_name" value="{{ $user->first_name }}"></input>
+				<div class="col-md-8 form-control-static">
+					<p>{{ Auth::user()->family_name }} {{ Auth::user()->first_name }} さん</p>
 				</div>
 			</div>
-			<div class="form-group">
-				<label for="ID" class="col-md-2 control-label">E-Mailアドレス</label>
-				<div class="col-md-6">
-					<input type="text" class="form-control" placeholder="メールアドレス" name="email" id="email" value="{{ $user->email }}"></input>
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="ID" class="col-md-2 control-label">パスワード</label>
-				<div class="col-md-4">
-					<input type="password" class="form-control" name="password" id="password"></input>
-					※変更の場合のみ入力してください
+
+
+
+			<div class="form-group request_remaining_day">
+				<label for="ID" class="col-md-2 control-label">有給残日数</label>
+				<div class="col-md-10">
+
+					@foreach(Auth::user()->getValidPaidVacation() as $remaining_day)
+					<div class="col-md-3 inline">
+						<div class="panel panel-default align-center">
+							<div class="panel-heading">{{ $remaining_day->limit_date }}日期限</div>
+							<div class="panel-body font13">
+								{{ $remaining_day->remaining_days }}
+							</div>
+						</div>
+					</div>
+					@endforeach
+
+					<div class="col-md-3">
+						<div class="panel panel-default align-center">
+							<div class="panel-heading">合計有給残日数</div>
+							<div class="panel-body font13">
+								{{ Auth::user()->addRemainingDays() }}
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 
 			<hr>
 
 			<div class="form-group">
-				<label for="ID" class="col-md-2 control-label">入社日</label>
-				<div class="col-md-4">
-					<input type="date" class="form-control" name="date_of_entering" id="date_of_entering" value="{{ $user->date_of_entering }}"></input>
+				<label for="ID" class="col-md-2 control-label">有給申請期間</label>
+				<div class="col-md-8 form-inline">
+					<input type="date" class="form-control" placeholder="開始日" name="use_start_date" id="use_start_date" value=""></input>
+					〜
+					<input type="date" class="form-control" placeholder="終了日" name="use_finish_date" id="use_finish_date" value=""></input>
+					<span id="sum_box">合計： <span id="sum"></span> 日間</span>
 				</div>
 			</div>
 			<div class="form-group">
-				<label for="ID" class="col-md-2 control-label">起算日</label>
-				<div class="col-md-6">
-					<p class="form_txt" id="base_date_text">
-						@if(!empty($user->base_date))
-						{{ $user->base_date }}
-						@else
-						入社日を入力すると自動で算出されます。
-						@endif
-					</p>
-				<!--<input type="date" class="form-control" name="base_date" id="base_date" value="{{ $user->base_date }}"></input>-->
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="ID" class="col-md-2 control-label">備考</label>
+				<label for="ID" class="col-md-2 control-label">連絡事項</label>
 				<div class="col-md-8">
-					<textarea class="form-control" name="memo" id="memo" value="{{ $user->memo }}">{{ $user->memo }}</textarea>
+					<textarea class="form-control" name="memo" id="memo" value=""></textarea>
 				</div>
 			</div>
 
-			<input type="hidden" name="base_date" id="base_date" value="{{ $user->base_date }}"></input>
-			<input type="hidden" name="user_id" id="user_id" value="{{ $user->id }}"></input>
+			<input type="hidden" name="use_days" id="use_days" value=""></input>
+			<input type="hidden" name="user_id" id="user_id" value=""></input>
 
 			<button type="submit" class="btn btn-success col-md-offset-2">決定</button>
 		</form>
 	</div>
 </div>
 
-{{-- DatePickerと起算日計算のJS--}}
-<script src="/js/calc_base_date.js"></script>
+{{-- DatePickerのJS--}}
+<script>
+    $(function () {
+        //datepicker
+        $("#use_start_date, #use_finish_date").datepicker({
+            dateFormat: 'yy-mm-dd',
+            language: 'ja',
+            beforeShow: function (input, inst) { //カレンダー位置の調整
+                var calendar = inst.dpDiv; // Datepicker
+                setTimeout(function () {
+                    calendar.position({
+                        my: 'left top', // カレンダーの左下
+                        at: 'left bottom', // 表示対象の左上
+                        of: input, // 対象テキストボックス
+                    });
+                }, 1);
+            }
+        });
+        //申請日数の計算
+        $('#use_start_date').change(function () {
+            $('#sum').text(1); //消化日数をp要素に出力
+            $('#use_days').attr('value', use_days); //hiddenで値を渡す
+        });
+        //申請日数の計算
+        $('#use_finish_date').change(function () {
+            //$('#use_finish_date').text(''); //入社日が変更されたらデフォルト文言は空にする
+            var use_start_date = moment($('#use_start_date').val()); //入力された開始日を取得
+            var use_finish_date = moment($('#use_finish_date').val()); //入力された終了日を取得
+            var use_days = use_finish_date.diff(use_start_date, 'days') + 1; //消化する日数計算
 
+            $('#sum').text(use_days); //消化日数をp要素に出力
+            $('#use_days').attr('value', use_days); //hiddenで値を渡す
+        });
+    });
+</script>
 @endsection

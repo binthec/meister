@@ -15,12 +15,11 @@
 				@foreach($users as $user)
 				<tr>
 					<td class="middle">{{ $i }}</td>
-
 					<td>{{ $user->id }}</td>
 					<td>{{ $user->family_name }} {{ $user->first_name }}</td>
 					<td>{{ $user->date_of_entering }}</td>
 					<td>{{ $user->base_date }}</td>
-					<td>{{ $user->getRemainingDays() }}</td>
+					<td>{{ $user->addRemainingDays() }}</td>
 					<td><button type="button" class="btn btn-success btn-sm" name="edit" onclick="location.href='/user/edit/{{ $user->id }}'">編集</button></td>
 				</tr>
 				<?php $i += 1 ?>
