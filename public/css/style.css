@@ -1,0 +1,21 @@
+.flash_message {
+    display: none;
+    position: absolute;
+    top: 47%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 99999;
+    background-color: #C4E1BC;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 1.4em;
+}
+
+td {
+    vertical-align: middle !important;
+}
+
+p.form_txt{
+    padding-top: 7px;
+}
