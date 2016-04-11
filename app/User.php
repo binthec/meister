@@ -8,6 +8,7 @@ use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use App\PaidVacation;
+use App\UsedDays;
 use Carbon\Carbon;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract {
@@ -25,7 +26,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	public function paidVacation() {
-		return $this->hasMany('App\PaidVacation');
+		return $this->hasMany('App\PaidVacation')->orderBy('start_date', 'asc'); //開始日の若い順に返す
+	}
+
+	public function usedDays() {
+		return $this->hasMany('App\UsedDays');
 	}
 
 	public function getTodayDate($bool = null) {
@@ -70,4 +75,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $remaining_days;
 	}
 
+//	public function getUsedDays() {
+//		return $used_days = $this->usedDays();
+//	}
 }

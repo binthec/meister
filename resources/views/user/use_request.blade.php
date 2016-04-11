@@ -52,9 +52,9 @@
 			<div class="form-group">
 				<label for="ID" class="col-md-2 control-label">有給申請期間</label>
 				<div class="col-md-8 form-inline">
-					<input type="date" class="form-control" placeholder="開始日" name="use_start_date" id="use_start_date" value=""></input>
+					<input type="date" class="form-control" placeholder="開始日" name="from" id="from" value=""></input>
 					〜
-					<input type="date" class="form-control" placeholder="終了日" name="use_finish_date" id="use_finish_date" value=""></input>
+					<input type="date" class="form-control" placeholder="終了日" name="until" id="until" value=""></input>
 					<span id="sum_box">合計： <span id="sum"></span> 日間</span>
 				</div>
 			</div>
@@ -65,8 +65,8 @@
 				</div>
 			</div>
 
-			<input type="hidden" name="use_days" id="use_days" value=""></input>
-			<input type="hidden" name="user_id" id="user_id" value=""></input>
+			<input type="hidden" name="used_days" id="used_days" value=""></input>
+			<input type="hidden" name="user_id" id="user_id" value="{{ Auth::user()->id }}"></input>
 
 			<button type="submit" class="btn btn-success col-md-offset-2">決定</button>
 		</form>
@@ -77,7 +77,7 @@
 <script>
     $(function () {
         //datepicker
-        $("#use_start_date, #use_finish_date").datepicker({
+        $("#from, #until").datepicker({
             dateFormat: 'yy-mm-dd',
             language: 'ja',
             beforeShow: function (input, inst) { //カレンダー位置の調整
@@ -92,19 +92,19 @@
             }
         });
         //申請日数の計算
-        $('#use_start_date').change(function () {
+        $('#from').change(function () {
             $('#sum').text(1); //消化日数をp要素に出力
-            $('#use_days').attr('value', use_days); //hiddenで値を渡す
+            $('#used_days').attr('value', used_days); //hiddenで値を渡す
         });
         //申請日数の計算
-        $('#use_finish_date').change(function () {
+        $('#until').change(function () {
             //$('#use_finish_date').text(''); //入社日が変更されたらデフォルト文言は空にする
-            var use_start_date = moment($('#use_start_date').val()); //入力された開始日を取得
-            var use_finish_date = moment($('#use_finish_date').val()); //入力された終了日を取得
-            var use_days = use_finish_date.diff(use_start_date, 'days') + 1; //消化する日数計算
+            var from = moment($('#from').val()); //入力された開始日を取得
+            var until = moment($('#until').val()); //入力された終了日を取得
+            var used_days = until.diff(from, 'days') + 1; //消化する日数計算
 
-            $('#sum').text(use_days); //消化日数をp要素に出力
-            $('#use_days').attr('value', use_days); //hiddenで値を渡す
+            $('#sum').text(used_days); //消化日数をp要素に出力
+            $('#used_days').attr('value', used_days); //hiddenで値を渡す
         });
     });
 </script>

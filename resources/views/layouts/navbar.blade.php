@@ -33,6 +33,7 @@
             <!-- 右寄せメニュー -->
             <ul class="nav navbar-nav navbar-right">
 				<li><a href="/user/use_request">有給消化登録</a></li>
+				<li><a href="/user/used_list">登録済み有給一覧</a></li>
 
 				<!-- ドロップダウンメニュー -->
 				<li class="dropdown">
