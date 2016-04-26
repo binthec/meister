@@ -73,39 +73,80 @@
 	</div>
 </div>
 
+
+
+<div class="row">
+	<div class="col-md-8 col-md-offset-2">
+		<hr>
+		<h1>登録済み有給一覧</h1>
+
+		<table class="table table-bordered">
+			<thead class="well">
+			<th width="5%">№</th><th>開始日</th><th>終了日</th><th>日数</th><th width="15%">操作</th>
+			</thead>
+			<tbody>
+
+				<?php $i = ($used_days->currentPage() - 1) * 5 + 1 ?>
+				{{-- dd(Auth::user()->usedDays) --}}
+				@foreach ($used_days as $used_day)
+				<tr>
+					<td class="middle">{{ $i }}</td>
+					<td>{{ $used_day->from }}</td>
+					<td>{{ $used_day->until }}</td>
+					<td>{{ $used_day->used_days }}</td>
+					<td>
+						<button type="button" class="btn btn-success btn-sm" name="edit" onclick="location.href='/user/use_request_edit/{{ Auth::user()->id }}'">編集</button>
+						<button type="button" class="btn btn-danger btn-sm" name="delete" onclick="location.href='/user/use_request_delete/{{ Auth::user()->id }}'">削除</button>
+					</td>
+					<?php $i += 1 ?>
+				</tr>
+
+				@endforeach
+
+			</tbody>
+		</table>
+		{!! $used_days->render() !!}
+	</div>
+</div>
+
+
+
+
 {{-- DatePickerのJS--}}
 <script>
     $(function () {
-        //datepicker
-        $("#from, #until").datepicker({
-            dateFormat: 'yy-mm-dd',
+    //datepicker
+
+    $("#from, #until").datepicker({
+    dateFormat: 'yy-mm-dd',
             language: 'ja',
             beforeShow: function (input, inst) { //カレンダー位置の調整
-                var calendar = inst.dpDiv; // Datepicker
-                setTimeout(function () {
-                    calendar.position({
-                        my: 'left top', // カレンダーの左下
-                        at: 'left bottom', // 表示対象の左上
-                        of: input, // 対象テキストボックス
-                    });
-                }, 1);
+            var calendar = inst.dpDiv; // Datepicker
+            setTimeout(function () {
+            calendar.position({
+            my: 'left top', // カレンダーの左下
+                    at: 'left bottom', // 表示対象の左上
+                    of: input, // 対象テキストボックス
+            });
+            }, 1);
             }
-        });
-        //申請日数の計算
-        $('#from').change(function () {
-            $('#sum').text(1); //消化日数をp要素に出力
-            $('#used_days').attr('value', used_days); //hiddenで値を渡す
-        });
-        //申請日数の計算
-        $('#until').change(function () {
-            //$('#use_finish_date').text(''); //入社日が変更されたらデフォルト文言は空にする
-            var from = moment($('#from').val()); //入力された開始日を取得
-            var until = moment($('#until').val()); //入力された終了日を取得
-            var used_days = until.diff(from, 'days') + 1; //消化する日数計算
+    });
+    //申請日数の計算
+    $('#from').change(function () {
+    $('#sum').text(1); //消化日数をp要素に出力
+    var used_days = 1;
+    $('#used_days').attr('value', used_days); //hiddenで値を渡す
+    });
+    //申請日数の計算
+    $('#until').change(function () {
+    //$('#use_finish_date').text(''); //入社日が変更されたらデフォルト文言は空にする
+    var from = moment($('#from').val()); //入力された開始日を取得
+    var until = moment($('#until').val()); //入力された終了日を取得
+    var used_days = until.diff(from, 'days') + 1; //消化する日数計算
 
-            $('#sum').text(used_days); //消化日数をp要素に出力
-            $('#used_days').attr('value', used_days); //hiddenで値を渡す
-        });
+    $('#sum').text(used_days); //消化日数をp要素に出力
+    $('#used_days').attr('value', used_days); //hiddenで値を渡す
+    });
     });
 </script>
 @endsection

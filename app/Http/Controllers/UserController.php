@@ -98,9 +98,10 @@ class UserController extends Controller {
 
 			\Session::flash('flash_message', 'ユーザ情報を保存しました');
 			//return redirect()->back(); //編集ページに留まる時はこっち。
-			return redirect('/user'); //一覧ページに戻るときはこっち。
+			return redirect('/user/use_request'); //一覧ページに戻るときはこっち。
 		}
-		return view('user.use_request');
+		$used_days = Auth::user()->usedDays()->paginate(5); //登録済み有給を取得
+		return view('user.use_request', ['used_days' => $used_days]);
 	}
 
 	public function usedList() {

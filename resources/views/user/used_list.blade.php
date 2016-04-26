@@ -12,14 +12,18 @@
 			<tbody>
 
 				<?php $i = 1 ?>
+				{{dd($used_days)}}
 				{{-- dd(Auth::user()->usedDays) --}}
-				@foreach (Auth::user()->usedDays as $used_day)
+				@foreach (Auth::user()->usedDays->paginate(5) as $used_day)
 				<tr>
 					<td class="middle">{{ $i }}</td>
 					<td>{{ $used_day->from }}</td>
 					<td>{{ $used_day->until }}</td>
 					<td>{{ $used_day->used_days }}</td>
-					<td><button type="button" class="btn btn-success btn-sm" name="edit" onclick="location.href='/user/use_request_edit/{{ Auth::user()->id }}'">編集</button></td>
+					<td>
+						<button type="button" class="btn btn-success btn-sm" name="edit" onclick="location.href='/user/use_request_edit/{{ Auth::user()->id }}'">編集</button>
+						<button type="button" class="btn btn-success btn-sm" name="delete" onclick="location.href='/user/use_request_delete/{{ Auth::user()->id }}'">削除</button>
+					</td>
 					<?php $i += 1 ?>
 				</tr>
 
