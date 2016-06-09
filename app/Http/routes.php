@@ -43,8 +43,10 @@ Route::get('/user/edit/{id}', 'UserController@edit');
 Route::get('/user/edit/', 'UserController@edit');
 
 //有給消化申請
-Route::get('/user/use_request', 'UserController@useRequest');
-Route::post('/user/use_request', 'UserController@useRequest');
+Route::get('/user/use_request', 'UseRequestController@useRequest');
+Route::post('/user/use_request', 'UseRequestController@useRequest');
+Route::get('/user/request_edit/{id}', 'UseRequestController@requestEdit');
+Route::post('/user/request_edit', 'UseRequestController@requestEdit');
 
 //登録済み有給一覧
 Route::get('/user/used_list', 'UserController@usedList');
