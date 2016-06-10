@@ -62,7 +62,8 @@
 
 <div class="row">
 	<div class="col-md-4 col-md-offset-4">
-		<button class="btn btn-success col-md-12"type="button">再計算</button>
+		<a href="/user/reset/{{ Auth::user()->id }}" class="btn btn-danger col-md-12"type="button">リセット</a><br><br>
+		<a class="btn btn-success col-md-12"type="button">リセット＋再計算（時間ちょっとかかるかも）</a>
 	</div>
 </div>
 @endsection<!-- /content -->

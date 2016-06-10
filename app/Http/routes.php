@@ -42,6 +42,8 @@ Route::post('/user/edit/{id}', 'UserController@edit');
 Route::get('/user/edit/{id}', 'UserController@edit');
 Route::get('/user/edit/', 'UserController@edit');
 
+Route::get('/user/reset/{id}', 'UserController@reset');
+
 //有給消化申請
 Route::get('/user/use_request', 'UseRequestController@useRequest');
 Route::post('/user/use_request', 'UseRequestController@useRequest');

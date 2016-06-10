@@ -58,7 +58,7 @@ class UserController extends Controller {
 				$paid_vacation->delete();
 			}
 
-			//有給の再計算
+			//有給の再計算、データ生成後にレコード保存
 			$calc = new PaidVacation;
 			$calc->calcRemainingDays($request->date_of_entering, $request->base_date, $user->id);
 
@@ -84,6 +84,20 @@ class UserController extends Controller {
 
 	public function destroy($id) {
 		//
+	}
+
+	public function reset($id = null) {
+		$user = User::find($id);
+
+		$paid_vacations = PaidVacation::where('user_id', $id)->get(); //編集するユーザIDを持つ有給レコードを取得
+		foreach ($paid_vacations as $paid_vacation) { //レコードが存在する場合、一旦物理削除
+			$paid_vacation->delete();
+		}
+
+		//有給の再計算、データ生成後にレコード保存
+		$calc = new PaidVacation;
+		$calc->calcRemainingDays($user->date_of_entering, $user->base_date, $user->id);
+		return redirect()->back(); //再計算後はdashboardに戻る
 	}
 
 }

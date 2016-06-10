@@ -26,7 +26,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	public function paidVacation() {
-		return $this->hasMany('App\PaidVacation')->orderBy('start_date', 'asc'); //開始日の若い順に返す
+		return $this->hasMany('App\PaidVacation'); //開始日の若い順に返す
 	}
 
 	public function usedDays() {
@@ -54,8 +54,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 //		return $remaining_days;
 //	}
 
-	public function getValidPaidVacation() { //有効な(期限が切れてない)有給レコードのコレクションを返すメソッド
-		$paid_vacations = $this->PaidVacation;
+	public function getValidPaidVacation($sort = null) { //有効な(期限が切れてない)有給レコードのコレクションを返すメソッド
+		if (!$sort) {
+			$sort = 'asc';
+		}
+		$paid_vacations = $this->PaidVacation()->orderBy('start_date', $sort)->get();
 		foreach ($paid_vacations as $key => $paid_vacation) {
 			if ($paid_vacation->start_date > $this->today || $paid_vacation->limit_date < $this->today) {
 				$paid_vacations->forget($key);

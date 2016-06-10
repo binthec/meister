@@ -66,6 +66,7 @@
 			</div>
 
 			<input type="hidden" name="used_days" id="used_days" value=""></input>
+
 			<input type="hidden" name="user_id" id="user_id" value="{{ Auth::user()->id }}"></input>
 
 			<button type="submit" class="btn btn-success col-md-offset-2">決定</button>
