@@ -25,6 +25,19 @@
 					<input type="text" class="form-control" placeholder="メールアドレス" name="email" id="email" value="{{ $user->email }}"></input>
 				</div>
 			</div>
+
+			<div class="form-group">
+				<label for="ID" class="col-md-2 control-label">権限</label>
+				<div class="col-md-2">
+					<select class="form-control">
+						@foreach($roleLabel as $role)
+						<option>{{ $role }}</option>
+						@endforeach
+					</select>
+				</div>
+				<span class="label label-danger">必須</span>
+			</div>
+
 			<div class="form-group">
 				<label for="ID" class="col-md-2 control-label">パスワード</label>
 				<div class="col-md-4">

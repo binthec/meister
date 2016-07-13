@@ -21,6 +21,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	protected $hidden = ['password', 'remember_token'];
 	public $today;
 
+	const ADMIN = 'admin';
+	const USER = 'user';
+
+	public static $roleLabel = [
+		self::ADMIN => '管理者',
+		self::USER => 'ユーザ',
+	];
+
 	public function __construct() {
 		$this->today = Carbon::now()->toDateString(); //今日の日付を取得;
 	}
@@ -33,8 +41,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->hasMany('App\UsedDays');
 	}
 
+	/**
+	 * 引数がtrueだったらカーボンのオブジェクトを返す。falseだったら日付('2016-04-07')を返す
+	 * @param type $bool
+	 * @return type
+	 */
 	public function getTodayDate($bool = null) {
-		//引数がtrueだったらカーボンのオブジェクトを返す。falseだったら日付('2016-04-07')を返す
 		if ($bool == true) {
 			$today = Carbon::now();
 		} else {
@@ -54,7 +66,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 //		return $remaining_days;
 //	}
 
-	public function getValidPaidVacation($sort = null) { //有効な(期限が切れてない)有給レコードのコレクションを返すメソッド
+	/**
+	 * 有効な(期限が切れてない)有給レコードのコレクションを返すメソッド
+	 * @param string $sort
+	 * @return type
+	 */
+	public function getValidPaidVacation($sort = null) {
 		if (!$sort) {
 			$sort = 'asc';
 		}
@@ -67,7 +84,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $paid_vacations;
 	}
 
-	public function addRemainingDays() { //有効な有給レコードを取得して、残日数を合算するメソッド
+	/**
+	 * 有効な有給レコードを取得して、残日数を合算するメソッド
+	 * @return type
+	 */
+	public function addRemainingDays() {
 		$paid_vacations = $this->getValidPaidVacation();
 		$remaining_days = 0;
 		foreach ($paid_vacations as $paid_vacation) {

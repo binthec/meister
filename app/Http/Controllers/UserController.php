@@ -39,6 +39,8 @@ class UserController extends Controller {
 
 	public function edit(Request $request, $id = null) {
 
+		$roleLabel = User::$roleLabel;
+
 		if ($request->isMethod('post')) {
 			$user = User::find($id);
 			$user->family_name = $request->family_name;
@@ -67,23 +69,12 @@ class UserController extends Controller {
 			return redirect('/user'); //一覧ページに戻るときはこっち。
 		}
 		$user = User::find($id);
-		return view('user.edit', ['user' => $user]);
-	}
-
-	public function store(Request $request) {
-		//
+		return view('user.edit', ['user' => $user, 'roleLabel' => $roleLabel]);
 	}
 
 	public function show($id) {
-		//
-	}
-
-	public function update(Request $request, $id) {
-		//
-	}
-
-	public function destroy($id) {
-		//
+		$user = User::where('id', $id)->first();
+		return view('user.profile', ['user' => $user]);
 	}
 
 	public function reset($id = null) {

@@ -5,7 +5,7 @@
 	<div class="col col-md-offset-2 col-md-8">
 		<h2>有給消化登録</h2>
 
-		<form method="post" action="/user/use_request" class="form-horizontal well">
+		<form method="post" action="/use_request" class="form-horizontal well">
 			{{-- CSRF対策--}}
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
 			<div class="form-group">
@@ -81,6 +81,9 @@
 		<hr>
 		<h1>登録済み有給一覧</h1>
 
+
+		@if($used_days->count())
+
 		<table class="table table-bordered">
 			<thead class="well">
 			<th width="5%">№</th><th>開始日</th><th>終了日</th><th>日数</th><th width="15%">操作</th>
@@ -96,16 +99,45 @@
 					<td>{{ $used_day->until }}</td>
 					<td>{{ $used_day->used_days }}</td>
 					<td>
-						<button type="button" class="btn btn-success btn-sm" name="edit" onclick="location.href='/user/request_edit/{{ $used_day->id }}'">編集</button>
-						<button type="button" class="btn btn-danger btn-sm" name="delete" onclick="location.href='/user/use_request_delete/{{ Auth::user()->id }}'">削除</button>
+						<a type="button" class="btn btn-success btn-sm" name="edit" href="/use_request/edit/{{ $used_day->id }}'">編集</a>
+						<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModalWindow{{ $used_day->id }}">削除</button>
+
+						<!-- deleteModalWindow -->
+						<div class="modal fade" id="deleteModalWindow{{ $used_day->id }}" tabindex="-1" role="dialog" aria-labelledby="ModalLabel">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+										<h4 class="modal-title" id="ModalLabel">申請済有給の削除</h4>
+									</div>
+									<div class="modal-body">
+										<p class="alert-danger align-center">この処理は取り消せません</p>
+										<p>選択した申請済有給を削除します。よろしいですか？</p>
+										<p>
+											削除する有給：{{ $used_day->from }} 〜 {{ $used_day->until }}<br>
+											有給日数：{{ $used_day->used_days }} 日分
+										</p>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+										<a type="button" class="btn btn-danger btn-sm" name="delete" href="/use_request/delete/{{ $used_day->id }}">削除実行</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- /deleteModalWindow -->
 					</td>
 					<?php $i += 1 ?>
 				</tr>
-
 				@endforeach
 
 			</tbody>
 		</table>
+
+		@else
+		<p>現在、登録済み有給はありません。</p>
+		@endif
+
 		{!! $used_days->render() !!}
 	</div>
 </div>
@@ -116,38 +148,38 @@
 {{-- DatePickerのJS--}}
 <script>
     $(function () {
-    //datepicker
+        //datepicker
 
-    $("#from, #until").datepicker({
-    dateFormat: 'yy-mm-dd',
+        $("#from, #until").datepicker({
+            dateFormat: 'yy-mm-dd',
             language: 'ja',
             beforeShow: function (input, inst) { //カレンダー位置の調整
-            var calendar = inst.dpDiv; // Datepicker
-            setTimeout(function () {
-            calendar.position({
-            my: 'left top', // カレンダーの左下
-                    at: 'left bottom', // 表示対象の左上
-                    of: input, // 対象テキストボックス
-            });
-            }, 1);
+                var calendar = inst.dpDiv; // Datepicker
+                setTimeout(function () {
+                    calendar.position({
+                        my: 'left top', // カレンダーの左下
+                        at: 'left bottom', // 表示対象の左上
+                        of: input, // 対象テキストボックス
+                    });
+                }, 1);
             }
-    });
-    //申請日数の計算
-    $('#from').change(function () {
-    $('#sum').text(1); //消化日数をp要素に出力
-    var used_days = 1;
-    $('#used_days').attr('value', used_days); //hiddenで値を渡す
-    });
-    //申請日数の計算
-    $('#until').change(function () {
-    //$('#use_finish_date').text(''); //入社日が変更されたらデフォルト文言は空にする
-    var from = moment($('#from').val()); //入力された開始日を取得
-    var until = moment($('#until').val()); //入力された終了日を取得
-    var used_days = until.diff(from, 'days') + 1; //消化する日数計算
+        });
+        //申請日数の計算
+        $('#from').change(function () {
+            $('#sum').text(1); //消化日数をp要素に出力
+            var used_days = 1;
+            $('#used_days').attr('value', used_days); //hiddenで値を渡す
+        });
+        //申請日数の計算
+        $('#until').change(function () {
+            //$('#use_finish_date').text(''); //入社日が変更されたらデフォルト文言は空にする
+            var from = moment($('#from').val()); //入力された開始日を取得
+            var until = moment($('#until').val()); //入力された終了日を取得
+            var used_days = until.diff(from, 'days') + 1; //消化する日数計算
 
-    $('#sum').text(used_days); //消化日数をp要素に出力
-    $('#used_days').attr('value', used_days); //hiddenで値を渡す
-    });
+            $('#sum').text(used_days); //消化日数をp要素に出力
+            $('#used_days').attr('value', used_days); //hiddenで値を渡す
+        });
     });
 </script>
 @endsection

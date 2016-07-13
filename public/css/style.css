@@ -35,3 +35,7 @@ td {
 p.form_txt{
     padding-top: 7px;
 }
+
+.container-fluid{
+ margin-bottom: 20px;   
+}

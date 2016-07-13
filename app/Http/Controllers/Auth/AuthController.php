@@ -58,6 +58,7 @@ class AuthController extends Controller {
 
 	public function register(Request $request) {
 
+		$roleLabel = User::$roleLabel;
 		if ($request->isMethod('post')) {
 
 			//バリデーションエラーがあればエラーを返す
@@ -106,9 +107,9 @@ class AuthController extends Controller {
 
 			\Session::flash('flash_message', 'ユーザ情報を保存しました');
 			//return redirect()->back(); //編集ページに留まる時はこっち。
-			return redirect('/user'); //一覧ページに戻るときはこっち。
+			return redirect('/user', ['roleLabel' => $roleLabel]); //一覧ページに戻るときはこっち。
 		}
-		return view('auth.register');
+		return view('auth.register', ['roleLabel' => $roleLabel]);
 	}
 
 }

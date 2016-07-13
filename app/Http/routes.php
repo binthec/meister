@@ -37,18 +37,26 @@ Route::post('/auth/register', 'Auth\AuthController@register');
 
 //ユーザ管理
 Route::get('/user', 'UserController@index');
-Route::post('/user/edit/{id}', 'UserController@edit');
+Route::get('/user/{id}', 'UserController@show');
 
+Route::post('/user/edit/{id}', 'UserController@edit');
 Route::get('/user/edit/{id}', 'UserController@edit');
+
 Route::get('/user/edit/', 'UserController@edit');
 
 Route::get('/user/reset/{id}', 'UserController@reset');
 
 //有給消化申請
-Route::get('/user/use_request', 'UseRequestController@useRequest');
-Route::post('/user/use_request', 'UseRequestController@useRequest');
-Route::get('/user/request_edit/{id}', 'UseRequestController@requestEdit');
-Route::post('/user/request_edit', 'UseRequestController@requestEdit');
+Route::match(['get', 'post'], '/use_request', 'UseRequestController@index');
+Route::get('/use_request/edit/{id}', 'UseRequestController@edit');
+Route::post('/use_request/edit', 'UseRequestController@edit');
+Route::get('/use_request/delete/{id}', 'UseRequestController@delete');
 
 //登録済み有給一覧
 Route::get('/user/used_list', 'UserController@usedList');
+
+
+//管理者
+Route::group(['middleware' => 'role:admin', 'prefix' => 'admin'], function () {
+	Route::get('/', 'AdminController@index');
+});
