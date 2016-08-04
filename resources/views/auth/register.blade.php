@@ -40,9 +40,9 @@
 			<div class="form-group">
 				<label for="ID" class="col-md-2 control-label">権限</label>
 				<div class="col-md-2">
-					<select class="form-control">
-						@foreach($roleLabel as $role)
-						<option>{{ $role }}</option>
+					<select class="form-control" name="role">
+						@foreach($roleLabel as $key => $role)
+						<option value="{{ $key }}">{{ $role }}</option>
 						@endforeach
 					</select>
 				</div>

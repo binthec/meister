@@ -47,7 +47,7 @@ class AuthController extends Controller {
 					'family_name' => 'required|max:255',
 					'first_name' => 'required|max:255',
 					'email' => 'required|email|max:255|unique:users',
-					'password' => 'required|confirmed|min:6',
+					'password' => 'required|confirmed|min:8',
 					'date_of_entering' => 'required',
 						], $messages);
 	}
@@ -58,7 +58,6 @@ class AuthController extends Controller {
 
 	public function register(Request $request) {
 
-		$roleLabel = User::$roleLabel;
 		if ($request->isMethod('post')) {
 
 			//バリデーションエラーがあればエラーを返す
@@ -68,13 +67,13 @@ class AuthController extends Controller {
 //								->withErrors($val)
 //								->withInput();
 //			}
-//			
 			//エラーがなければUserインスタンスを新規作成
 			$user = new User;
+			$user->role = $request->role;
 			$user->family_name = $request->family_name;
 			$user->first_name = $request->first_name;
 			$user->email = $request->email;
-			$user->password = $request->password;
+			$user->password = bcrypt($request->password);
 			$user->date_of_entering = $request->date_of_entering; //入社日
 			$user->base_date = $request->base_date; //起算日
 			$user->memo = $request->memo;
@@ -82,7 +81,7 @@ class AuthController extends Controller {
 
 			//有給の再計算
 			$calc = new PaidVacation;
-			$calc->calcPaidVacation($request->date_of_entering, $request->base_date, $user->id);
+			$calc->calcRemainingDays($request->date_of_entering, $request->base_date, $user->id);
 
 //			//有給の計算
 //			$today = Carbon::now()->toDateString(); //今日の日付を取得
@@ -107,8 +106,9 @@ class AuthController extends Controller {
 
 			\Session::flash('flash_message', 'ユーザ情報を保存しました');
 			//return redirect()->back(); //編集ページに留まる時はこっち。
-			return redirect('/user', ['roleLabel' => $roleLabel]); //一覧ページに戻るときはこっち。
+			return redirect('/user'); //一覧ページに戻るときはこっち。
 		}
+		$roleLabel = User::$roleLabel;
 		return view('auth.register', ['roleLabel' => $roleLabel]);
 	}
 
