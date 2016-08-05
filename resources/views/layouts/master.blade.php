@@ -3,13 +3,17 @@
 	<head>
 		<title>U9システム</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<!-- jQuery UI -->
-		<link href="https://code.jquery.com/ui/1.10.3/themes/redmond/jquery-ui.css" rel="stylesheet" media="screen">
 		<!-- Bootstrap -->
 		<link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<!-- jQuery UI -->
+		<link href="https://code.jquery.com/ui/1.10.3/themes/redmond/jquery-ui.css" rel="stylesheet" media="screen">
 		<!-- styles -->
 		<link href="/css/styles.css" rel="stylesheet">
 		<link href="/css/custom.css" rel="stylesheet">
+
+		<link href="/vendors/form-helpers/css/bootstrap-formhelpers.min.css" rel="stylesheet">
+		<link href="/vendors/select/bootstrap-select.min.css" rel="stylesheet">
+		<link href="/css/forms.css" rel="stylesheet">
 
 		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -73,6 +77,7 @@
 							<!-- Main menu -->
 							<li class="current"><a href="/dashboard"><i class="glyphicon glyphicon-home"></i> Dashboard</a></li>
 							<li><a href="/use_request"><i class="glyphicon glyphicon-bookmark"></i> 有給消化登録</a></li>
+							@if (!Auth::guest())
 							<!-- adminユーザのみユーザ一覧を利用可 -->
 							@if(Auth::user()->role == 'admin')
 							<li class="submenu">
@@ -87,6 +92,8 @@
 								</ul>
 							</li>
 							@endif
+							@endif
+
 						</ul>
 					</div>
 				</div>

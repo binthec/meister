@@ -8,7 +8,7 @@
 		<div class="col-md-12">
 			<div class="content-box-large">
 				<div class="panel-heading">
-					<div class="panel-title">お知らせ</div>
+					<legend>お知らせ</legend>
 					<!--
 					<div class="panel-options">
 						<a href="#" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
