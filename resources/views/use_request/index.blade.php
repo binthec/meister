@@ -61,12 +61,12 @@
 								<div class="col-sm-offset-1 col-sm-10">
 									<div class="checkbox">
 										<label>
-											<input type="checkbox" checked> 午前
+											<input type="checkbox" class="half" name="from_am" id="from_am" checked> 午前
 										</label>
 									</div>
 									<div class="checkbox">
 										<label>
-											<input type="checkbox" checked> 午後
+											<input type="checkbox" class="half" name="from_pm" id="from_pm" checked> 午後
 										</label>
 									</div>
 								</div>
@@ -77,6 +77,20 @@
 						</div>
 						<div class="col-md-3">
 							<input type="date" class="form-control" placeholder="終了日" name="until" id="until" value=""></input>
+							<div class="form-group">
+								<div class="col-sm-offset-1 col-sm-10">
+									<div class="checkbox">
+										<label>
+											<input type="checkbox" class="half" name="until_am" id="until_pm" checked> 午前
+										</label>
+									</div>
+									<div class="checkbox">
+										<label>
+											<input type="checkbox" class="half" name="until_pm" id="until_pm" checked> 午後
+										</label>
+									</div>
+								</div>
+							</div>
 						</div>
 						<div class="col-md-3 form-control-static">
 							<span id="sum_box">合計： <span id="sum"></span> 日間</span>
@@ -179,57 +193,87 @@
 </div>
 @endsection
 
-@section('css')
-<link href="/vendors/bootstrap-datetimepicker/datetimepicker.css" rel="stylesheet">
-<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
-@endsection
-
 @section('js')
-<script src="/vendors/form-helpers/js/bootstrap-formhelpers.min.js"></script>
-<script src="/vendors/select/bootstrap-select.min.js"></script>
-<script src="/vendors/tags/js/bootstrap-tags.min.js"></script>
-<script src="/vendors/mask/jquery.maskedinput.min.js"></script>
-<script src="/vendors/moment/moment.min.js"></script>
-<script src="/vendors/wizard/jquery.bootstrap.wizard.min.js"></script>
-<script src="/vendors/bootstrap-datetimepicker/bootstrap-datetimepicker.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
-<script src="/js/forms.js"></script>
+{{-- フォームに必要なCSSとJSを読み込み --}}
+@include('elements.forms')
 
 {{-- DatePickerのJS--}}
 <script>
-$(function () {
-    //datepicker
+    $(function () {
+        //datepicker
+        $("#from, #until").datepicker({
+            dateFormat: 'yy-mm-dd',
+            language: 'ja',
+            beforeShow: function (input, inst) { //カレンダー位置の調整
+                var calendar = inst.dpDiv; // Datepicker
+                setTimeout(function () {
+                    calendar.position({
+                        my: 'left bottom', // カレンダーの左下
+                        at: 'left top', // 表示対象の左上
+                        of: input, // 対象テキストボックス
+                    });
+                }, 1);
+            }
+        });
 
-    $("#from, #until").datepicker({
-        dateFormat: 'yy-mm-dd',
-        language: 'ja',
-        beforeShow: function (input, inst) { //カレンダー位置の調整
-            var calendar = inst.dpDiv; // Datepicker
-            setTimeout(function () {
-                calendar.position({
-                    my: 'left top', // カレンダーの左下
-                    at: 'left bottom', // 表示対象の左上
-                    of: input, // 対象テキストボックス
-                });
-            }, 1);
+        //期間が空でない場合のみ、日数の差分計算をする
+        getDiff();
+
+        //申請日数の計算
+        $('#from').change(function () {
+            //期間が空でない場合のみ、日数の差分計算をする
+            getDiff();
+            //もしuntilが空の場合、fromと同じ値を入れる
+            daysFormat('from', 'until');
+            //untilがfromよりも前日付だとエラーを出す
+            if (Number($('#sum').text()) <= 0) {
+                console.log('errror!');
+                if (!$('#from').parent().hasClass('has-error')) {
+                    $('#from').parent().addClass('has-error');
+                }
+            } else {
+                if ($('#from').parent().hasClass('has-error')) {
+                    $('#from').parent().removeClass('has-error');
+                }
+            }
+        });
+        //申請日数の計算
+        $('#until').change(function () {
+            //期間が空でない場合のみ、日数の差分計算をする
+            getDiff();
+            //もしfromが空の場合、untilと同じ値を入れる
+            daysFormat('until', 'from');
+        });
+        //午前・午後の計算
+        $('.half').change(function () {
+            if ($(this).is(':checked')) {
+                var sum = Number($('#sum').text()) + Number(0.5);
+                $('#sum').text(sum);
+            } else {
+                var sum = Number($('#sum').text()) - Number(0.5);
+                $('#sum').text(sum);
+            }
+        });
+    });
+
+    function daysFormat(own, other) {
+        //もしotherが空の場合、ownと同じ値を入れる
+        if (!$('#' + other).val()) {
+            $('#' + other).val($('#' + own).val());
+            $('#sum').text(1); //消化日数をp要素に出力
+            $('#used_days').attr('value', 1); //hiddenで値を渡す
         }
-    });
-    //申請日数の計算
-    $('#from').change(function () {
-        $('#sum').text(1); //消化日数をp要素に出力
-        var used_days = 1;
-        $('#used_days').attr('value', used_days); //hiddenで値を渡す
-    });
-    //申請日数の計算
-    $('#until').change(function () {
-        //$('#use_finish_date').text(''); //入社日が変更されたらデフォルト文言は空にする
-        var from = moment($('#from').val()); //入力された開始日を取得
-        var until = moment($('#until').val()); //入力された終了日を取得
-        var used_days = until.diff(from, 'days') + 1; //消化する日数計算
+    }
 
-        $('#sum').text(used_days); //消化日数をp要素に出力
-        $('#used_days').attr('value', used_days); //hiddenで値を渡す
-    });
-});
+    function getDiff() {
+        if ($('#from').val() && $('#until').val()) {
+            var from = moment($('#from').val()); //入力された開始日を取得
+            var until = moment($('#until').val()); //入力された終了日を取得
+            var used_days = until.diff(from, 'days') + 1; //消化する日数計算
+
+            $('#sum').text(used_days); //消化日数をp要素に出力
+            $('#used_days').attr('value', used_days); //hiddenで値を渡す
+        }
+    }
 </script>
 @endsection
