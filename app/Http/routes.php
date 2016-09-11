@@ -38,18 +38,14 @@ Route::post('/auth/register', 'Auth\AuthController@register');
 //ユーザ管理
 Route::get('/user', 'UserController@index');
 Route::get('/user/{id}', 'UserController@show');
-
-Route::post('/user/edit/{id}', 'UserController@edit');
-Route::get('/user/edit/{id}', 'UserController@edit');
-
-Route::get('/user/edit/', 'UserController@edit');
-
+Route::match(['get', 'post'], '/user/edit/{id}', 'UserController@edit');
 Route::get('/user/reset/{id}', 'UserController@reset');
 
 //有給消化申請
 Route::match(['get', 'post'], '/use_request', 'UseRequestController@index');
-Route::get('/use_request/edit/{id}', 'UseRequestController@edit');
-Route::post('/use_request/edit', 'UseRequestController@edit');
+//Route::get('/use_request/edit/{id}', 'UseRequestController@edit');
+//Route::post('/use_request/edit', 'UseRequestController@edit');
+Route::match(['get', 'post'], '/use_request/edit/{id}', 'UseRequestController@edit');
 Route::get('/use_request/delete/{id}', 'UseRequestController@delete');
 
 //登録済み有給一覧

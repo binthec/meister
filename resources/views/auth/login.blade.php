@@ -1,64 +1,95 @@
-@extends('layouts/master')
-@section('content')
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>AdminLTE 2 | Log in</title>
+		<!-- Tell the browser to be responsive to screen width -->
+		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+		<!-- Bootstrap 3.3.6 -->
+		<link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+		<!-- Font Awesome -->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+		<!-- Ionicons -->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+		<!-- Theme style -->
+		<link rel="stylesheet" href="/assets/dist/css/AdminLTE.min.css">
+		<!-- iCheck -->
+		<link rel="stylesheet" href="/assets/plugins/iCheck/square/blue.css">
 
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-md-6 col-md-offset-3">
-			<div class="panel panel-default">
-				<div class="panel-heading">ログイン</div>
-				<div class="panel-body">
-					@if (count($errors) > 0)
-					<div class="alert alert-danger">
-						<strong>Whoops!</strong> There were some problems with your input.<br><br>
-						<ul>
-							@foreach ($errors->all() as $error)
-							<li>{{ $error }}</li>
-							@endforeach
-						</ul>
+		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+		<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+		<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+	<body class="hold-transition login-page">
+
+		@if (count($errors) > 0)
+		<div class="alert alert-danger">
+			<strong>Whoops!</strong> There were some problems with your input.<br><br>
+			<ul>
+				@foreach ($errors->all() as $error)
+				<li>{{ $error }}</li>
+				@endforeach
+			</ul>
+		</div>
+		@endif
+
+		<div class="login-box">
+			<div class="login-logo">
+				<a href="/dashboard"><b>U9</b> Admin</a>
+			</div>
+			<!-- /.login-logo -->
+			<div class="login-box-body">
+				<p class="login-box-msg">ログイン</p>
+
+
+				{!! Form::open(['method' => 'post','url' => '/login']) !!}
+				{!! csrf_field() !!}
+
+				<div class="form-group has-feedback">
+					{!! Form::email('email', '',['class'=>'form-control', 'placeholder' => 'メールアドレス']) !!}
+					<span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+				</div>
+				<div class="form-group has-feedback">
+					{!! Form::password('password', ['class'=>'form-control', 'placeholder' => 'パスワード']) !!}
+					<span class="glyphicon glyphicon-lock form-control-feedback"></span>
+				</div>
+				<div class="row">
+					<div class="col-xs-8">
+						<div class="checkbox icheck">
+							<label>
+								<input type="checkbox"> パスワードを覚える
+							</label>
+						</div>
 					</div>
-					@endif
+					<div class="col-xs-4">
+						<button type="submit" class="btn btn-primary btn-block btn-flat">ログイン</button>
+					</div><!-- /.col -->
+				</div>
+				{!! Form::close() !!}
 
-					<form class="form-horizontal" role="form" method="POST" action="/login">
-						{{-- CSRF対策--}}
-						<input type="hidden" name="_token" value="{{ csrf_token() }}">
+			</div>
+			<!-- /.login-box-body -->
+		</div>
+		<!-- /.login-box -->
 
-						<div class="form-group">
-							<label class="col-md-4 control-label">E-mailアドレス</label>
-							<div class="col-md-6">
-								<input type="email" class="form-control" name="email" value="{{ old('email') }}">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label class="col-md-4 control-label">パスワード</label>
-							<div class="col-md-6">
-								<input type="password" class="form-control" name="password">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<div class="col-md-6 col-md-offset-4">
-								<div class="checkbox">
-									<label>
-										<input type="checkbox" name="remember"> パスワードを記憶する
-									</label>
-								</div>
-							</div>
-						</div>
-
-						<div class="form-group">
-							<div class="col-md-6 col-md-offset-4">
-								<button type="submit" class="btn btn-primary" style="margin-right: 15px;">
-									ログイン
-								</button>
-
-								<a href="/password/email">パスワードを再発行</a>
-							</div>
-						</div>
-					</form>
-				</div><!-- .panel-body -->
-			</div><!-- .panel -->
-		</div><!-- .col -->
-	</div><!-- .row -->
-</div><!-- .container-fluid -->
-@endsection
+		<!-- jQuery 2.2.3 -->
+		<script src="/assets/plugins/jQuery/jquery-2.2.3.min.js"></script>
+		<!-- Bootstrap 3.3.6 -->
+		<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+		<!-- iCheck -->
+		<script src="/assets/plugins/iCheck/icheck.min.js"></script>
+		<script>
+$(function () {
+    $('input').iCheck({
+        checkboxClass: 'icheckbox_square-blue',
+        radioClass: 'iradio_square-blue',
+        increaseArea: '20%' // optional
+    });
+});
+		</script>
+	</body>
+</html>

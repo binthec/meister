@@ -7,42 +7,39 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Auth;
 use Carbon\Carbon;
+use App\UsedDays;
 
-class HomeController extends Controller {
+class HomeController extends Controller
+{
 
-	public function dashboard() {
-		//$items = Item::all();
-		//dd($items);
-		$user = Auth::user();
-		$today = Carbon::now();
-//		dd($today);
-//		dd($user);
-		//return view('home.dashboard', ['items' => $items]);
-//		dd($user);
-		return view('home.dashboard', ['user' => $user, 'today' => $today]);
+	public function dashboard()
+	{
+		$validPaidVacations = Auth::user()->getValidPaidVacation();
+		return view('home.dashboard', compact('validPaidVacations'));
 	}
 
-	public function create() {
+	public function store(Request $request)
+	{
 		//
 	}
 
-	public function store(Request $request) {
+	public function show($id)
+	{
 		//
 	}
 
-	public function show($id) {
+	public function edit($id)
+	{
 		//
 	}
 
-	public function edit($id) {
+	public function update(Request $request, $id)
+	{
 		//
 	}
 
-	public function update(Request $request, $id) {
-		//
-	}
-
-	public function destroy($id) {
+	public function destroy($id)
+	{
 		//
 	}
 

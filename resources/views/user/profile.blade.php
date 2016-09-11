@@ -20,7 +20,7 @@
 						<div class="form-group">
 							<label for="ID" class="col-md-2 control-label">名前</label>
 							<div class="col-md-8 form-inline">
-								<p class="form_txt" id="base_date_text">{{ $user->family_name }} {{ $user->first_name }}</p>
+								<p class="form_txt" id="base_date_text">{{ $user->last_name }} {{ $user->first_name }}</p>
 							</div>
 						</div>
 						<div class="form-group">

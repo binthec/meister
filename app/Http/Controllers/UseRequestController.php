@@ -6,55 +6,51 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Exception;
 use App\UsedDays;
 use App\PaidVacation;
 use App\User;
 
-class UseRequestController extends Controller {
+class UseRequestController extends Controller
+{
 
-	public function index(Request $request) {
+	public function index(Request $request)
+	{
 
 		if ($request->isMethod('post')) {
-			/**
-			 * 申請した有給をUsedDaysテーブルに保存
-			 */
+
+			$user = User::where('id', $request->user_id)->first(); //ユーザIDをもとにユーザを特定
+			$remainingDays = $user->getSumRemainingDays(); //有給残日数の合計
+			$usedDays = $request->used_days; //申請した有給日数
+
+			if ($usedDays > $remainingDays) {
+				//残っている有給より大きな値が申請された場合、エラーを返す
+				//throw new Exception('申請された日数が有給残日数を上回っています。再度日付を選択してください');
+			}
+
+			//申請した有給をUsedDaysテーブルに保存
 			$used_days = new UsedDays;
 			$used_days->user_id = $request->user_id;
 			$used_days->from = $request->from;
 			$used_days->until = $request->until;
-			$used_days->used_days = $request->used_days;
+			$used_days->used_days = $usedDays;
 			$used_days->save();
 
-			/**
-			 * 登録された消化分の有給日数を、有給残日数から差し引く処理
-			 */
-			$used_days = $request->used_days; //登録日数
-			$user = User::where('id', $request->user_id)->first(); //ユーザIDをもとにユーザを特定
-			$valid_paid_vacations = $user->getValidPaidVacation(); //ユーザの有効な有給レコードを取得
-			//有給残日数の修正。有給申請なので、今ある有給残日数から、申請された日数を減らす
-			foreach ($valid_paid_vacations as $valid_paid_vacation) {
-				while ($valid_paid_vacation->remaining_days > 0 && $used_days > 0) {
-					$valid_paid_vacation->remaining_days--;
-					$used_days--;
-				}
-				$valid_paid_vacation->save();
-				if ($used_days == 0) {
-					break;
-				}
-			}
+			//計算後の有給残日数をレコードに保存
+			$resultRemainingDays = $remainingDays - $usedDays; //有給残日数から申請日数を減算
+			$user->setRemainingDays($resultRemainingDays);
 
-			//dd($valid_paid_vacations);
-
-			\Session::flash('flash_message', 'ユーザ情報を保存しました');
-			//return redirect()->back(); //編集ページに留まる時はこっち。
+			\Session::flash('flashMessage', '有給消化申請が完了しました');
 			return redirect('/use_request'); //一覧ページに戻るときはこっち。
 		}
 		$used_days = Auth::user()->usedDays()->paginate(5); //登録済み有給を取得
-		return view('use_request.index', ['used_days' => $used_days]);
+		$validPaidVacations = Auth::user()->getValidPaidVacation();
+
+		return view('use_request.index', compact('used_days', 'validPaidVacations'));
 	}
 
-	public function edit(Request $request, $id = null) {
-
+	public function edit(Request $request, $id = null)
+	{
 
 		if ($request->isMethod('post')) {
 
@@ -106,27 +102,22 @@ class UseRequestController extends Controller {
 		}
 
 		$requested = UsedDays::where('id', $id)->first();
-		$used_days = Auth::user()->usedDays()->paginate(5); //登録済み有給を取得
-		return view('use_request.edit', ['used_days' => $used_days, 'requested' => $requested]);
+		$usedDays = Auth::user()->usedDays()->paginate(5); //登録済み有給を取得
+		return view('use_request.edit', compact('usedDays', 'requested'));
 	}
 
-	public function delete($id) {
+	public function delete($id)
+	{
 		$usedDays = UsedDays::where('id', $id)->first();
 		$usedDays->delete();
 
+//計算後の有給残日数をレコードに保存
 		$user = User::where('id', $usedDays->user_id)->first();
-		$valid_paid_vacations = $user->getValidPaidVacation('asc'); //ユーザの有効な有給レコードを取得
+		$resultRemainingDays = $user->getSumRemainingDays() + $usedDays->used_days; //有給残日数に削除する分の申請日数を加算
+		$user->setRemainingDays($resultRemainingDays);
 
-		$used_days = $usedDays->used_days; //申請している有給日数
-		foreach ($valid_paid_vacations as $valid_paid_vacation) {
-			while ($valid_paid_vacation->remaining_days < $valid_paid_vacation->original_paid_vacation && $used_days > 0) {
-				$valid_paid_vacation->remaining_days++;
-				$used_days--;
-			}
-			$valid_paid_vacation->save();
-		}
-		\Session::flash('flash_message', '申請済有給を削除しました');
-		return redirect('/use_request'); //一覧ページに戻るときはこっち。
+		\Session::flash('flashMessage', '申請済有給を削除しました');
+		return redirect('/use_request'); //一覧ページに戻る
 	}
 
 }
