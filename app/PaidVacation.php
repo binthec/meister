@@ -71,21 +71,21 @@ class PaidVacation extends Model
 	 * 入社してから今日日付までに付与されている有給を計算してレコードを保存するメソッド
 	 * 引数：入社日、起算日、ユーザID
 	 */
-	public function calcRemainingDays($date_of_entering = null, $base_date = null, $user_id = null)
+	public function calcRemainingDays($dateOfEntering, $basDate, $userId)
 	{
-		$start_date = $base_date; //起算日を最初の有給の有効期限開始日に格納
+		$startDate = $basDate; //起算日を最初の有給の有効期限開始日に格納
 
-		while ($this->today > $start_date) {
-			$paid_vacations = new PaidVacation; //新規にインスタンス生成
-			$paid_vacations->user_id = $user_id;
+		while ($this->today > $startDate) {
+			$paidVacation = new PaidVacation; //新規にインスタンス生成
+			$paidVacation->user_id = $userId;
 
-			$paid_vacations->start_date = $start_date;
-			$paid_vacations->limit_date = Carbon::createFromFormat('Y-m-d', $start_date)->addYear(2)->subDay(); //起算日から2年後マイナス1日が期限日
-			$paid_vacations->remaining_days = $paid_vacations->getOriginalPaidVacation($base_date, $start_date); //有給日数を取得：有給取得によって減算されるカラム
-			$paid_vacations->original_paid_vacation = $paid_vacations->getOriginalPaidVacation($base_date, $start_date); //有給日数を取得：本来の日数を記憶しておくためのカラム。減算されない。
-			$paid_vacations->save();
+			$paidVacation->start_date = $startDate;
+			$paidVacation->limit_date = Carbon::createFromFormat('Y-m-d', $startDate)->addYear(2)->subDay(); //起算日から2年後マイナス1日が期限日
+			$paidVacation->remaining_days = $paidVacation->getOriginalPaidVacation($basDate, $startDate); //有給日数を取得：有給取得によって減算されるカラム
+			$paidVacation->original_paid_vacation = $paidVacation->getOriginalPaidVacation($basDate, $startDate); //有給日数を取得：本来の日数を記憶しておくためのカラム。減算されない。
+			$paidVacation->save();
 
-			$start_date = Carbon::createFromFormat('Y-m-d', $start_date)->addYear(1)->toDateString(); //有給の有効期限開始日
+			$startDate = Carbon::createFromFormat('Y-m-d', $startDate)->addYear(1)->toDateString(); //有給の有効期限開始日
 		}
 	}
 
