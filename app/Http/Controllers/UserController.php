@@ -101,4 +101,19 @@ class UserController extends Controller
 		return redirect()->back(); //再計算後はdashboardに戻る
 	}
 
+	/**
+	 * PaidVacation テーブルを更新する
+	 */
+	public function update()
+	{
+		$validPaidVacations = User::find(Auth::user()->id)->getValidPaidVacation();
+
+		if ($validPaidVacations->count() < 2) {
+			
+		}
+
+		exit;
+		return view('user.index');
+	}
+
 }

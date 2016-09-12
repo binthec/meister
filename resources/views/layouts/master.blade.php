@@ -69,17 +69,18 @@
 				<section class="sidebar">
 					<!-- sidebar menu: : style can be found in sidebar.less -->
 					<ul class="sidebar-menu">
+
+						<li class="header">メインメニュー</li>
+
 						<li class="treeview {{ isActiveUrl('dashboard') }}">
 							<a href="/dashboard">
 								<i class="fa fa-dashboard"></i> <span>Dashboard</span>
 							</a>
 						</li>
 
-						<li class="header">メインメニュー</li>
-
-						<li class="treeview {{ isActiveUrl('user_request') }}">
-							<a href="{{ url('use_request')}}">
-								<i class="fa fa-dashboard"></i> <span>有給消化申請</span>
+						<li class="treeview {{ isActiveUrl('use_request*') }}">
+							<a href="{{ url('use_request/add') }}">
+								<i class="fa fa-calendar-check-o"></i> <span>有給消化申請</span>
 							</a>
 						</li>
 

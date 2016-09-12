@@ -4,7 +4,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
 	<h1>
-		有給消化申請
+		有給消化申請・一覧
 	</h1>
 </section>
 
@@ -12,16 +12,18 @@
 <section class="content">
 	<div class="box">
 		<div class="box-header with-border">
-			<h3 class="box-title">申請内容の編集</h3>
+			<h3 class="box-title">申請</h3>
 		</div>
 		<div class="box-body">
 
-			{!! Form::open(['method' => 'post', 'url' => 'user/request_edit', 'class' => 'form-horizontal']) !!}
+			{!! Form::open(['url' => '/use_request/add', 'method' => 'POST', 'class' => 'form-horizontal']) !!}
 			{{ csrf_field() }}
+
 			<div class="form-group">
 				<label for="ID" class="col-md-2 control-label">ID</label>
 				<div class="col-md-8 form-control-static">{{ Auth::user()->id }}</div>
 			</div>
+
 			<div class="form-group">
 				<label for="ID" class="col-md-2 control-label">名前</label>
 				<div class="col-md-8 form-control-static">
@@ -49,9 +51,11 @@
 						</div>
 					</div>
 				</div>
+
 				<div class="col-md-1 text-center">
 					<p class="font18">＋</p>
 				</div>
+
 				<div class="col-md-2">
 					<div class="panel panel-default align-center">
 						<div class="panel-heading text-center">
@@ -70,9 +74,11 @@
 						</div>
 					</div>
 				</div>
+
 				<div class="col-md-1 text-center">
 					<p class="font18">＝</p>
 				</div>
+
 				<div class="col-md-2">
 					<div class="panel panel-default align-center">
 						<div class="panel-heading text-center">合計有給残日数</div>
@@ -81,6 +87,7 @@
 						</div>
 					</div>
 				</div>
+
 			</div>
 
 			<hr>
@@ -91,7 +98,7 @@
 					{!! Form::date('daterange', '', ['class' => 'form-control use_daterange font18', 'placeholder' => '日付を選択してください']) !!}
 				</div>
 				<div class="col-md-4 form-control-static">
-					<span class="font18" id="sum_box">合計： <span id="sum">{{ $useRequest->used_days }}</span> 日間</span>
+					<span class="font18" id="sum_box">合計： <span id="sum"></span> 日間</span>
 				</div>
 			</div>
 
@@ -104,12 +111,12 @@
 							<label>半休の選択</label>
 							<div class="checkbox">
 								<label>
-									{!! Form::checkbox('from_am','', ($useRequest->from_am == 1)? true : false, ['class' => 'half', 'id' => 'from_am']) !!} 午前半休
+									{!! Form::checkbox('from_am', '', false, ['class' => 'half', 'id' => 'from_am']) !!} 午前半休
 								</label>
 							</div>
 							<div class="checkbox">
 								<label>
-									{!! Form::checkbox('from_pm', '', ($useRequest->from_pm == 1)? true : false , ['class' => 'half', 'id' => 'from_pm']) !!} 午後半休
+									{!! Form::checkbox('from_pm', '', false, ['class' => 'half', 'id' => 'from_pm']) !!} 午後半休
 								</label>
 							</div>
 						</div>
@@ -121,7 +128,7 @@
 							<label>開始日の半休選択</label>
 							<div class="checkbox">
 								<label>
-									{!! Form::checkbox('from_pm', '', ($useRequest->from_pm == 1)? true : false, ['class' => 'half', 'id' => 'from_pm']) !!} 午後半休
+									{!! Form::checkbox('from_pm', '', false, ['class' => 'half', 'id' => 'from_pm']) !!} 午後半休
 								</label>
 							</div>
 						</div>
@@ -130,7 +137,7 @@
 							<label>終了日の半休選択</label>
 							<div class="checkbox">
 								<label>
-									{!! Form::checkbox('until_pm', '', ($useRequest->until_pm == 1)? true : false, ['class' => 'half', 'id' => 'until_pm']) !!} 午前半休
+									{!! Form::checkbox('until_am', '', false, ['class' => 'half', 'id' => 'until_am']) !!} 午前半休
 								</label>
 							</div>
 						</div>
@@ -142,68 +149,25 @@
 			<div class="form-group">
 				<label for="ID" class="col-md-2 control-label">連絡事項</label>
 				<div class="col-md-8">
-					{!! Form::textarea('memo', $useRequest->memo, ['class' => 'form-control', 'rows' => 5]) !!}
+					{!! Form::textarea('memo', '', ['class' => 'form-control', 'rows' => 5]) !!}
 				</div>
 			</div>
-		</div>
 
-		<div class="box-footer">
-			<button type="submit" class="btn btn-primary col-md-offset-2">決定</button>
-		</div>
+			{!! Form::hidden('from', '',['id' => 'from']) !!}
+			{!! Form::hidden('until', '',['id' => 'until']) !!}
+			{!! Form::hidden('used_days', '',['id' => 'used_days']) !!}
+			{!! Form::hidden('user_id', Auth::user()->id) !!}
 
-		{!! Form::hidden('from', $useRequest->from,['id' => 'from']) !!}
-		{!! Form::hidden('until', $useRequest->until,['id' => 'until']) !!}
-		{!! Form::hidden('used_days', $useRequest->used_days,['id' => 'used_days']) !!}
-		{!! Form::hidden('user_id', Auth::user()->id) !!}
+			<div class="box-footer">
+				<button type="submit" class="btn btn-primary col-md-offset-2">決定</button>
+			</div>
+			{!! Form::close() !!}
 
-		{!! Form::close() !!}
-	</div>
-
-
-	<div class="box">
-		<div class="box-header with-border">
-			<h3 class="box-title">申請済有給の一覧</h3>
-		</div>
-		<div class="box-body">
-
-			<table class="table table-bordered">
-				<thead class="well">
-				<th width="5%">№</th><th>期間</th><th>日数</th>
-				</thead>
-				<tbody>
-
-					{{-- 通し番号を付ける --}}
-					<?php $i = ($usedDays->currentPage() - 1) * App\UsedDays::PAGE_NUM + 1 ?>
-					{{-- dd(Auth::user()->usedDays) --}}
-					@foreach ($usedDays as $usedDay)
-					<tr>
-						<td class="middle">{{ $i }}</td>
-						<td>
-							@if($usedDay->used_days <= 1)
-							{{ App\User::getJaDate($usedDay->from) }}
-							&ensp;
-							{{ ($usedDay->from_am == 1)? '午前半休': '' }}
-							{{ ($usedDay->from_pm == 1)? '午後半休': '' }}
-							@else
-							{{ App\User::getJaDate($usedDay->from) }} 
-							{{ ($usedDay->from_pm == 1)? '午後': '' }}
-							&ensp;〜&ensp;
-							{{ App\User::getJaDate($usedDay->until) }}
-							{{ ($usedDay->until_am == 1)? '午前': '' }}
-							@endif
-						</td>
-						<td>{{ $usedDay->used_days }} 日間</td>
-						<?php $i += 1 ?>
-					</tr>
-					@endforeach
-				</tbody>
-			</table>
-			{!! $usedDays->render() !!}
 		</div>
 	</div>
 </section>
-@endsection
 
+@endsection
 
 @section('js')
 @include('elements.for_form')
@@ -211,10 +175,6 @@
 <script>
 //Date range picker	
     $(function () {
-
-        var days = <?php echo $useRequest->used_days; ?>;
-        displayChkBox(days);//編集の場合、最初に申請日数を判定してチェックボックスを表示させる
-
         $(".use_daterange").daterangepicker({
             locale: {
                 format: "YYYY年MM月DD日",
@@ -224,13 +184,10 @@
             },
             drops: "up",
             applyClass: "btn-primary",
-            startDate: <?php echo json_encode(App\User::getJaDate($useRequest->from)); ?>,
-            endDate: <?php echo json_encode(App\User::getJaDate($useRequest->until)); ?>,
         },
                 function (start, end) {
                     calcAndSetVal(start, end);
                 });
-
     });
 </script>
 @endsection

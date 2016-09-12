@@ -141,9 +141,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	{
 		$validPaidVacations = $this->getValidPaidVacation(); //有効な有給レコードを取得
 
-		if ($resultRemainingDays >= $validPaidVacations->last()->remaining_days) {
-			$resultRemainingDays -= $validPaidVacations->last()->remaining_days;
+		if ($resultRemainingDays >= $validPaidVacations->last()->original_paid_vacation) {
+			$resultRemainingDays -= $validPaidVacations->last()->original_paid_vacation;
+			$validPaidVacations->last()->remaining_days = $validPaidVacations->last()->original_paid_vacation;
 			$validPaidVacations->first()->remaining_days = $resultRemainingDays;
+			$validPaidVacations->last()->save();
 			$validPaidVacations->first()->save();
 		} else {
 			$validPaidVacations->last()->remaining_days = $resultRemainingDays;

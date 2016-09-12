@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\UsedDays;
 
@@ -15,7 +15,8 @@ class HomeController extends Controller
 	public function dashboard()
 	{
 		$validPaidVacations = Auth::user()->getValidPaidVacation();
-		return view('home.dashboard', compact('validPaidVacations'));
+		$usedDays = Auth::user()->usedDays()->orderBy('from', 'descs')->paginate(UsedDays::PAGE_NUM); //登録済み有給を取得
+		return view('home.dashboard', compact('validPaidVacations', 'usedDays'));
 	}
 
 	public function store(Request $request)
