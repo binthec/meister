@@ -112,9 +112,9 @@ class UserController extends Controller
 	 * @param Request $request
 	 * @param type $id
 	 */
-	public function editDate(Request $request, $id)
+	public function editDate(Request $request, $useId)
 	{
-		$user = User::find($id);
+		$user = User::find($useId);
 
 		if ($request->isMethod('post')) {
 
@@ -123,12 +123,13 @@ class UserController extends Controller
 			$user->save();
 
 			//1.編集するユーザIDを持つ有給レコードを物理削除
-			PaidVacation::where('user_id', $id)->delete();
+			PaidVacation::where('user_id', $useId)->delete();
 
 			//2.有給の再計算とデータ生成を行い、レコードに新規保存
-			PaidVacation::setOriginalPaidVacations($user->id);
+			PaidVacation::setOriginalPaidVacations($useId);
 
-			//3.既に登録されている有給消化申請の日数を有給レコードから削除
+			//3.既に登録されている有給消化申請の日数を有給レコードから減算
+			PaidVacation::recalcRemainingDays($useId);
 
 			\Session::flash('flashMessage', '入社日の変更を完了しました');
 			return redirect('/user'); //一覧ページに戻るときはこっち。

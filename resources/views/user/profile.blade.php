@@ -62,7 +62,6 @@
 		</div>
 
 		<div class="col-lg-8">
-			<!-- Profile Image -->
 
 			<!-- Left col -->
 			<div class="box box-primary">

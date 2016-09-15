@@ -105,10 +105,14 @@ class PaidVacation extends Model
 	public static function recalcRemainingDays($userId)
 	{
 		$paidVacations = PaidVacation::where('user_id', $userId)->orderBy('start_date', 'asc')->get();
-		$usedDays = UsedDays::where('user_id', $userId)->orderBy('from', 'asc')->get();
-
+		//$usedDays = UsedDays::where('user_id', $userId)->orderBy('from', 'asc')->get();
 //		foreach ($paidVacations as $paidVacation) {
-//			
+//			$usedDays = UsedDays::where('user_id', $userId)
+//					->whereBetween('start_date', [$paidVacation->start_date, Carbon::createFromFormat('Y-m-d', $paidVacation->limit_date)->addYear(1)->toDateString()])
+//					->get();
+//
+//
+//			dd($usedDays);
 //		}
 	}
 
