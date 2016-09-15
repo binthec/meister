@@ -11,44 +11,35 @@
   |
  */
 
-//Route::get('/', function () {
-//    return view('welcome');
-//});
-//Route::get('/', 'Auth\AuthController@getLogin');
-//Route::get('/home', 'HomeController@dashboard');
-//ログイン後のroute
-Route::get('/dashboard', 'HomeController@dashboard');
-Route::post('/dashboard', 'HomeController@dashboard');
-
 // 認証のルート定義
-Route::get('/', 'Auth\AuthController@getLogin');
-
-//Route::post('auth/login', 'Auth\AuthController@postLogin');
-//Route::get('/login', 'Auth\AuthController@login');
-//Route::post('/login', 'Auth\AuthController@login');
+Route::get('/', 'Auth\AuthController@getlogin');
 Route::get('/login', 'Auth\AuthController@getLogin');
 Route::post('/login', 'Auth\AuthController@postLogin');
 
-Route::get('/logout', 'Auth\AuthController@getLogout');
+Route::group(['middleware' => 'auth'], function() {
+	//ログイン後のroute
+	Route::match(['get', 'post'], '/dashboard', 'HomeController@dashboard');
 
-// 登録のルート定義
-Route::get('/auth/register', 'Auth\AuthController@register');
-Route::post('/auth/register', 'Auth\AuthController@register');
+	Route::get('/logout', 'Auth\AuthController@getLogout');
 
-////ユーザ管理
-Route::get('/user', 'UserController@index');
-Route::match(['get', 'post'], '/user/edit/{id}', 'UserController@edit');
-Route::get('/user/reset/{id}', 'UserController@reset');
-Route::get('/user/update', 'UserController@update');
+	// 登録のルート定義
+	Route::match(['get', 'post'], '/auth/register', 'Auth\AuthController@register');
 
-//有給消化申請
-Route::match(['get', 'post'], '/use_request', 'UseRequestController@index');
-Route::match(['get', 'post'], '/use_request/add', 'UseRequestController@add');
-Route::match(['get', 'post'], '/use_request/edit/{id}', 'UseRequestController@edit');
-Route::get('/use_request/delete/{id}', 'UseRequestController@delete');
+	//ユーザ管理
+	Route::get('/user', 'UserController@index');
+	Route::get('/user/profile/{id}', 'UserController@profile');
+	Route::match(['get', 'post'], '/user/editProfile/{id}', 'UserController@editPofile');
+	Route::match(['get', 'post'], '/user/editDate/{id}', 'UserController@editDate');
+	Route::get('/user/reset/{id}', 'UserController@reset');
+	Route::get('/user/update/{userId?}', 'UserController@update');
 
-//登録済み有給一覧
-//Route::get('/user/used_list', 'UserController@usedList');
+	//有給消化申請
+	Route::match(['get', 'post'], '/use_request', 'UseRequestController@index');
+	Route::match(['get', 'post'], '/use_request/add', 'UseRequestController@add');
+	Route::match(['get', 'post'], '/use_request/edit/{id}', 'UseRequestController@edit');
+	Route::get('/use_request/delete/{id}', 'UseRequestController@delete');
+});
+
 
 
 //管理者

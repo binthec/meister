@@ -14,14 +14,33 @@
     color: #fff;
 }
 
-.font18{
-    font-size: 18px;
-}
-
+.font14{ font-size: 14px; }
+.font16{ font-size: 16px; }
+.font18{ font-size: 18px; }
 
 .cant-use{
     display: none;
 }
 .can-use{
     display: block;
+}
+
+table.profile td{
+    padding-top: 20px!important;
+    padding-bottom: 20px!important;
+}
+
+.profile td.item{
+    text-align: right;
+    padding-right: 40px;
+    width:20%;
+}
+
+#profile .icon{
+    font-size: 90px;
+    color: #3c8dbc;
+}
+
+#profile table tbody tr.sum td{
+   border-top: 3px double #aaa; /* ヘッダ行の下線 */
 }

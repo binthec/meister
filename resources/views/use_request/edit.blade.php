@@ -16,7 +16,7 @@
 		</div>
 		<div class="box-body">
 
-			{!! Form::open(['method' => 'post', 'url' => 'user/request_edit', 'class' => 'form-horizontal']) !!}
+			{!! Form::open(['method' => 'post', 'url' => ['use_request/edit', $useRequest->id], 'class' => 'form-horizontal']) !!}
 			{{ csrf_field() }}
 			<div class="form-group">
 				<label for="ID" class="col-md-2 control-label">ID</label>

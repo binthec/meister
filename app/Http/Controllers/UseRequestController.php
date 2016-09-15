@@ -58,56 +58,35 @@ class UseRequestController extends Controller
 		return view('use_request.add', compact('validPaidVacations'));
 	}
 
-	public function edit(Request $request, $id = null)
+	public function edit(Request $request, $id)
 	{
 
 		if ($request->isMethod('post')) {
 
 			//現在の申請内容を取得（＝これから更新するレコード）
-			$data = UsedDays::where('id', $request->id)->first();
+			$data = UsedDays::where('id', $id)->first();
 
-			//[既に申請している日数]−[新しく申請する日数]を算出
-			$diff_days = $data->used_days - $request->used_days;
+			$user = User::find(Auth::user()->id);
+			$sumRemainingDays = $user->getSumRemainingDays();
 
+			//1.既に申請している日数を、合計有給日数に加算して、元に戻す
+			$sumRemainingDays += $data->used_days;
+
+			//2.新規で登録する日数を減算
+			$resultRemainingDays = $sumRemainingDays - $request->used_days;
+
+			//3.計算後の有給残日数をレコードに保存
+			$user->setRemainingDays($resultRemainingDays);
+
+			//編集されたデータで既存レコードを更新
 			$data->from = $request->from;
 			$data->until = $request->until;
-//			$data->memo = $request->memo;
 			$data->used_days = $request->used_days;
+			$data->memo = $request->memo;
 			$data->save();
 
-			//有給残日数を修正
-			$user = User::where('id', $request->user_id)->first(); //ユーザIDをもとにユーザインスタンスを生成
-			//
-			//有給残日数の修正
-			if ($diff_days > 0) {//差分が0より多い場合、有給残日数を増やす
-				$valid_paid_vacations = $user->getValidPaidVacation('desc'); //ユーザの有効な有給レコードを取得
-				foreach ($valid_paid_vacations as $valid_paid_vacation) {
-//					dd($valid_paid_vacation);
-					while ($valid_paid_vacation->remaining_days > 0 && $diff_days > 0) {
-						$valid_paid_vacation->remaining_days++;
-						$diff_days--;
-					}
-					$valid_paid_vacation->save();
-					if ($diff_days == 0) {
-						break;
-					}
-				}
-			} else {//差分が0より少ない場合、有給残日数を減らす
-//				$diff_days = $diff_days * -1;
-				$valid_paid_vacations = $user->getValidPaidVacation(); //ユーザの有効な有給レコードを取得
-				foreach ($valid_paid_vacations as $valid_paid_vacation) {
-//					dd($valid_paid_vacation);
-					while ($valid_paid_vacation->remaining_days > 0 && $diff_days < 0) {
-						$valid_paid_vacation->remaining_days--;
-						$diff_days++;
-					}
-					$valid_paid_vacation->save();
-					if ($diff_days == 0) {
-						break;
-					}
-				}
-			}
-			return redirect('/use_request'); //一覧ページに戻るときはこっち。
+			\Session::flash('flashMessage', '申請済有給の編集が完了しました');
+			return redirect('/dashboard');
 		}
 
 		$useRequest = UsedDays::find($id);

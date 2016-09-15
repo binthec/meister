@@ -5,17 +5,6 @@
 <script src="/plugins/datepicker/bootstrap-datepicker.js"></script>
 <script src="/plugins/datepicker/locales/bootstrap-datepicker.ja.js"></script>
 
-<script>
-    $(function () {
-        $(".use_datepicker").datepicker({
-            language: "ja",
-            format: "yyyy年m月d日",
-            autoclose: true,
-            orientation: "bottom left"
-        });
-    });
-</script>
-
 
 <!-- daterange picker -->
 <link rel="stylesheet" href="/plugins/daterangepicker/daterangepicker.css">

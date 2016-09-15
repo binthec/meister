@@ -38,7 +38,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	/**
-	 * 引数がtrueだったらカーボンのオブジェクトを返す。falseだったら日付('2016-04-07')を返す
+	 * 引数がtrueだったらカーボンのオブジェクトを返す。falseだったら日付 'Y-m-d' を返す
 	 * @param type $bool
 	 * @return type
 	 */
@@ -88,7 +88,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	 * 有効な(期限が切れてない)有給レコードのコレクションを返すメソッド
 	 * sortが引数で渡って来なかった場合は早く期限が切れる順（＝古い順）にコレクションを返す
 	 * @param string $sort
-	 * @return @type Collection
+	 * @return Collection
 	 */
 	public function getValidPaidVacation($sort = null)
 	{
@@ -106,7 +106,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	/**
 	 * 有効な有給レコードを取得して、残日数を合算するメソッド
-	 * @return type
+	 * @return int
 	 */
 	public function getSumRemainingDays()
 	{
@@ -121,20 +121,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	/**
-	 * ユーザの権限用のラベル
-	 */
-	const ADMIN = 'admin';
-	const USER = 'user';
-
-	public static $roleLabels = [
-		self::ADMIN => '管理者',
-		self::USER => 'ユーザ',
-	];
-
-	/**
-	 * 有給申請したり、削除したり、編集したりした際に有給残日数を計算してレコードに保存するメソッド
+	 * 有給申請したり、削除したり、編集したりした際に有給残日数を計算してレコードを更新するメソッド
 	 * 
-	 * @param type $resultRemainingDays 計算後に残っている有給(＝最終的な有給残日数)
+	 * @param int $resultRemainingDays 計算後に残っている有給(＝最終的な有給残日数)
 	 * 返り値なし
 	 */
 	public function setRemainingDays($resultRemainingDays)
@@ -154,5 +143,44 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			$validPaidVacations->first()->save();
 		}
 	}
+
+	/**
+	 * ユーザの権限用のラベル
+	 */
+	const USER = 'user';
+	const ADMIN = 'admin';
+
+	public static $roleLabels = [
+		self::USER => 'ユーザ',
+		self::ADMIN => '管理者',
+	];
+
+	/**
+	 * 社員区分
+	 */
+	const REGULAR_EMPLOYEE = 1;
+	const CONTRACT_EMPLOYEE = 2;
+	const DIRECTOR = 50;
+
+	public static $memberStatus = [
+		self::REGULAR_EMPLOYEE => '正社員',
+		self::CONTRACT_EMPLOYEE => '契約社員',
+		self::DIRECTOR => '役員',
+	];
+
+	/**
+	 * 部署
+	 */
+	const NO_DEPARTMENT = 0;
+	const DEPARTMENT_SYSTEM = 1;
+	const DEPARTMENT_FRONT = 2;
+	const GENERAL_AFFAIRS = 50;
+
+	public static $departments = [
+		self::NO_DEPARTMENT => '部署なし',
+		self::DEPARTMENT_SYSTEM => 'システムチーム',
+		self::DEPARTMENT_FRONT => 'フロントチーム',
+		self::GENERAL_AFFAIRS => '総務',
+	];
 
 }
