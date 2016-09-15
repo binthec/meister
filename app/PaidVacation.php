@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use App\User;
 
 class PaidVacation extends Model
 {
@@ -102,18 +103,23 @@ class PaidVacation extends Model
 		}
 	}
 
+	/**
+	 * 既に登録されている有給消化申請の日数を、
+	 * 有給レコード（オリジナルのまっさらな状態のもの）から減算していく
+	 * 入社日を変更した場合など、全部の再計算が必要な際に行う
+	 * 
+	 * @param type $userId
+	 */
 	public static function recalcRemainingDays($userId)
 	{
-		$paidVacations = PaidVacation::where('user_id', $userId)->orderBy('start_date', 'asc')->get();
-		//$usedDays = UsedDays::where('user_id', $userId)->orderBy('from', 'asc')->get();
-//		foreach ($paidVacations as $paidVacation) {
-//			$usedDays = UsedDays::where('user_id', $userId)
-//					->whereBetween('start_date', [$paidVacation->start_date, Carbon::createFromFormat('Y-m-d', $paidVacation->limit_date)->addYear(1)->toDateString()])
-//					->get();
-//
-//
-//			dd($usedDays);
-//		}
+		$user = User::find($userId);
+		$usedDays = UsedDays::where('user_id', $userId)->orderBy('from', 'asc')->get();
+
+		foreach ($usedDays as $day) {
+			$sum = $user->getSumRemainingDays($day->start_date);
+			$resultRemainingDays = $sum - $day->used_days;
+			$user->setRemainingDays($resultRemainingDays, $day->start_date);
+		}
 	}
 
 }

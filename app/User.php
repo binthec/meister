@@ -38,7 +38,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	/**
-	 * 引数がtrueだったらカーボンのオブジェクトを返す。falseだったら日付 'Y-m-d' を返す
+	 * 引数がtrueだったらカーボンのオブジェクトを返す。引数なし、またはfalseだったら日付 'Y-m-d' を返す
 	 * @param type $bool
 	 * @return type
 	 */
@@ -73,31 +73,22 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return date('Y年m月d日', strtotime($date));
 	}
 
-//	public function getRemainingDays() { //有給残日数の計算メソッド
-//		$paid_vacations = $this->PaidVacation;
-//		$remaining_days = 0;
-//		foreach ($paid_vacations as $paid_vacation) {
-//			if ($paid_vacation->start_date < $this->today && $paid_vacation->limit_date > $this->today) {
-//				$remaining_days += $paid_vacation->remaining_days;
-//			}
-//		}
-//		return $remaining_days;
-//	}
-
 	/**
-	 * 有効な(期限が切れてない)有給レコードのコレクションを返すメソッド
-	 * sortが引数で渡って来なかった場合は早く期限が切れる順（＝古い順）にコレクションを返す
-	 * @param string $sort
-	 * @return Collection
+	 * 基準日（＝$baseDate）を含む有給レコードのコレクションを返すメソッド
+	 * 今日日付を渡せば、今日時点で有効な有給レコードが返る
+	 * 
+	 * @param type $baseDate 'Y-m-d' 形式の日付。
+	 * @param string $sort 省略した場合は早く期限が切れる順（＝古い順'asc'）にコレクションを返す
+	 * @return collection $baseDateを含む２つのモデルがコレクションになって返る
 	 */
-	public function getValidPaidVacation($sort = null)
+	public function getValidPaidVacation($baseDate, $sort = null)
 	{
 		if (!$sort) {
 			$sort = 'asc';
 		}
 		$paidVacations = $this->PaidVacation()->orderBy('start_date', $sort)->get();
 		foreach ($paidVacations as $key => $paidVacation) {
-			if ($paidVacation->start_date > $this->today || $paidVacation->limit_date < $this->today) {
+			if ($paidVacation->start_date > $baseDate || $paidVacation->limit_date < $baseDate) {
 				$paidVacations->forget($key);
 			}
 		}
@@ -106,14 +97,19 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	/**
 	 * 有効な有給レコードを取得して、残日数を合算するメソッド
-	 * @return int
+	 * 
+	 * @param type $baseDate 'Y-m-d'の日付。省略した場合は今日日付で有効な有給の合算を出す
+	 * @return type
 	 */
-	public function getSumRemainingDays()
+	public function getSumRemainingDays($baseDate = null)
 	{
-		$paidVacations = $this->getValidPaidVacation();
+		if (!$baseDate) {
+			$baseDate = self::getTodayDate();
+		}
+		$paidVacations = $this->getValidPaidVacation($baseDate);
 		$remainingDays = 0;
 		foreach ($paidVacations as $paidVacation) {
-			if ($paidVacation->start_date < $this->today && $paidVacation->limit_date > $this->today) {
+			if ($paidVacation->start_date < $baseDate && $paidVacation->limit_date > $baseDate) {
 				$remainingDays += $paidVacation->remaining_days;
 			}
 		}
@@ -123,12 +119,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	/**
 	 * 有給申請したり、削除したり、編集したりした際に有給残日数を計算してレコードを更新するメソッド
 	 * 
-	 * @param int $resultRemainingDays 計算後に残っている有給(＝最終的な有給残日数)
+	 * @param int $resultRemainingDays
+	 * @param date $baseData 'Y-m-d'の日付。省略した場合は今日日付で有効なレコードの値をもとにする
 	 * 返り値なし
 	 */
-	public function setRemainingDays($resultRemainingDays)
+	public function setRemainingDays($resultRemainingDays, $baseDate = null)
 	{
-		$validPaidVacations = $this->getValidPaidVacation(); //有効な有給レコードを取得
+		if (!$baseDate) {
+			$baseDate = self::getTodayDate();
+		}
+		$validPaidVacations = $this->getValidPaidVacation($baseDate); //有効な有給レコードを取得
 
 		if ($resultRemainingDays >= $validPaidVacations->last()->original_paid_vacation) {
 			$resultRemainingDays -= $validPaidVacations->last()->original_paid_vacation;

@@ -54,7 +54,7 @@ class UseRequestController extends Controller
 			return redirect('/dashboard'); //一覧ページに戻る
 		}
 
-		$validPaidVacations = Auth::user()->getValidPaidVacation();
+		$validPaidVacations = Auth::user()->getValidPaidVacation(User::getTodayDate());
 		return view('use_request.add', compact('validPaidVacations'));
 	}
 
@@ -91,7 +91,7 @@ class UseRequestController extends Controller
 
 		$useRequest = UsedDays::find($id);
 		$usedDays = Auth::user()->usedDays()->paginate(UsedDays::PAGE_NUM); //登録済み有給を取得
-		$validPaidVacations = Auth::user()->getValidPaidVacation();
+		$validPaidVacations = Auth::user()->getValidPaidVacation(User::getTodayDate());
 		return view('use_request.edit', compact('useRequest', 'usedDays', 'validPaidVacations'));
 	}
 
@@ -100,7 +100,7 @@ class UseRequestController extends Controller
 		$usedDays = UsedDays::where('id', $id)->first();
 		$usedDays->delete();
 
-//計算後の有給残日数をレコードに保存
+		//計算後の有給残日数をレコードに保存
 		$user = User::where('id', $usedDays->user_id)->first();
 		$resultRemainingDays = $user->getSumRemainingDays() + $usedDays->used_days; //有給残日数に削除する分の申請日数を加算
 		$user->setRemainingDays($resultRemainingDays);

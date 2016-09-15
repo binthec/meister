@@ -55,7 +55,7 @@ class UserController extends Controller
 	public function profile($userId)
 	{
 		$user = User::find($userId);
-		$validPaidVacations = $user->getValidPaidVacation();
+		$validPaidVacations = $user->getValidPaidVacation(User::getTodayDate());
 		$usedDays = $user->usedDays()->orderBy('from', 'descs')->paginate(UsedDays::PAGE_NUM); //登録済み有給を取得
 		return view('user.profile', compact('user', 'validPaidVacations', 'usedDays'));
 	}
@@ -125,14 +125,14 @@ class UserController extends Controller
 			//1.編集するユーザIDを持つ有給レコードを物理削除
 			PaidVacation::where('user_id', $useId)->delete();
 
-			//2.有給の再計算とデータ生成を行い、レコードに新規保存
+			//2.有給を最初から再計算して、新規に、現在までの有給レコード生成
 			PaidVacation::setOriginalPaidVacations($useId);
 
 			//3.既に登録されている有給消化申請の日数を有給レコードから減算
 			PaidVacation::recalcRemainingDays($useId);
 
 			\Session::flash('flashMessage', '入社日の変更を完了しました');
-			return redirect('/user'); //一覧ページに戻るときはこっち。
+			return redirect()->action('UserController@profile', $userId);
 		}
 
 		return view('user.editDate', ['user' => $user]);
