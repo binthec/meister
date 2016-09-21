@@ -80,7 +80,7 @@
 
 						<li class="treeview {{ isActiveUrl('use_request*') }}">
 							<a href="{{ url('use_request/add') }}">
-								<i class="fa fa-calendar-check-o"></i> <span>有給消化申請</span>
+								<i class="fa fa-calendar-check-o"></i> <span>有給消化登録</span>
 							</a>
 						</li>
 

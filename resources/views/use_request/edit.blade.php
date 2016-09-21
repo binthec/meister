@@ -3,9 +3,7 @@
 @section('content')
 <!-- Content Header (Page header) -->
 <section class="content-header">
-	<h1>
-		有給消化申請
-	</h1>
+	<h1>有給消化申請</h1>
 </section>
 
 <!-- Main content -->
@@ -18,10 +16,6 @@
 
 			{!! Form::open(['method' => 'post', 'url' => ['use_request/edit', $useRequest->id], 'class' => 'form-horizontal']) !!}
 			{{ csrf_field() }}
-			<div class="form-group">
-				<label for="ID" class="col-md-2 control-label">ID</label>
-				<div class="col-md-8 form-control-static">{{ Auth::user()->id }}</div>
-			</div>
 			<div class="form-group">
 				<label for="ID" class="col-md-2 control-label">名前</label>
 				<div class="col-md-8 form-control-static">
@@ -86,9 +80,14 @@
 			<hr>
 
 			<div class="form-group">
-				<label for="ID" class="col-md-2 control-label">有給申請期間</label>
+				<label for="daterange" class="col-md-2 control-label">有給申請期間</label>
 				<div class="col-md-6">
 					{!! Form::date('daterange', '', ['class' => 'form-control use_daterange font18', 'placeholder' => '日付を選択してください']) !!}
+					@if($errors->has('daterange'))
+					<span class="help-block">
+						<strong class="text-danger">{{ $errors->first('daterange') }}</strong>
+					</span>
+					@endif
 				</div>
 				<div class="col-md-4 form-control-static">
 					<span class="font18" id="sum_box">合計： <span id="sum">{{ $useRequest->used_days }}</span> 日間</span>
@@ -143,6 +142,11 @@
 				<label for="ID" class="col-md-2 control-label">連絡事項</label>
 				<div class="col-md-8">
 					{!! Form::textarea('memo', $useRequest->memo, ['class' => 'form-control', 'rows' => 5]) !!}
+					@if($errors->has('memo'))
+					<span class="help-block">
+						<strong class="text-danger">{{ $errors->first('memo') }}</strong>
+					</span>
+					@endif
 				</div>
 			</div>
 		</div>

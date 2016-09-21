@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Validator;
 use Exception;
 use App\UsedDays;
 use App\PaidVacation;
@@ -13,6 +14,10 @@ use App\User;
 
 class UseRequestController extends Controller
 {
+
+	const MESSAGES = [
+		'max' => ':max 文字以内でご入力ください',
+	];
 
 	public function index()
 	{
@@ -28,9 +33,22 @@ class UseRequestController extends Controller
 			$remainingDays = $user->getSumRemainingDays(); //有給残日数の合計
 			$requestedUsedDays = $request->used_days; //申請した有給日数
 
-			if ($requestedUsedDays > $remainingDays) {
-				//残っている有給より大きな値が申請された場合、エラーを返す
-				//throw new Exception('申請された日数が有給残日数を上回っています。再度日付を選択してください');
+			$validator = Validator::make($request->all(), [
+						'memo' => 'max:2000',
+							], self::MESSAGES);
+
+			//申請日数が残日数を上回っている時のエラー
+			$validator->after(function($validator) use ($requestedUsedDays, $remainingDays) {
+				if ($requestedUsedDays > $remainingDays) {
+					$validator->errors()->add('daterange', '申請日数が残日数を上回っています。申請日程を確認してください');
+				}
+			});
+
+			if ($validator->fails()) {
+				return redirect()
+								->back()
+								->withErrors($validator)
+								->withInput();
 			}
 
 			//申請した有給をUsedDaysテーブルに保存
@@ -68,6 +86,24 @@ class UseRequestController extends Controller
 
 			$user = User::find(Auth::user()->id);
 			$sumRemainingDays = $user->getSumRemainingDays();
+
+			$validator = Validator::make($request->all(), [
+						'memo' => 'max:2000',
+							], self::MESSAGES);
+
+			//申請日数が残日数を上回っている時のエラー
+			$validator->after(function($validator) use ($request, $sumRemainingDays) {
+				if ($request->used_days > $sumRemainingDays) {
+					$validator->errors()->add('daterange', '申請日数が残日数を上回っています。申請日程を確認してください');
+				}
+			});
+
+			if ($validator->fails()) {
+				return redirect()
+								->back()
+								->withErrors($validator)
+								->withInput();
+			}
 
 			//1.既に申請している日数を、合計有給日数に加算して、元に戻す
 			$sumRemainingDays += $data->used_days;

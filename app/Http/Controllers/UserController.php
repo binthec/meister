@@ -112,9 +112,9 @@ class UserController extends Controller
 	 * @param Request $request
 	 * @param type $id
 	 */
-	public function editDate(Request $request, $useId)
+	public function editDate(Request $request, $userId)
 	{
-		$user = User::find($useId);
+		$user = User::find($userId);
 
 		if ($request->isMethod('post')) {
 
@@ -123,13 +123,13 @@ class UserController extends Controller
 			$user->save();
 
 			//1.編集するユーザIDを持つ有給レコードを物理削除
-			PaidVacation::where('user_id', $useId)->delete();
+			PaidVacation::where('user_id', $userId)->delete();
 
 			//2.有給を最初から再計算して、新規に、現在までの有給レコード生成
-			PaidVacation::setOriginalPaidVacations($useId);
+			PaidVacation::setOriginalPaidVacations($userId);
 
 			//3.既に登録されている有給消化申請の日数を有給レコードから減算
-			PaidVacation::recalcRemainingDays($useId);
+			PaidVacation::recalcRemainingDays($userId);
 
 			\Session::flash('flashMessage', '入社日の変更を完了しました');
 			return redirect()->action('UserController@profile', $userId);
@@ -138,11 +138,11 @@ class UserController extends Controller
 		return view('user.editDate', ['user' => $user]);
 	}
 
-	public function reset($id = null)
+	public function reset($userId = null)
 	{
-		$user = User::find($id);
+		$user = User::find($userId);
 
-		$paid_vacations = PaidVacation::where('user_id', $id)->get(); //編集するユーザIDを持つ有給レコードを取得
+		$paid_vacations = PaidVacation::where('user_id', $userId)->get(); //編集するユーザIDを持つ有給レコードを取得
 		foreach ($paid_vacations as $paid_vacation) { //レコードが存在する場合、一旦物理削除
 			$paid_vacation->delete();
 		}
@@ -150,7 +150,7 @@ class UserController extends Controller
 		//有給の再計算、データ生成後にレコード保存
 		PaidVacation::setOriginalPaidVacations($user->id);
 
-		$usedDays = UsedDays::where('user_id', Auth::user()->id)->delete();
+		$usedDays = UsedDays::where('user_id', $userId)->delete();
 
 		\Session::flash('flashMessage', 'リセット完了');
 		return redirect()->back(); //再計算後はdashboardに戻る

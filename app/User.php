@@ -119,7 +119,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	/**
 	 * 有給申請したり、削除したり、編集したりした際に有給残日数を計算してレコードを更新するメソッド
 	 * 
-	 * @param int $resultRemainingDays
+	 * @param int $resultRemainingDays は申請日数分を「減算した”後”」の有給残日数
 	 * @param date $baseData 'Y-m-d'の日付。省略した場合は今日日付で有効なレコードの値をもとにする
 	 * 返り値なし
 	 */
@@ -130,7 +130,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		}
 		$validPaidVacations = $this->getValidPaidVacation($baseDate); //有効な有給レコードを取得
 
-		if ($resultRemainingDays >= $validPaidVacations->last()->original_paid_vacation) {
+		if ($validPaidVacations->count() == 1) {
+			//まだ入社して２年半未満の人
+			$validPaidVacations->first()->remaining_days = $resultRemainingDays;
+			$validPaidVacations->first()->save();
+		} elseif ($resultRemainingDays >= $validPaidVacations->last()->original_paid_vacation) {
 			$resultRemainingDays -= $validPaidVacations->last()->original_paid_vacation;
 			$validPaidVacations->last()->remaining_days = $validPaidVacations->last()->original_paid_vacation;
 			$validPaidVacations->first()->remaining_days = $resultRemainingDays;
