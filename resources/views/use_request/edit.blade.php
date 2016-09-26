@@ -129,7 +129,7 @@
 							<label>終了日の半休選択</label>
 							<div class="checkbox">
 								<label>
-									{!! Form::checkbox('until_pm', '', ($useRequest->until_pm == 1)? true : false, ['class' => 'half', 'id' => 'until_pm']) !!} 午前半休
+									{!! Form::checkbox('until_am', '', ($useRequest->until_am == 1)? true : false, ['class' => 'half', 'id' => 'until_am']) !!} 午前半休
 								</label>
 							</div>
 						</div>
@@ -206,18 +206,21 @@
 		</div>
 	</div>
 </section>
+
+{{ var_dump($useRequest->used_days) }}
 @endsection
 
 
 @section('js')
 @include('elements.for_form')
 
+
 <script>
-//Date range picker	
+    //Date range picker	
     $(function () {
 
         var days = <?php echo $useRequest->used_days; ?>;
-        displayChkBox(days);//編集の場合、最初に申請日数を判定してチェックボックスを表示させる
+        displayChkBox(days, true);//編集の場合、最初に申請日数を判定してチェックボックスを表示させる
 
         $(".use_daterange").daterangepicker({
             locale: {

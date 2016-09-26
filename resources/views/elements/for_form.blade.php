@@ -40,25 +40,35 @@
     }
 
     function calcAndSetVal(start, end) {
-        var used_days = end.diff(start, 'days') + 1; //消化する日数計算
-        $('#sum').text(used_days); //消化日数をp要素に出力
+        var usedDays = end.diff(start, 'days') + 1; //消化する日数計算
+        $('#sum').text(usedDays); //消化日数をp要素に出力
 
         //消化日数が１日か複数日かで表示する半休チェックを入れ替える			
-        displayChkBox(used_days);
+        displayChkBox(usedDays);
 
         //hiddenで値を渡す
         $('#from').attr('value', start.format('YYYY-MM-DD'));
         $('#until').attr('value', end.format('YYYY-MM-DD'));
-        $('#used_days').attr('value', used_days);
+        $('#used_days').attr('value', usedDays);
     }
 
-    function displayChkBox(used_days) {
-        if (used_days <= 1) {
-            $('#single').removeClass("cant-use").addClass("can-use").find('input').prop("checked", false).find('input').prop('disabled', false);
-            $('#plural').removeClass("can-use").addClass("cant-use").find('input').prop("checked", false);
+    function displayChkBox(usedDays, defaultForEdit = false) {
+        if (defaultForEdit === false) {
+            if (usedDays <= 1) {
+                $('#single').removeClass("cant-use").addClass("can-use").find('input').prop("checked", false).prop('disabled', false);
+                $('#plural').removeClass("can-use").addClass("cant-use").find('input').prop("checked", false);
+            } else {
+                $('#single').removeClass("can-use").addClass("cant-use").find('input').prop("checked", false);
+                $('#plural').removeClass("cant-use").addClass("can-use").find('input').prop("checked", false).prop('disabled', false);
+            }
         } else {
-            $('#single').removeClass("can-use").addClass("cant-use").find('input').prop("checked", false);
-            $('#plural').removeClass("cant-use").addClass("can-use").find('input').prop("checked", false).find('input').prop('disabled', false);
+            if (usedDays <= 1) {
+                $('#single').removeClass("cant-use").addClass("can-use").find('input').prop('disabled', false);
+                $('#plural').removeClass("can-use").addClass("cant-use").find('input').prop("checked", false);
+            } else {
+                $('#single').removeClass("can-use").addClass("cant-use").find('input').prop("checked", false);
+                $('#plural').removeClass("cant-use").addClass("can-use").find('input').prop('disabled', false);
+            }
         }
     }
 

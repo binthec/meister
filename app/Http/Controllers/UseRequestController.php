@@ -82,13 +82,13 @@ class UseRequestController extends Controller
 		if ($request->isMethod('post')) {
 
 			//現在の申請内容を取得（＝これから更新するレコード）
-			$data = UsedDays::where('id', $id)->first();
+			$usedDays = UsedDays::where('id', $id)->first();
 
 			$user = User::find(Auth::user()->id);
 			$sumRemainingDays = $user->getSumRemainingDays();
 
 			//1.既に申請している日数を、合計有給日数に加算して、元に戻す
-			$sumRemainingDays += $data->used_days;
+			$sumRemainingDays += $usedDays->used_days;
 
 			$validator = Validator::make($request->all(), [
 						'memo' => 'max:2000',
@@ -115,11 +115,14 @@ class UseRequestController extends Controller
 			$user->setRemainingDays($resultRemainingDays);
 
 			//編集されたデータで既存レコードを更新
-			$data->from = $request->from;
-			$data->until = $request->until;
-			$data->used_days = $request->used_days;
-			$data->memo = $request->memo;
-			$data->save();
+			$usedDays->from = $request->from;
+			$usedDays->from_am = (isset($request->from_am)) ? 1 : 0;
+			$usedDays->from_pm = (isset($request->from_pm)) ? 1 : 0;
+			$usedDays->until = $request->until;
+			$usedDays->until_am = (isset($request->until_am)) ? 1 : 0;
+			$usedDays->used_days = $request->used_days;
+			$usedDays->memo = $request->memo;
+			$usedDays->save();
 
 			\Session::flash('flashMessage', '申請済有給の編集が完了しました');
 			return redirect('/dashboard');
