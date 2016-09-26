@@ -87,17 +87,19 @@ class UseRequestController extends Controller
 			$user = User::find(Auth::user()->id);
 			$sumRemainingDays = $user->getSumRemainingDays();
 
+			//1.既に申請している日数を、合計有給日数に加算して、元に戻す
+			$sumRemainingDays += $data->used_days;
+
 			$validator = Validator::make($request->all(), [
 						'memo' => 'max:2000',
 							], self::MESSAGES);
 
-			//申請日数が残日数を上回っている時のエラー
+			//2.申請日数が残日数を上回っている時はエラーと共に画面に戻る
 			$validator->after(function($validator) use ($request, $sumRemainingDays) {
 				if ($request->used_days > $sumRemainingDays) {
 					$validator->errors()->add('daterange', '申請日数が残日数を上回っています。申請日程を確認してください');
 				}
 			});
-
 			if ($validator->fails()) {
 				return redirect()
 								->back()
@@ -105,13 +107,11 @@ class UseRequestController extends Controller
 								->withInput();
 			}
 
-			//1.既に申請している日数を、合計有給日数に加算して、元に戻す
-			$sumRemainingDays += $data->used_days;
-
-			//2.新規で登録する日数を減算
+			//問題無ければ処理を続行
+			//3.新規で登録する日数を減算
 			$resultRemainingDays = $sumRemainingDays - $request->used_days;
 
-			//3.計算後の有給残日数をレコードに保存
+			//4.計算後の有給残日数をレコードに保存
 			$user->setRemainingDays($resultRemainingDays);
 
 			//編集されたデータで既存レコードを更新
