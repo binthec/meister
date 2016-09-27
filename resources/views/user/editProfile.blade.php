@@ -73,7 +73,7 @@
 			<div class="form-group">
 				<label for="ID" class="col-md-2 control-label">備考</label>
 				<div class="col-md-8">
-					<textarea class="form-control" name="memo" id="memo" value="{{ $user->memo }}">{{ $user->memo }}</textarea>
+					{!! Form::textarea('memo', $user->memo, ['class' => 'form-control', 'placeholder' => 'なし', 'rows' => 5]) !!}
 				</div>
 			</div>
 

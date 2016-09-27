@@ -39,7 +39,7 @@
 						</li>
 						<li class="list-group-item">
 							<a>備考</a>
-							<p>{{ $user->memo }}</p>
+							<p>{!! nl2br($user->memo) !!}</p>
 						</li>
 					</ul>
 

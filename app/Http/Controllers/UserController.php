@@ -94,7 +94,7 @@ class UserController extends Controller
 			$user->email = $request->email;
 			$user->status = $request->status;
 			$user->department = $request->department;
-			$user->role = $request->role;
+			$user->role = ($request->role) ? $request->role : $user->role;
 			$user->retire_flg = (isset($request->retire_flg)) ? $request->retire_flg : null;
 			$user->memo = $request->memo;
 			$user->save();
