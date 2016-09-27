@@ -44,3 +44,8 @@ table.profile td{
 #profile table tbody tr.sum td{
    border-top: 3px double #aaa; /* ヘッダ行の下線 */
 }
+
+.skin-blue .sidebar-menu > li.header{
+    color: #0073b7;
+    font-weight: bold;
+}
