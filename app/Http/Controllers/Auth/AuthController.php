@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use App\Http\Requests;
 use Illuminate\Http\Request;
+use Auth;
 
 class AuthController extends Controller
 {
@@ -61,6 +62,19 @@ class AuthController extends Controller
 	public function getLogin()
 	{
 		return view('auth.login');
+	}
+
+	/**
+	 * @param Request $request
+	 * @return type
+	 */
+	public function authenticate(Request $request)
+	{
+		if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+			//ログインの度にDBレコードを更新する
+			PaidVacation::setOriginalPaidVacations(Auth::user()->id);
+			return redirect()->intended('dashboard');
+		}
 	}
 
 	public function register(Request $request)

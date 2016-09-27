@@ -14,7 +14,7 @@
 // 認証のルート定義
 Route::get('/', 'Auth\AuthController@getlogin');
 Route::get('/login', 'Auth\AuthController@getLogin');
-Route::post('/login', 'Auth\AuthController@postLogin');
+Route::post('/login', 'Auth\AuthController@authenticate');
 
 Route::group(['middleware' => 'auth'], function() {
 	//ログイン後のroute
@@ -31,8 +31,8 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::match(['get', 'post'], '/user/editProfile/{id}', 'UserController@editPofile');
 	Route::match(['get', 'post'], '/user/editDate/{id}', 'UserController@editDate');
 	Route::get('/user/reset/{id}', 'UserController@reset');
-	Route::get('/user/update/{userId?}', 'UserController@update');
-
+//	Route::get('/user/update/{userId?}', 'UserController@update');
+//	
 	//有給消化申請
 	Route::match(['get', 'post'], '/use_request', 'UseRequestController@index');
 	Route::match(['get', 'post'], '/use_request/add', 'UseRequestController@add');

@@ -15,7 +15,6 @@
 	<div class="box box-primary">
 		<div class="box-header with-border">
 			<h3 class="box-title">ユーザ一覧</h3>
-			<a href="{{ url('user/update') }}" class="btn btn-danger pull-right">全ユーザDB更新</a>
 		</div>
 		<!-- /.box-header -->
 		<div class="box-body">

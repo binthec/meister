@@ -156,29 +156,4 @@ class UserController extends Controller
 		return redirect()->back(); //再計算後はdashboardに戻る
 	}
 
-	/**
-	 * PaidVavationテーブルを、今日日付の段階での最新にするためのメソッド
-	 * 
-	 * @param type $userId 引数は、ユーザIDが渡れば単一のユーザのレコード更新、ユーザIDが無ければ全ユーザのレコードを更新する
-	 * @return 個人が更新をした場合はdashboard、管理者が全体に対してDB更新した場合はユーザ一覧にリダイレクト
-	 */
-	public function update($userId = null)
-	{
-
-		if ($userId) {
-			$users = User::where('id', $userId)->get();
-			$url = '/dashboard';
-		} else {
-			$users = User::all();
-			$url = '/user';
-		}
-
-		foreach ($users as $user) {
-			PaidVacation::setOriginalPaidVacations($user->id);
-		}
-
-		\Session::flash('flashMessage', 'DBレコードのアップデートを完了しました');
-		return redirect($url);
-	}
-
 }

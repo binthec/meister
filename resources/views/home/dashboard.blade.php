@@ -27,8 +27,6 @@
 		</div><!-- ./col -->
 
 		<div class="col-md-2 col-md-offset-4">
-			<a href="{{ url('user/update', Auth::user()->id) }}" class="btn btn-primary col-md-12">DB更新</a>
-			<br><br>
 			<a href="/user/reset/{{ Auth::user()->id }}" class="btn btn-danger col-md-12"type="button">リセット</a>
 		</div>
 	</div><!-- /.row -->
