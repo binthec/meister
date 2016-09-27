@@ -102,9 +102,9 @@
 					</span>
 					@endif
 				</div>
-				<span class="label label-danger">必須</span>
 			</div>
 
+			@if(Auth::user()->role === 1)
 			<hr>
 
 			<div class="form-group">
@@ -125,6 +125,7 @@
 					</div>
 				</div>
 			</div>
+			@endif
 
 			{!! Form::hidden('user_id', $user->id) !!}
 

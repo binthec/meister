@@ -84,8 +84,9 @@
 							</a>
 						</li>
 
-
+						@if(Auth::user()->role === 1)
 						<li class="header">管理メニュー</li>
+
 						<li class="treeview {{ isActiveUrl('user*') }}">
 							<a href="#">
 								<i class="fa fa-users"></i> <span>ユーザ管理</span>
@@ -111,6 +112,7 @@
 								<li><a href="#"><i class="fa fa-circle-o"></i> PC新規登録</a></li>
 							</ul>
 						</li>
+						@endif
 
 					</ul>
 				</section>
@@ -125,7 +127,6 @@
 				@if (Session::has('flashMessage'))
 				<div class="alert alert-primary flashMessage">{{ Session::get('flashMessage') }}</div>
 				@endif
-
 
 				@yield('content')
 			</div>

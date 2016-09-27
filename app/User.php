@@ -151,8 +151,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	/**
 	 * ユーザの権限用のラベル
 	 */
-	const USER = 'user';
-	const ADMIN = 'admin';
+	const USER = 20;
+	const ADMIN = 1;
 
 	public static $roleLabels = [
 		self::USER => 'ユーザ',

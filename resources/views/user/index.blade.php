@@ -24,6 +24,7 @@
 					<tr>
 						<th>名前</th>
 						<th>メールアドレス</th>
+						<th>U9サイト内権限</th>
 						<th>入社日</th>
 						<th>有給残日数</th>
 						<th>操作</th>
@@ -34,6 +35,7 @@
 					<tr>
 						<td>{{ $user->last_name }} {{ $user->first_name }}</td>
 						<td>{{ $user->email }}</td>
+						<td>{{ App\User::$roleLabels[$user->role] }}</td>
 						<td>{{ App\User::getJaDate($user->date_of_entering) }}</td>
 						<td class="font18">{{ $user->getSumRemainingDays() }}</td>
 						<td><a href="{{ url('user/profile', $user->id) }}" class="btn btn-primary">詳細表示</a></td>
@@ -44,6 +46,7 @@
 					<tr>
 						<th>名前</th>
 						<th>メールアドレス</th>
+						<th>U9サイト内権限</th>
 						<th>入社日</th>
 						<th>有給残日数</th>
 						<th>操作</th>
@@ -62,7 +65,7 @@
     $(function () {
         $("#users").DataTable({
             "stateSave": true, // 状態を保存する機能をつける
-            "order": [[2, 'asc']], //初期表示の際はメアドの昇順
+            "order": [[3, 'asc']], //初期表示の際はメアドの昇順
             "columnDefs": [{
                     "orderable": false,
                     "targets": [4] //操作カラムのソートを不可に設定

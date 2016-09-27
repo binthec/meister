@@ -29,7 +29,7 @@
 							<b>{{ $user->email }}</b> <a class="pull-right">Email</a>
 						</li>
 						<li class="list-group-item">
-							<b>{{ $user->role }}</b> <a class="pull-right">U9サイト内権限</a>
+							<b>{{ App\User::$roleLabels[$user->role] }}</b> <a class="pull-right">U9サイト内権限</a>
 						</li>
 						<li class="list-group-item">
 							<b>{{ App\User::getJaDate($user->date_of_entering) }}</b> <a class="pull-right">入社日</a>
@@ -44,12 +44,14 @@
 					</ul>
 
 					<div class="row">
-						<div class="col-lg-6">
+						<div class="col-lg-6{{ (Auth::user()->role !== 1)? ' col-lg-offset-3': '' }}">
 							<a href="{{ url('user/editProfile', $user->id) }}" class="btn btn-primary btn-block"><b>プロフィール変更</b></a>	
 						</div>
+						@if(Auth::user()->role === 1)
 						<div class="col-lg-6">
 							<a href="{{ url('user/editDate', $user->id) }}" class="btn btn-primary btn-block"><b>入社日変更</b></a>
 						</div>
+						@endif
 					</div>
 					<div class="row space-top20">
 						<div class="col-lg-6 col-lg-offset-3">
