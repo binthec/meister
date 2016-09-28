@@ -38,6 +38,11 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::match(['get', 'post'], '/use_request/add', 'UseRequestController@add');
 	Route::match(['get', 'post'], '/use_request/edit/{id}', 'UseRequestController@edit');
 	Route::get('/use_request/delete/{id}', 'UseRequestController@delete');
+
+	//デバイス管理
+	Route::match(['get', 'post'], '/device', 'DeviceController@index');
+	Route::match(['get', 'post'], '/device/add', 'DeviceController@add');
+	Route::match(['get', 'post'], '/device/edit/{id}', 'DeviceController@edit');
 });
 
 

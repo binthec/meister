@@ -17,8 +17,6 @@
 		<!-- AdminLTE Skins. Choose a skin from the css/skins
 			 folder instead of downloading all of them to reduce the load. -->
 		<link rel="stylesheet" href="/assets/dist/css/skins/skin-blue.min.css">
-		<!-- iCheck -->
-		<link rel="stylesheet" href="/assets/plugins/iCheck/flat/blue.css">
 		<!-- custom css -->
 		<link rel="stylesheet" href="/css/custom.css">
 
@@ -100,16 +98,16 @@
 							</ul>
 						</li>
 
-						<li class="treeview">
+						<li class="treeview {{ isActiveUrl('device*') }}">
 							<a href="#">
-								<i class="fa fa-laptop"></i> <span>PC管理</span>
+								<i class="fa fa-laptop"></i> <span>デバイス管理</span>
 								<span class="pull-right-container">
 									<i class="fa fa-angle-left pull-right"></i>
 								</span>
 							</a>
 							<ul class="treeview-menu">
-								<li><a href="#"><i class="fa fa-circle-o"></i> PC一覧</a></li>
-								<li><a href="#"><i class="fa fa-circle-o"></i> PC新規登録</a></li>
+								<li class="{{ isActiveUrl('device') }}"><a href="{{ url('device') }}"><i class="fa fa-circle-o"></i> デバイス一覧</a></li>
+								<li class="{{ isActiveUrl('device/add') }}"><a href="{{ url('device/add') }}"><i class="fa fa-circle-o"></i> デバイス新規登録</a></li>
 							</ul>
 						</li>
 						@endif

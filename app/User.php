@@ -37,6 +37,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->hasMany('App\UsedDays');
 	}
 
+	public function devices()
+	{
+		return $this->hasMany('App\Device');
+	}
+
 	/**
 	 * 引数がtrueだったらカーボンのオブジェクトを返す。引数なし、またはfalseだったら日付 'Y-m-d' を返す
 	 * @param type $bool
