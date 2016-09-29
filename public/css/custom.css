@@ -49,3 +49,7 @@ table.profile td{
     color: #0073b7;
     font-weight: bold;
 }
+
+.modal-dialog{
+    width: 400px;
+}

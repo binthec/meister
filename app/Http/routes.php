@@ -22,8 +22,6 @@ Route::group(['middleware' => 'auth'], function() {
 
 	Route::get('/logout', 'Auth\AuthController@getLogout');
 
-
-
 	//ユーザ管理
 	Route::get('/user', 'UserController@index');
 	Route::match(['get', 'post'], '/user/register', 'Auth\AuthController@register');

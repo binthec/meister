@@ -110,6 +110,38 @@
 						<td class="text-red">{{ ($device->status == 99) ? '廃棄済' : '' }}</td>
 						<td>
 							<a href="{{ url('device/edit', $device->id) }}" class="btn btn-primary">編集</a>
+							<a href="{{ url('device/detail', $device->id) }}" class="btn btn-success" data-toggle="modal" data-target="#detailModal{{ $device->id }}">詳細</a>
+
+							<!-- deleteModalWindow -->
+							<div class="modal fade" id="detailModal{{ $device->id }}" tabindex="-1" role="dialog" aria-labelledby="ModalLabel">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header bg-blue text-center">
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+											<i class="fa fa-4x {{ App\Device::$deviceIcon[$device->category] }}"></i>
+											<h5>【 {{ $device->name }} 】</h5>
+											<p>{{ App\Device::$osLabels[$device->os] }} / {{ App\Device::$deviceCategories[$device->category] }}</p>
+										</div>
+										<div class="modal-body">
+											<ul class="nav nav-stacked">
+												<li><a href="#">使用者 <span class="pull-right text-blue">{{ ($device->user_id) ? $users[$device->user_id] :'なし' }}</span></a></li>
+												<li><a href="#">購入日 <span class="pull-right text-blue">{{ App\User::getJaDate($device->bought_at) }}</span></a></li>
+												<li><a href="#">コア数 <span class="pull-right text-blue">{{ $device->memory }}コア</span></a></li>
+												<li><a href="#">メモリ <span class="pull-right text-blue">{{ $device->memory }} GB</span></a></li>
+												<li><a href="#">サイズ <span class="pull-right text-blue">{{ $device->size }} インチ</span></a></li>
+												@if($device->status == 99)
+												<div class="text-center font16 bg-red">廃棄済</div>
+												@endif
+											</ul>
+										</div>
+										<!--										<div class="modal-footer">
+																					<button type="button" class="btn btn-primary" data-dismiss="modal">閉じる</button>
+																				</div>-->
+									</div>
+								</div>
+							</div>
+							<!-- /deleteModalWindow -->
+
 						</td>
 					</tr>
 					@endforeach

@@ -27,6 +27,11 @@ class Device extends Model
 		self::TABLET => 'タブレット',
 //		self::DISPLAY => 'ディスプレイ',
 	];
+	public static $deviceIcon = [
+		self::NOTE_PC => 'fa-laptop',
+		self::DESKTOP_PC => 'fa-desktop',
+		self::TABLET => 'fa-tablet',
+	];
 
 	/**
 	 * OS種別
