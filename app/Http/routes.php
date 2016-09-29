@@ -22,17 +22,16 @@ Route::group(['middleware' => 'auth'], function() {
 
 	Route::get('/logout', 'Auth\AuthController@getLogout');
 
-	// 登録のルート定義
-	Route::match(['get', 'post'], '/auth/register', 'Auth\AuthController@register');
+
 
 	//ユーザ管理
 	Route::get('/user', 'UserController@index');
+	Route::match(['get', 'post'], '/user/register', 'Auth\AuthController@register');
 	Route::get('/user/profile/{id}', 'UserController@profile');
 	Route::match(['get', 'post'], '/user/editProfile/{id}', 'UserController@editPofile');
 	Route::match(['get', 'post'], '/user/editDate/{id}', 'UserController@editDate');
 	Route::get('/user/reset/{id}', 'UserController@reset');
-//	Route::get('/user/update/{userId?}', 'UserController@update');
-//	
+
 	//有給消化申請
 	Route::match(['get', 'post'], '/use_request', 'UseRequestController@index');
 	Route::match(['get', 'post'], '/use_request/add', 'UseRequestController@add');

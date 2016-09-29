@@ -12,7 +12,7 @@
 <script src="/plugins/daterangepicker/daterangepicker.js"></script>
 
 <script>
-    //午前・午後の計算
+    //午前・午後の計算。チェックされた場合は-0.5、チェックが外れた場合は+0.5する処理
     $('.half').change(function () {
         if ($(this).is(':checked')) {
             var sum = Number($('#sum').text()) - Number(0.5);
@@ -29,6 +29,13 @@
     turnOverChkBox('#from_am', '#from_pm');
     turnOverChkBox('#from_pm', '#from_am');
 
+    /**
+     * 申請日が１日の場合に表示される半休ボックスで、
+     * 片方がチェックされた場合には片方をチェック出来なくする処理
+     * 
+     * @param {type} start
+     * @param {type} end
+     */
     function turnOverChkBox(checked, turnOver) {
         $(checked).change(function () {
             if ($(this).is(':checked')) {
@@ -39,6 +46,13 @@
         });
     }
 
+    /**
+     * daterangeで入力された開始日と終了日をもとに申請日数を計算して表示し、
+     * formのhidden要素に渡す処理
+     * 
+     * @type date start
+     * @type date end
+     */
     function calcAndSetVal(start, end) {
         var usedDays = end.diff(start, 'days') + 1; //消化する日数計算
         $('#sum').text(usedDays); //消化日数をp要素に出力
@@ -52,6 +66,13 @@
         $('#used_days').attr('value', usedDays);
     }
 
+    /**
+     * 半休のチェックボックスの表示メソッド
+     * 申請日が1日が複数日かによって表示するチェックボックスを変える
+     * 
+     * @type int usedDays 申請日数
+     * @type bool defaultForEdit 編集で最初に表示された時(=true)と処理を区別する
+     */
     function displayChkBox(usedDays, defaultForEdit = false) {
         if (defaultForEdit === false) {
             if (usedDays <= 1) {
@@ -63,8 +84,15 @@
             }
         } else {
             if (usedDays <= 1) {
-                $('#single').removeClass("cant-use").addClass("can-use").find('input').prop('disabled', false);
+                $('#single').removeClass('cant-use').addClass("can-use").find('input').prop('disabled', false);
                 $('#plural').removeClass("can-use").addClass("cant-use").find('input').prop("checked", false);
+                //編集で最初に表示した時のみ、もし既に午前か午後いずれかのチェックボックスがチェックされていた場合、
+                //もう片方のチェックボックスをチェック出来ないようにして表示する
+                if ($('#from_pm').is(':checked')) {
+                    $('#from_am').prop('disabled', true);
+                } else if ($('#from_am').is(':checked')) {
+                    $('#from_pm').prop('disabled', true);
+                }
             } else {
                 $('#single').removeClass("can-use").addClass("cant-use").find('input').prop("checked", false);
                 $('#plural').removeClass("cant-use").addClass("can-use").find('input').prop('disabled', false);

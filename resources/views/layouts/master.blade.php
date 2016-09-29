@@ -82,6 +82,19 @@
 							</a>
 						</li>
 
+						<li class="treeview {{ isActiveUrl('device*') }}">
+							<a href="#">
+								<i class="fa fa-laptop"></i> <span>デバイス管理</span>
+								<span class="pull-right-container">
+									<i class="fa fa-angle-left pull-right"></i>
+								</span>
+							</a>
+							<ul class="treeview-menu">
+								<li class="{{ isActiveUrl('device') }}"><a href="{{ url('device') }}"><i class="fa fa-circle-o"></i> デバイス一覧</a></li>
+								<li class="{{ isActiveUrl('device/add') }}"><a href="{{ url('device/add') }}"><i class="fa fa-circle-o"></i> デバイス新規登録</a></li>
+							</ul>
+						</li>
+
 						@if(Auth::user()->role === 1)
 						<li class="header">管理メニュー</li>
 
@@ -94,20 +107,7 @@
 							</a>
 							<ul class="treeview-menu">
 								<li class="{{ isActiveUrl('user') }}"><a href="/user"><i class="fa fa-circle-o"></i> ユーザ一覧</a></li>
-								<li class="{{ isActiveUrl('auth/register') }}"><a href="/auth/register"><i class="fa fa-circle-o"></i> ユーザ新規登録</a></li>
-							</ul>
-						</li>
-
-						<li class="treeview {{ isActiveUrl('device*') }}">
-							<a href="#">
-								<i class="fa fa-laptop"></i> <span>デバイス管理</span>
-								<span class="pull-right-container">
-									<i class="fa fa-angle-left pull-right"></i>
-								</span>
-							</a>
-							<ul class="treeview-menu">
-								<li class="{{ isActiveUrl('device') }}"><a href="{{ url('device') }}"><i class="fa fa-circle-o"></i> デバイス一覧</a></li>
-								<li class="{{ isActiveUrl('device/add') }}"><a href="{{ url('device/add') }}"><i class="fa fa-circle-o"></i> デバイス新規登録</a></li>
+								<li class="{{ isActiveUrl('user/register') }}"><a href="/user/register"><i class="fa fa-circle-o"></i> ユーザ新規登録</a></li>
 							</ul>
 						</li>
 						@endif

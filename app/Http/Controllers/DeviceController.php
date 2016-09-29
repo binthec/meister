@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Input;
+use Validator;
 use App\User;
 use App\Device;
 
@@ -77,11 +78,36 @@ class DeviceController extends Controller
 						->with('disposal', $disposal);
 	}
 
+	const MESSAGES = [
+		'name.max' => '機器名は :max 文字以内で入力してください',
+		'serial_id.required' => 'シリアルIDは必須項目です',
+		'core.max' => 'コア数は :max 文字以内で入力してください',
+		'core.integer' => 'コア数は数値で入力してください',
+		'memory.max' => 'メモリは :max 文字以内で入力してください',
+		'memory.integer' => 'メモリは数値で入力してください',
+		'size.max' => 'サイズは :max 文字以内で入力してください',
+	];
+
 	public function add(Request $request)
 	{
 
 		if ($request->isMethod('post')) {
-//			dd($request);
+
+			$validator = Validator::make($request->all(), [
+						'name' => 'max:200',
+						'serial_id' => 'required',
+						'core' => 'max:50|integer',
+						'memory' => 'max:50|integer',
+						'size' => 'max:50',
+							], self::MESSAGES);
+
+			if ($validator->fails()) {
+				return redirect()
+								->back()
+								->withErrors($validator)
+								->withInput();
+			}
+
 			$device = new Device;
 			$device->category = $request->category;
 			$device->os = $request->os;

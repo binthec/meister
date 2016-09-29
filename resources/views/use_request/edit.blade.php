@@ -207,14 +207,11 @@
 	</div>
 </section>
 
-{{ var_dump($useRequest->used_days) }}
 @endsection
 
 
 @section('js')
 @include('elements.for_form')
-
-
 <script>
     //Date range picker	
     $(function () {

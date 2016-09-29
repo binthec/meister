@@ -52,7 +52,7 @@
 			<div class="form-group">
 				<label for="user_id" class="col-md-2 control-label">使用者</label>
 				<div class="col-md-4">
-					{!! Form::select('user_id', $users, '', ['class' => 'form-control', 'placeholder' => '']) !!}
+					{!! Form::select('user_id', $users, $user_id, ['class' => 'form-control', 'placeholder' => '']) !!}
 				</div>
 
 				<label for="disposal" class="col-md-2 control-label">廃棄</label>

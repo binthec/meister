@@ -12,7 +12,7 @@
 <!-- Main content -->
 <section class="content">
 
-	{!! Form::open(['method' => 'post', 'url' => 'auth/register', 'class' => 'form-horizontal']) !!}
+	{!! Form::open(['method' => 'post', 'url' => 'user/register', 'class' => 'form-horizontal']) !!}
 	{{ csrf_field() }}
 	<div class="box">
 		<div class="box-header with-border">

@@ -22,24 +22,16 @@
 				<label for="category" class="col-md-2 control-label">分類</label>
 				<div class="col-md-3">
 					{!! Form::select('category', App\Device::$deviceCategories, 1,['class' => 'form-control']) !!}
-					@if($errors->has('category'))
-					<span class="help-block">
-						<strong class="text-danger">{{ $errors->first('category') }}</strong>
-					</span>
-					@endif
 				</div>
+				<span class="label label-danger">必須</span>
 			</div>
 
-			<div class="form-group{{ $errors->has('category') ? ' has-error' : '' }}">
+			<div class="form-group">
 				<label for="os" class="col-md-2 control-label">OS</label>
 				<div class="col-md-3">
 					{!! Form::select('os', App\Device::$osLabels, 1,['class' => 'form-control']) !!}
-					@if($errors->has('os'))
-					<span class="help-block">
-						<strong class="text-danger">{{ $errors->first('os') }}</strong>
-					</span>
-					@endif
 				</div>
+				<span class="label label-danger">必須</span>
 			</div>
 
 			<div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
@@ -60,33 +52,24 @@
 					{!! Form::text('serial_id', '', ['class' => 'form-control']) !!}
 					@if($errors->has('serial_id'))
 					<span class="help-block">
-						<strong class="text-danger">{{ $errors->first('serial_id') }}</strong>
+						<strong class="text-danger"">{{ $errors->first('serial_id') }}</strong>
 					</span>
 					@endif
 				</div>
+				<div class="label label-danger">必須</div>
 			</div>
 
-			<div class="form-group{{ $errors->has('bought_at') ? ' has-error' : '' }}">
+			<div class="form-group">
 				<label for="bought_at" class="col-md-2 control-label">購入日</label>
 				<div class="col-md-8">
 					{!! Form::text('bought_at', '', ['class' => 'form-control use_datepicker']) !!}
-					@if($errors->has('bought_at'))
-					<span class="help-block">
-						<strong class="text-danger">{{ $errors->first('bought_at') }}</strong>
-					</span>
-					@endif
 				</div>
 			</div>
 
-			<div class="form-group{{ $errors->has('user_id') ? ' has-error' : '' }}">
+			<div class="form-group">
 				<label for="user_id" class="col-md-2 control-label">使用者</label>
 				<div class="col-md-8">
 					{!! Form::select('user_id', $users, '', ['class' => 'form-control', 'placeholder' => 'なし']) !!}
-					@if($errors->has('user_id'))
-					<span class="help-block">
-						<strong class="text-danger">{{ $errors->first('user_id') }}</strong>
-					</span>
-					@endif
 				</div>
 			</div>
 
