@@ -123,12 +123,37 @@
 											<p>{{ App\Device::$osLabels[$device->os] }} / {{ App\Device::$deviceCategories[$device->category] }}</p>
 										</div>
 										<div class="modal-body">
-											<ul class="nav nav-stacked">
-												<li><a href="#">使用者 <span class="pull-right text-blue">{{ ($device->user_id) ? $users[$device->user_id] :'なし' }}</span></a></li>
-												<li><a href="#">購入日 <span class="pull-right text-blue">{{ App\User::getJaDate($device->bought_at) }}</span></a></li>
-												<li><a href="#">コア数 <span class="pull-right text-blue">{{ $device->memory }}コア</span></a></li>
-												<li><a href="#">メモリ <span class="pull-right text-blue">{{ $device->memory }} GB</span></a></li>
-												<li><a href="#">サイズ <span class="pull-right text-blue">{{ $device->size }} インチ</span></a></li>
+											<ul class="nav nav-stacked" id="deviceDetail">
+												<li>
+													<a href="#">
+														<span class="left">{{ ($device->user_id) ? $users[$device->user_id] :'なし' }} </span>
+														<span class="pull-right text-blue">使用者</span>
+													</a>
+												</li>
+												<li>
+													<a href="#">
+														<span class="left">{{ App\User::getJaDate($device->bought_at) }} </span>
+														<span class="pull-right text-blue">購入日</span>
+													</a>
+												</li>
+												<li>
+													<a href="#">
+														<span class="left">{{ $device->core }}コア </span>
+														<span class="pull-right text-blue">コア数</span>
+													</a>
+												</li>
+												<li>
+													<a href="#">
+														<span class="left">{{ $device->memory }} GB </span>
+														<span class="pull-right text-blue">メモリ</span>
+													</a>
+												</li>
+												<li>
+													<a href="#">
+														<span class="left">{{ $device->size }} インチ </span>
+														<span class="pull-right text-blue">サイズ</span>
+													</a>
+												</li>
 												@if($device->status == 99)
 												<div class="text-center font16 bg-red">廃棄済</div>
 												@endif

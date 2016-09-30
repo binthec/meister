@@ -53,3 +53,7 @@ table.profile td{
 .modal-dialog{
     width: 400px;
 }
+
+#deviceDetail .left{
+    font-weight: bold;
+}
