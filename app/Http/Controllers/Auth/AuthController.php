@@ -72,7 +72,8 @@ class AuthController extends Controller
 	{
 		if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
 			//ログインの度にDBレコードを更新する
-			PaidVacation::setOriginalPaidVacations(Auth::user()->id);
+			$user = User::find(Auth::user()->id);
+			$user->setOriginalPaidVacations();
 			return redirect()->intended('dashboard');
 		}
 	}
@@ -105,7 +106,7 @@ class AuthController extends Controller
 			$user->save();
 
 			//有給の再計算
-			PaidVacation::setOriginalPaidVacations($user->id);
+			$user->setOriginalPaidVacations();
 
 			\Session::flash('flashMessage', 'ユーザ情報を保存しました');
 			return redirect('/user'); //一覧ページに戻る

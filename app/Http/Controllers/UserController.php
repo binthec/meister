@@ -126,7 +126,7 @@ class UserController extends Controller
 			PaidVacation::where('user_id', $userId)->delete();
 
 			//2.有給を最初から再計算して、新規に、現在までの有給レコード生成
-			PaidVacation::setOriginalPaidVacations($userId);
+			$user->setOriginalPaidVacations();
 
 			//3.既に登録されている有給消化申請の日数を有給レコードから減算
 			$user->recalcRemainingDays();
@@ -148,7 +148,7 @@ class UserController extends Controller
 		}
 
 		//有給の再計算、データ生成後にレコード保存
-		PaidVacation::setOriginalPaidVacations($user->id);
+		$user->setOriginalPaidVacations();
 
 		$usedDays = UsedDays::where('user_id', $userId)->delete();
 
