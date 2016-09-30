@@ -157,6 +157,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 			$startDate = Carbon::createFromFormat('Y-m-d', $startDate)->addYear(1)->toDateString(); //有給の有効期限開始日
 		}
+
+		//利用可能な有給がないが、前借りして有給を取得する場合の処理
+		//現在存在する有給レコードよりも一つ新しいレコード（＝本来ならまだ利用出来ないレコード）を取得し、
+		//そこから有給登録日数を減算する
+		if ($this->today < $startDate) {
+			//
+		}
 	}
 
 	/**

@@ -38,11 +38,18 @@ class UseRequestController extends Controller
 							], self::MESSAGES);
 
 			//申請日数が残日数を上回っている時のエラー
+//			$validator->after(function($validator) use ($requestedUsedDays, $remainingDays) {
+//				if ($requestedUsedDays > $remainingDays) {
+//					$validator->errors()->add('daterange', '申請日数が残日数を上回っています。申請日程を確認してください');
+//				}
+//			});
+
 			$validator->after(function($validator) use ($requestedUsedDays, $remainingDays) {
 				if ($requestedUsedDays > $remainingDays) {
-					$validator->errors()->add('daterange', '申請日数が残日数を上回っています。申請日程を確認してください');
+					
 				}
 			});
+
 
 			if ($validator->fails()) {
 				return redirect()
