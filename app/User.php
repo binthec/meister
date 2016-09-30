@@ -154,6 +154,23 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	/**
+	 * 既に登録されている有給消化申請の日数を、
+	 * 有給レコード（オリジナルのまっさらな状態のもの）から減算していく
+	 * 入社日を変更した場合など、全部の再計算が必要な際に行う
+	 * 
+	 * @param type $userId
+	 */
+	public function recalcRemainingDays()
+	{
+		$usedDays = UsedDays::where('user_id', $this->id)->orderBy('from', 'asc')->get();
+		foreach ($usedDays as $day) {
+			$sum = $this->getSumRemainingDays($day->start_date);
+			$resultRemainingDays = $sum - $day->used_days;
+			$this->setRemainingDays($resultRemainingDays, $day->start_date);
+		}
+	}
+
+	/**
 	 * ユーザの権限用のラベル
 	 */
 	const USER = 20;

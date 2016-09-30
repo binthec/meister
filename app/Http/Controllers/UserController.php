@@ -129,7 +129,7 @@ class UserController extends Controller
 			PaidVacation::setOriginalPaidVacations($userId);
 
 			//3.既に登録されている有給消化申請の日数を有給レコードから減算
-			PaidVacation::recalcRemainingDays($userId);
+			$user->recalcRemainingDays();
 
 			\Session::flash('flashMessage', '入社日の変更を完了しました');
 			return redirect()->action('UserController@profile', $userId);
