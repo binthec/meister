@@ -29,10 +29,6 @@ class UseRequestController extends Controller
 	{
 		if ($request->isMethod('post')) {
 
-			$user = User::where('id', $request->user_id)->first(); //ユーザIDをもとにユーザを特定
-			$remainingDays = $user->getSumRemainingDays(); //有給残日数の合計
-			$requestedUsedDays = $request->used_days; //申請した有給日数
-
 			$validator = Validator::make($request->all(), [
 						'memo' => 'max:2000',
 							], self::MESSAGES);
@@ -44,13 +40,6 @@ class UseRequestController extends Controller
 //				}
 //			});
 
-			$validator->after(function($validator) use ($requestedUsedDays, $remainingDays) {
-				if ($requestedUsedDays > $remainingDays) {
-					
-				}
-			});
-
-
 			if ($validator->fails()) {
 				return redirect()
 								->back()
@@ -58,22 +47,29 @@ class UseRequestController extends Controller
 								->withInput();
 			}
 
-			//申請した有給をUsedDaysテーブルに保存
+			//ユーザIDをもとにユーザを特定
+			$user = User::where('id', $request->user_id)->first();
+			//有給残日数の合計を取得
+			$remainingDays = $user->getSumRemainingDays();
+			//
+			//前借りの場合（＝有給残日数が０の際に有給を登録する場合）の処理を入れる
+			//
+			//登録する日数を残日数から減算した値（＝登録後の有給残日数）を取得
+			$resultRemainingDays = $remainingDays - $request->used_days;
+			//計算後の有給残日数をレコードに保存
+			$user->setRemainingDays($resultRemainingDays);
+
+			//申請した有給の内容をUsedDaysテーブルに保存
 			$usedDays = new UsedDays;
 			$usedDays->user_id = $request->user_id;
 			$usedDays->from = $request->from;
-
 			$usedDays->from_am = (isset($request->from_am)) ? 1 : 0;
 			$usedDays->from_pm = (isset($request->from_pm)) ? 1 : 0;
 			$usedDays->until = $request->until;
 			$usedDays->until_am = (isset($request->until_am)) ? 1 : 0;
-			$usedDays->used_days = $requestedUsedDays;
+			$usedDays->used_days = $request->used_days;
 			$usedDays->memo = $request->memo;
 			$usedDays->save();
-
-			//計算後の有給残日数をレコードに保存
-			$resultRemainingDays = $remainingDays - $requestedUsedDays; //有給残日数から申請日数を減算
-			$user->setRemainingDays($resultRemainingDays);
 
 			\Session::flash('flashMessage', '有給消化申請が完了しました');
 			return redirect('/dashboard'); //一覧ページに戻る
@@ -88,25 +84,17 @@ class UseRequestController extends Controller
 
 		if ($request->isMethod('post')) {
 
-			//現在の申請内容を取得（＝これから更新するレコード）
-			$usedDays = UsedDays::where('id', $id)->first();
-
-			$user = User::find(Auth::user()->id);
-			$sumRemainingDays = $user->getSumRemainingDays();
-
-			//1.既に申請している日数を、合計有給日数に加算して、元に戻す
-			$sumRemainingDays += $usedDays->used_days;
-
 			$validator = Validator::make($request->all(), [
 						'memo' => 'max:2000',
 							], self::MESSAGES);
 
-			//2.申請日数が残日数を上回っている時はエラーと共に画面に戻る
-			$validator->after(function($validator) use ($request, $sumRemainingDays) {
-				if ($request->used_days > $sumRemainingDays) {
-					$validator->errors()->add('daterange', '申請日数が残日数を上回っています。申請日程を確認してください');
-				}
-			});
+			//申請日数が残日数を上回っている時はエラーと共に画面に戻る
+//			$validator->after(function($validator) use ($request, $sumRemainingDays) {
+//				if ($request->used_days > $sumRemainingDays) {
+//					$validator->errors()->add('daterange', '申請日数が残日数を上回っています。申請日程を確認してください');
+//				}
+//			});
+
 			if ($validator->fails()) {
 				return redirect()
 								->back()
@@ -114,11 +102,20 @@ class UseRequestController extends Controller
 								->withInput();
 			}
 
-			//問題無ければ処理を続行
-			//3.新規で登録する日数を減算
+			//現在の申請内容を取得（＝これから更新するレコード）
+			$usedDays = UsedDays::find($id);
+
+			$user = User::find(Auth::user()->id);
+			//有給残日数の合計を取得
+			$sumRemainingDays = $user->getSumRemainingDays();
+
+			//1.既に申請している日数を、合計有給日数に加算して、元に戻す
+			$sumRemainingDays += $usedDays->used_days;
+
+			//2.新規で登録する日数を、残日数から減算
 			$resultRemainingDays = $sumRemainingDays - $request->used_days;
 
-			//4.計算後の有給残日数をレコードに保存
+			//3.計算後の有給残日数をレコードに保存
 			$user->setRemainingDays($resultRemainingDays);
 
 			//編集されたデータで既存レコードを更新
