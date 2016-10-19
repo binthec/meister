@@ -213,24 +213,24 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		}
 
 
-		//本来は有効な有給ではないが、前借りしてくるために未来のレコードを１レコードのみ取得
-		$invalidPaidVacation = $this->PaidVacation()->orderBy('start_date', 'desc')->first();
+		//前借り用レコード（＝前借りしてくるための未来の有給レコード）を取得
+		$advancedPaidVacation = $this->getAdvancedPaidVacaion();
 
-		//前借りしている状態の場合、前借りしている分も計算後の日数に加算する
-		$diff = $invalidPaidVacation->original_paid_vacation - $invalidPaidVacation->remaining_days;
-		if ($diff > 0) {
-			$resultRemainingDays -= $diff;
-		}
-		//resultRemainingDaysの数値は、現在利用可能な有給レコードの残日数を基準にした値。
-		//resultRemainingDays が0ということは、現在利用可能な有給レコードの残日数が0ということ
-		//resultRemainingDays がマイナスということは、前借り状態ということ
-		//
-
+		//前借りしている状態の場合、前借りしている分を計算後の日数から減算する
+//		$diff = $this->getUsedAdvancedDays();
+//		if ($diff > 0) {
+//			$resultRemainingDays -= $diff;
+//		}
+//		dd($resultRemainingDays);
 		//計算後の有給残日数が0以下の場合、前借り処理を行う
 		if ($resultRemainingDays <= 0) {
 
-			//前借り処理が出来るのは、先１年の１レコードの残日数が１以上の場合のみ
-			if ($invalidPaidVacation->remaining_days > 0) {
+			//前借り用のレコードに計算後の数字（=マイナスの値）を加算
+			$advancedPaidVacation->remaining_days = ($advancedPaidVacation->original_paid_vacation + $resultRemainingDays);
+
+			//最終的な残日数が0以上であれば前借り処理を実行
+			if ($advancedPaidVacation->remaining_days >= 0) {
+				$advancedPaidVacation->save(); //保存
 				//有効な有給レコードを取得
 				$validPaidVacations = $this->getValidPaidVacation($baseDate);
 				//現在有効なレコード全てに残日数0を代入して保存
@@ -238,17 +238,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 					$validPaidVacation->remaining_days = 0;
 					$validPaidVacation->save();
 				}
-
-				//前借り用のレコードに計算後の数字（マイナスの値）を加算
-				$invalidPaidVacation->remaining_days = ($invalidPaidVacation->original_paid_vacation + $resultRemainingDays);
-				$invalidPaidVacation->save(); //保存
-			} else {
-				//error!!
 			}
 		} else {//有効な有給レコードから通常の減算をする
 			//計算後の残日数が１以上の場合は、前借り用のレコードの残日数の値を元に戻す
-			$invalidPaidVacation->remaining_days = $invalidPaidVacation->original_paid_vacation;
-			$invalidPaidVacation->save();
+			$advancedPaidVacation->remaining_days = $advancedPaidVacation->original_paid_vacation;
+			$advancedPaidVacation->save();
 
 			//有効な有給レコードを取得
 			$validPaidVacations = $this->getValidPaidVacation($baseDate);
@@ -284,8 +278,43 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		foreach ($usedDays as $day) {
 			$sum = $this->getSumRemainingDays($day->start_date);
 			$resultRemainingDays = $sum - $day->used_days;
+			//前借りしている場合は、前借り分も計算後の残日数から減算する
+			if ($this->getUsedAdvancedDays() > 0) {
+				$resultRemainingDays -= $this->getUsedAdvancedDays();
+			}
 			$this->setRemainingDays($resultRemainingDays, $day->start_date);
 		}
+	}
+
+	/**
+	 * //前借り用レコード（＝前借りしてくるための未来の有給レコード）を取得するメソッド
+	 * 
+	 * @return type PaidVacation
+	 */
+	public function getAdvancedPaidVacaion()
+	{
+		return $this->PaidVacation()->orderBy('start_date', 'desc')->first();
+	}
+
+	/**
+	 * 前借りしている日数を返すメソッド
+	 *  
+	 * @param PaidVacation $invalidPaidVacation
+	 * @return type int
+	 */
+	public function getUsedAdvancedDays()
+	{
+		$advancedPaidVacation = $this->getAdvancedPaidVacaion(); //前借り用レコード取得
+		return $advancedPaidVacation->original_paid_vacation - $advancedPaidVacation->remaining_days;
+	}
+
+	/**
+	 * 申請した日数と合わせて、最終的な計算後の残日数を出す関数がやっぱいるわな……
+	 * 
+	 */
+	public function getResultRemainingDays()
+	{
+		//
 	}
 
 	/**

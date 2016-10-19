@@ -29,16 +29,27 @@ class UseRequestController extends Controller
 	{
 		if ($request->isMethod('post')) {
 
+			//ユーザIDをもとにユーザを特定
+			$user = User::where('id', $request->user_id)->first();
+			//有給残日数の合計を取得
+			$remainingDays = $user->getSumRemainingDays();
+			//登録する日数を残日数から減算した値（＝登録後の有給残日数）を取得
+			$resultRemainingDays = $remainingDays - $request->used_days;
+			//前借りしている場合は、前借り分も計算後の残日数から減算する
+			if ($user->getUsedAdvancedDays() > 0) {
+				$resultRemainingDays -= $user->getUsedAdvancedDays();
+			}
+
 			$validator = Validator::make($request->all(), [
 						'memo' => 'max:2000',
 							], self::MESSAGES);
 
-			//申請日数が残日数を上回っている時のエラー
-//			$validator->after(function($validator) use ($requestedUsedDays, $remainingDays) {
-//				if ($requestedUsedDays > $remainingDays) {
-//					$validator->errors()->add('daterange', '申請日数が残日数を上回っています。申請日程を確認してください');
-//				}
-//			});
+			//申請日数が前借り可能日数すら上回っている時のエラー
+			$validator->after(function($validator) use ($resultRemainingDays, $user) {
+				if (($user->getAdvancedPaidVacaion()->original_paid_vacation + $resultRemainingDays) < 0) {
+					$validator->errors()->add('daterange', '申請日数が前借り可能日数を上回っています。申請日程を確認してください');
+				}
+			});
 
 			if ($validator->fails()) {
 				return redirect()
@@ -47,15 +58,6 @@ class UseRequestController extends Controller
 								->withInput();
 			}
 
-			//ユーザIDをもとにユーザを特定
-			$user = User::where('id', $request->user_id)->first();
-			//有給残日数の合計を取得
-			$remainingDays = $user->getSumRemainingDays();
-			//
-			//前借りの場合（＝有給残日数が０の際に有給を登録する場合）の処理を入れる
-			//
-			//登録する日数を残日数から減算した値（＝登録後の有給残日数）を取得
-			$resultRemainingDays = $remainingDays - $request->used_days;
 			//計算後の有給残日数をレコードに保存
 			$user->setRemainingDays($resultRemainingDays);
 
@@ -84,28 +86,10 @@ class UseRequestController extends Controller
 
 		if ($request->isMethod('post')) {
 
-			$validator = Validator::make($request->all(), [
-						'memo' => 'max:2000',
-							], self::MESSAGES);
-
-			//申請日数が残日数を上回っている時はエラーと共に画面に戻る
-//			$validator->after(function($validator) use ($request, $sumRemainingDays) {
-//				if ($request->used_days > $sumRemainingDays) {
-//					$validator->errors()->add('daterange', '申請日数が残日数を上回っています。申請日程を確認してください');
-//				}
-//			});
-
-			if ($validator->fails()) {
-				return redirect()
-								->back()
-								->withErrors($validator)
-								->withInput();
-			}
-
 			//現在の申請内容を取得（＝これから更新するレコード）
 			$usedDays = UsedDays::find($id);
-
 			$user = User::find(Auth::user()->id);
+
 			//有給残日数の合計を取得
 			$sumRemainingDays = $user->getSumRemainingDays();
 
@@ -114,6 +98,31 @@ class UseRequestController extends Controller
 
 			//2.新規で登録する日数を、残日数から減算
 			$resultRemainingDays = $sumRemainingDays - $request->used_days;
+
+			//3.前借りしている場合は、前借り分も計算後の残日数から減算する
+			if ($user->getUsedAdvancedDays() > 0) {
+				$resultRemainingDays -= $user->getUsedAdvancedDays();
+			}
+
+			$validator = Validator::make($request->all(), [
+						'memo' => 'max:2000',
+							], self::MESSAGES);
+
+			//申請日数が前借り可能日数すら上回っている時のエラー
+			$validator->after(function($validator) use ($resultRemainingDays, $user) {
+				if (($user->getAdvancedPaidVacaion()->original_paid_vacation + $resultRemainingDays) < 0) {
+					$validator->errors()->add('daterange', '申請日数が前借り可能日数を上回っています。申請日程を確認してください');
+				}
+			});
+
+			if ($validator->fails()) {
+				return redirect()
+								->back()
+								->withErrors($validator)
+								->withInput();
+			}
+
+
 
 			//3.計算後の有給残日数をレコードに保存
 			$user->setRemainingDays($resultRemainingDays);
@@ -146,6 +155,10 @@ class UseRequestController extends Controller
 		//計算後の有給残日数をレコードに保存
 		$user = User::where('id', $usedDays->user_id)->first();
 		$resultRemainingDays = $user->getSumRemainingDays() + $usedDays->used_days; //有給残日数に削除する分の申請日数を加算
+		//前借りしている場合は、前借り分も計算後の残日数から減算する
+		if ($user->getUsedAdvancedDays() > 0) {
+			$resultRemainingDays -= $user->getUsedAdvancedDays();
+		}
 		$user->setRemainingDays($resultRemainingDays);
 
 		\Session::flash('flashMessage', '申請済有給を削除しました');
