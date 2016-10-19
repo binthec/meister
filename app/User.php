@@ -44,14 +44,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	/**
 	 * 引数がtrueだったらカーボンのオブジェクトを返す。引数なし、またはfalseだったら日付 'Y-m-d' を返す
+	 * 
 	 * @param type $bool
 	 * @return type
 	 */
-	public static function getTodayDate($bool = null)
+	public static function getTodayDate($bool = true)
 	{
-		if ($bool == true) {
-			$today = Carbon::now();
-		} else {
+		$today = Carbon::now();
+		if ($bool == false) {
 			$today = Carbon::now()->toDateString();
 		}
 		return $today;
@@ -143,7 +143,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		$baseDate = User::where('id', $this->id)->first()->base_date;
 
 		//前借り機能のため、有給レコードはデフォルトで１年分多く作成しておく
-		$limitDate = self::getTodayDate(true)->addYears(1)->toDateString();
+		$limitDate = self::getTodayDate()->addYears(1)->toDateString();
 		while ($limitDate > $startDate) {
 			$paidVacation = new PaidVacation; //新規にインスタンス生成
 			$paidVacation->user_id = $this->id;

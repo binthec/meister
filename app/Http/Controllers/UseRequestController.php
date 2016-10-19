@@ -122,8 +122,6 @@ class UseRequestController extends Controller
 								->withInput();
 			}
 
-
-
 			//3.計算後の有給残日数をレコードに保存
 			$user->setRemainingDays($resultRemainingDays);
 
