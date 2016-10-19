@@ -90,37 +90,32 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		$startDate = Carbon::createFromFormat('Y-m-d', $startDate);
 
 		//$years = $start_date->diffInYears($base_date);
-
-		if ($this->today == $startDate || $startDate->isPast()) { //今日が起算日か、起算日を過ぎていれば
-			//起算日から何年経っているかの年数(入社日からではない)
-			$passedYears = $startDate->diffInYears($baseDate);
-			//$passedYears = Carbon::createFromDate('2015', '3', '25')->age; //テスト用日数
-			//dd($passed_years);
-			switch ($passedYears) {
-				case 0: //起算日から1年未満（＝入社半年～1年半の間）の場合、10日付与
-					return 10;
-					break;
-				case 1: //起算日から1年以上2年未満（＝入社1年半～2年半の間）の場合、11日付与
-					return 11;
-					break;
-				case 2:
-					return 12;
-					break;
-				case 3:
-					return 14;
-					break;
-				case 4:
-					return 16;
-					break;
-				case 5:
-					return 18;
-					break;
-				default:
-					return 20;
-					break;
-			}
-		} else { //起算日を過ぎていなければまだ有給は無いので0を返す
-			return 0;
+		//起算日から何年経っているかの年数(入社日からではない)
+		$passedYears = $startDate->diffInYears($baseDate);
+		//$passedYears = Carbon::createFromDate('2015', '3', '25')->age; //テスト用日数
+		//dd($passed_years);
+		switch ($passedYears) {
+			case 0: //起算日から1年未満（＝入社半年～1年半の間）の場合、10日付与
+				return 10;
+				break;
+			case 1: //起算日から1年以上2年未満（＝入社1年半～2年半の間）の場合、11日付与
+				return 11;
+				break;
+			case 2:
+				return 12;
+				break;
+			case 3:
+				return 14;
+				break;
+			case 4:
+				return 16;
+				break;
+			case 5:
+				return 18;
+				break;
+			default:
+				return 20;
+				break;
 		}
 	}
 
@@ -144,8 +139,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			$startDate = User::where('id', $this->id)->first()->base_date;
 		}
 
-		$baseDate = User::where('id', $this->id)->first()->base_date; //起算日
-		while ($this->today > $startDate) {
+		//起算日
+		$baseDate = User::where('id', $this->id)->first()->base_date;
+
+		//前借り機能のため、有給レコードはデフォルトで１年分多く作成しておく
+		$limitDate = self::getTodayDate(true)->addYears(1)->toDateString();
+		while ($limitDate > $startDate) {
 			$paidVacation = new PaidVacation; //新規にインスタンス生成
 			$paidVacation->user_id = $this->id;
 
@@ -157,13 +156,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 			$startDate = Carbon::createFromFormat('Y-m-d', $startDate)->addYear(1)->toDateString(); //有給の有効期限開始日
 		}
-
-		//利用可能な有給がないが、前借りして有給を取得する場合の処理
-		//現在存在する有給レコードよりも一つ新しいレコード（＝本来ならまだ利用出来ないレコード）を取得し、
-		//そこから有給登録日数を減算する
-		if ($this->today < $startDate) {
-			//
-		}
 	}
 
 	/**
@@ -174,13 +166,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	 * @param string $sort 省略した場合は早く期限が切れる順（＝古い順'asc'）にコレクションを返す
 	 * @return collection $baseDateを含む２つのモデルがコレクションになって返る
 	 */
-	public function getValidPaidVacation($baseDate, $sort = null)
+	public function getValidPaidVacation($baseDate, $sort = 'asc')
 	{
-		if (!$sort) {
-			$sort = 'asc';
-		}
 		$paidVacations = $this->PaidVacation()->orderBy('start_date', $sort)->get();
 		foreach ($paidVacations as $key => $paidVacation) {
+			//期限開始日がbaseDateより大きいか、期限日がbaseDateよりも小さい場合は、Collectionからはずす
 			if ($paidVacation->start_date > $baseDate || $paidVacation->limit_date < $baseDate) {
 				$paidVacations->forget($key);
 			}
@@ -221,23 +211,63 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		if (!$baseDate) {
 			$baseDate = self::getTodayDate();
 		}
-		$validPaidVacations = $this->getValidPaidVacation($baseDate); //有効な有給レコードを取得
 
-		if ($validPaidVacations->count() == 1) {
-			//まだ入社して２年半未満の人
-			$validPaidVacations->first()->remaining_days = $resultRemainingDays;
-			$validPaidVacations->first()->save();
-		} elseif ($resultRemainingDays >= $validPaidVacations->last()->original_paid_vacation) {
-			$resultRemainingDays -= $validPaidVacations->last()->original_paid_vacation;
-			$validPaidVacations->last()->remaining_days = $validPaidVacations->last()->original_paid_vacation;
-			$validPaidVacations->first()->remaining_days = $resultRemainingDays;
-			$validPaidVacations->last()->save();
-			$validPaidVacations->first()->save();
-		} else {
-			$validPaidVacations->last()->remaining_days = $resultRemainingDays;
-			$validPaidVacations->first()->remaining_days = 0;
-			$validPaidVacations->last()->save();
-			$validPaidVacations->first()->save();
+
+		//本来は有効な有給ではないが、前借りしてくるために未来のレコードを１レコードのみ取得
+		$invalidPaidVacation = $this->PaidVacation()->orderBy('start_date', 'desc')->first();
+
+		//前借りしている状態の場合、前借りしている分も計算後の日数に加算する
+		$diff = $invalidPaidVacation->original_paid_vacation - $invalidPaidVacation->remaining_days;
+		if ($diff > 0) {
+			$resultRemainingDays -= $diff;
+		}
+		//resultRemainingDaysの数値は、現在利用可能な有給レコードの残日数を基準にした値。
+		//resultRemainingDays が0ということは、現在利用可能な有給レコードの残日数が0ということ
+		//resultRemainingDays がマイナスということは、前借り状態ということ
+		//
+
+		//計算後の有給残日数が0以下の場合、前借り処理を行う
+		if ($resultRemainingDays <= 0) {
+
+			//前借り処理が出来るのは、先１年の１レコードの残日数が１以上の場合のみ
+			if ($invalidPaidVacation->remaining_days > 0) {
+				//有効な有給レコードを取得
+				$validPaidVacations = $this->getValidPaidVacation($baseDate);
+				//現在有効なレコード全てに残日数0を代入して保存
+				foreach ($validPaidVacations as $validPaidVacation) {
+					$validPaidVacation->remaining_days = 0;
+					$validPaidVacation->save();
+				}
+
+				//前借り用のレコードに計算後の数字（マイナスの値）を加算
+				$invalidPaidVacation->remaining_days = ($invalidPaidVacation->original_paid_vacation + $resultRemainingDays);
+				$invalidPaidVacation->save(); //保存
+			} else {
+				//error!!
+			}
+		} else {//有効な有給レコードから通常の減算をする
+			//計算後の残日数が１以上の場合は、前借り用のレコードの残日数の値を元に戻す
+			$invalidPaidVacation->remaining_days = $invalidPaidVacation->original_paid_vacation;
+			$invalidPaidVacation->save();
+
+			//有効な有給レコードを取得
+			$validPaidVacations = $this->getValidPaidVacation($baseDate);
+			if ($validPaidVacations->count() == 1) {
+				//まだ入社して２年半未満の人
+				$validPaidVacations->first()->remaining_days = $resultRemainingDays;
+				$validPaidVacations->first()->save();
+			} elseif ($resultRemainingDays >= $validPaidVacations->last()->original_paid_vacation) {
+				$resultRemainingDays -= $validPaidVacations->last()->original_paid_vacation;
+				$validPaidVacations->last()->remaining_days = $validPaidVacations->last()->original_paid_vacation;
+				$validPaidVacations->first()->remaining_days = $resultRemainingDays;
+				$validPaidVacations->last()->save();
+				$validPaidVacations->first()->save();
+			} else {
+				$validPaidVacations->last()->remaining_days = $resultRemainingDays;
+				$validPaidVacations->first()->remaining_days = 0;
+				$validPaidVacations->last()->save();
+				$validPaidVacations->first()->save();
+			}
 		}
 	}
 
