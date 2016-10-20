@@ -30,7 +30,7 @@ class UseRequestController extends Controller
 	{
 		if ($request->isMethod('post')) {
 
-//			dd($request);
+//			dd($request->from);
 			//ユーザIDをもとにユーザを特定
 			$user = User::where('id', $request->user_id)->first();
 			//有給残日数の合計を取得
@@ -41,14 +41,18 @@ class UseRequestController extends Controller
 			$resultRemainingDays = $user->getResultRemainingDays($resultRemainingDays);
 
 			$validator = Validator::make($request->all(), $this->rules);
-			$validator->after(function($validator) use ($resultRemainingDays, $user) {
+			$validator->after(function($validator) use ($resultRemainingDays, $user, $request) {
 				//申請日数が前借り可能日数すら上回っている時のエラー
 				if (($user->getAdvancedPaidVacaion()->original_paid_vacation + $resultRemainingDays) < 0) {
-					$validator->errors()->add('daterange', '申請日数が前借り可能日数を上回っています。申請日程を確認してください');
+					$validator->errors()->add('daterange', '指定した日数は前借り可能日数を上回っています。日程を確認してください');
 				}
 				//申請日が入力されていない場合のエラー
 				if ($validator->errors()->has('used_days')) {
 					$validator->errors()->add('daterange', $validator->errors()->first('used_days'));
+				}
+				//指定した期間が登録済み有給期間と重複している場合のエラー
+				if ($user->checkDateDuplication($request->from, $request->until)) {
+					$validator->errors()->add('daterange', '指定した期間は登録済みの有給期間と重複しています。日程を確認してください');
 				}
 			});
 
@@ -104,7 +108,7 @@ class UseRequestController extends Controller
 			$resultRemainingDays = $user->getResultRemainingDays($resultRemainingDays);
 
 			$validator = Validator::make($request->all(), $this->rules);
-			$validator->after(function($validator) use ($resultRemainingDays, $user) {
+			$validator->after(function($validator) use ($resultRemainingDays, $user, $request) {
 				//申請日数が前借り可能日数すら上回っている時のエラー
 				if (($user->getAdvancedPaidVacaion()->original_paid_vacation + $resultRemainingDays) < 0) {
 					$validator->errors()->add('daterange', '申請日数が前借り可能日数を上回っています。申請日程を確認してください');
@@ -112,6 +116,10 @@ class UseRequestController extends Controller
 				//申請日が入力されていない場合のエラー
 				if ($validator->errors()->has('used_days')) {
 					$validator->errors()->add('daterange', $validator->errors()->first('used_days'));
+				}
+				//指定した期間が登録済み有給期間と重複している場合のエラー
+				if ($user->checkDateDuplication($request->from, $request->until)) {
+					$validator->errors()->add('daterange', '指定した期間は登録済みの有給期間と重複しています。日程を確認してください');
 				}
 			});
 

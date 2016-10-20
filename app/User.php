@@ -320,6 +320,24 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	/**
+	 * 登録した期間が登録済みレコードの期間と重複していないかをチェックするメソッド
+	 * 重複している場合 true を返す
+	 * 
+	 * @param type $startDate
+	 * @param type $endDate
+	 * @return type bool
+	 */
+	public function checkDateDuplication($startDate, $endDate)
+	{
+		$duplicatedRecords = UsedDays::where('user_id', $this->id)
+				->where('until', '>=', $startDate)
+				->where('from', '<=', $endDate)
+				->get();
+
+		return $duplicatedRecords->count() > 0;
+	}
+
+	/**
 	 * ユーザの権限用のラベル
 	 */
 	const USER = 20;
