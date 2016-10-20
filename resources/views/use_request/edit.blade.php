@@ -138,7 +138,7 @@
 				</div>
 			</div>
 
-			<div class="form-group">
+			<div class="form-group{{ $errors->has('memo') ? ' has-error' : '' }}">
 				<label for="ID" class="col-md-2 control-label">連絡事項</label>
 				<div class="col-md-8">
 					{!! Form::textarea('memo', $useRequest->memo, ['class' => 'form-control', 'rows' => 5]) !!}

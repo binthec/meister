@@ -52,15 +52,15 @@
 							<div class="modal fade" id="deleteModal{{ $usedDay->id }}" tabindex="-1" role="dialog" aria-labelledby="ModalLabel">
 								<div class="modal-dialog" role="document">
 									<div class="modal-content">
-										<div class="modal-header">
+										<div class="modal-header bg-red">
 											<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 											<h4 class="modal-title" id="ModalLabel">申請済有給の削除</h4>
 										</div>
 										<div class="modal-body">
-											<p class="alert-danger align-center">この処理は取り消せません</p>
+											<p class="alert-danger align-center">&ensp;<i class="fa fa-warning"></i> この処理は取り消せません</p>
 											<p>選択した申請済有給を削除します。よろしいですか？</p>
 											<p>
-												削除する有給：{{ $usedDay->from }} 〜 {{ $usedDay->until }}<br>
+												削除する有給：{{ App\User::getJaDate($usedDay->from) }} 〜 {{ App\User::getJaDate($usedDay->until) }}<br>
 												有給日数：{{ $usedDay->used_days }} 日分
 											</p>
 										</div>

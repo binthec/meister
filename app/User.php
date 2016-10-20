@@ -212,16 +212,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			$baseDate = self::getTodayDate();
 		}
 
-
 		//前借り用レコード（＝前借りしてくるための未来の有給レコード）を取得
 		$advancedPaidVacation = $this->getAdvancedPaidVacaion();
 
-		//前借りしている状態の場合、前借りしている分を計算後の日数から減算する
-//		$diff = $this->getUsedAdvancedDays();
-//		if ($diff > 0) {
-//			$resultRemainingDays -= $diff;
-//		}
-//		dd($resultRemainingDays);
 		//計算後の有給残日数が0以下の場合、前借り処理を行う
 		if ($resultRemainingDays <= 0) {
 
@@ -267,7 +260,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	/**
 	 * 既に登録されている有給消化申請の日数を、
-	 * 有給レコード（オリジナルのまっさらな状態のもの）から減算していく
+	 * オリジナルのまっさらな状態の全有給レコードから減算していくメソッド
 	 * 入社日を変更した場合など、全部の再計算が必要な際に行う
 	 * 
 	 * @param type $userId
@@ -277,22 +270,23 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		$usedDays = UsedDays::where('user_id', $this->id)->orderBy('from', 'asc')->get();
 		foreach ($usedDays as $day) {
 			$sum = $this->getSumRemainingDays($day->start_date);
+			//登録する日数を残日数から減算した値（＝登録後の有給残日数）を取得
 			$resultRemainingDays = $sum - $day->used_days;
 			//前借りしている場合は、前借り分も計算後の残日数から減算する
-			if ($this->getUsedAdvancedDays() > 0) {
-				$resultRemainingDays -= $this->getUsedAdvancedDays();
-			}
+			$resultRemainingDays = $this->getResultRemainingDays($resultRemainingDays);
 			$this->setRemainingDays($resultRemainingDays, $day->start_date);
 		}
 	}
 
 	/**
-	 * //前借り用レコード（＝前借りしてくるための未来の有給レコード）を取得するメソッド
+	 * 前借り用レコード（＝前借りしてくるための未来の有給レコード）を取得するメソッド
 	 * 
 	 * @return type PaidVacation
 	 */
 	public function getAdvancedPaidVacaion()
 	{
+		//有給レコードは予め現在取得可能な有給＋１年分を登録しているので、
+		//そのユーザの有給レコードを全部取得した中の、「年月日が一番新しいものは前借りレコードである」ことが保証されている
 		return $this->PaidVacation()->orderBy('start_date', 'desc')->first();
 	}
 
@@ -309,12 +303,20 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	/**
-	 * 申請した日数と合わせて、最終的な計算後の残日数を出す関数がやっぱいるわな……
+	 * 計算後の有給残日数から前借り分の日数を減算して、
+	 * 最終的な計算後の有給残に日数を算出するメソッド
+	 * それぞれで有効な有給レコードの残日数を計算した後に、このメソッドを通す
 	 * 
+	 * @param float $resultRemainingDays
+	 * @return float $resultRemainingDays
 	 */
-	public function getResultRemainingDays()
+	public function getResultRemainingDays($resultRemainingDays)
 	{
-		//
+		//前借りしている日数が1日以上の場合、残日数から前借り日数を減算する
+		if ($this->getUsedAdvancedDays() > 0) {
+			$resultRemainingDays -= $this->getUsedAdvancedDays();
+		}
+		return $resultRemainingDays;
 	}
 
 	/**
