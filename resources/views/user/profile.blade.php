@@ -92,10 +92,11 @@
 								</td>
 								<td class="text-center font18">
 									@if ($validPaidVacations->count() > 0)
-									{{ $validPaidVacations->first()->remaining_days }} 日
+									{{ $validPaidVacations->first()->remaining_days }}
 									@else
 									0
 									@endif
+									日
 								</td>
 							</tr>
 							<tr>
@@ -108,18 +109,32 @@
 								</td>
 								<td class="text-center font18">
 									@if ($validPaidVacations->count() == 2)
-									{{ $validPaidVacations->last()->remaining_days }} 日
+									{{ $validPaidVacations->last()->remaining_days }}
 									@else
 									0
 									@endif
+									日
+								</td>
+
+
+							</tr>
+
+							@if(Auth::user()->getUsedAdvancedDays())
+							<tr>
+								<td>前借り日数</td>
+								<td class="text-center text-red font18">
+									{{ Auth::user()->getUsedAdvancedDays() }} 日
 								</td>
 							</tr>
+							@endif
+
 							<tr class="sum">
 								<td>
 									<span class="pull-right text-bold">合計有給残日数</span>
 								</td>
-								<td class="text-center font18 text-blue text-bold">
-									{{ $user->getSumRemainingDays() }} 日
+								<?php $sum = $user->getSumRemainingDays() - Auth::user()->getUsedAdvancedDays() ?>
+								<td class="text-center font18 text-bold{{ ($sum >= 0) ? ' text-blue': ' text-red' }}">
+									{{ $sum }} 日
 								</td>
 							</tr>
 
@@ -137,12 +152,11 @@
 					@if($usedDays->count())
 					<table class="table table-bordered">
 						<thead class="well">
-						<th width="5%">№</th><th>期間</th><th>日数</th><th>操作</th>
+						<th width="5%">№</th><th>期間</th><th>日数</th>{!! (Auth::user()->role === 1)? '<th>操作</th>': '' !!}
 						</thead>
 						<tbody>
 
 							<?php $i = ($usedDays->currentPage() - 1) * App\UsedDays::PAGE_NUM + 1 ?>
-							{{-- dd(Auth::user()->usedDays) --}}
 							@foreach ($usedDays as $usedDay)
 							<tr>
 								<td class="middle">{{ $i }}</td>
@@ -161,6 +175,8 @@
 									@endif
 								</td>
 								<td>{{ $usedDay->used_days }} 日間</td>
+
+								@if(Auth::user()->role === 1)
 								<td>
 									<a type="button" class="btn btn-primary btn-sm" name="edit" href="{{ url('use_request/edit', $usedDay->id) }}">編集</a>
 									&ensp;
@@ -191,8 +207,10 @@
 									</div>
 									<!-- /deleteModalWindow -->
 								</td>
-								<?php $i += 1 ?>
+								@endif
 							</tr>
+
+							<?php $i += 1 ?>
 							@endforeach
 
 						</tbody>
