@@ -1,4 +1,5 @@
 @extends('layouts/master')
+@section('title', '入社日変更')
 
 @section('content')
 <!-- Content Header (Page header) -->

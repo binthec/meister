@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>U9 | Dashboard</title>
+		<title>U9 | @yield('title')</title>
 		<!-- Tell the browser to be responsive to screen width -->
 		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 		<!-- Bootstrap 3.3.6 -->
@@ -90,7 +90,7 @@
 								</span>
 							</a>
 							<ul class="treeview-menu">
-								<li class="{{ isActiveUrl('device') }}"><a href="{{ url('device') }}"><i class="fa fa-circle-o"></i> デバイス一覧</a></li>
+								<li class="{{ isActiveUrl('device') }}"><a href="{{ url('device') }}"><i class="fa fa-circle-o"></i> デバイス一覧・検索</a></li>
 								<li class="{{ isActiveUrl('device/add') }}"><a href="{{ url('device/add') }}"><i class="fa fa-circle-o"></i> デバイス新規登録</a></li>
 							</ul>
 						</li>

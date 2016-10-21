@@ -200,9 +200,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	/**
-	 * 有給申請したり、削除したり、編集したりした際に有給残日数を計算してレコードを更新するメソッド
+	 * 有給登録したり、削除したり、編集したりした際に有給残日数を計算してレコードを更新するメソッド
 	 * 
-	 * @param int $resultRemainingDays は申請日数分を「減算した”後”」の有給残日数
+	 * @param int $resultRemainingDays は登録日数分を「減算した”後”」の有給残日数
 	 * @param date $baseData 'Y-m-d'の日付。省略した場合は今日日付で有効なレコードの値をもとにする
 	 * 返り値なし
 	 */
@@ -259,7 +259,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	/**
-	 * 既に登録されている有給消化申請の日数を、
+	 * 既に登録されている有給消化登録の日数を、
 	 * オリジナルのまっさらな状態の全有給レコードから減算していくメソッド
 	 * 入社日を変更した場合など、全部の再計算が必要な際に行う
 	 * 
@@ -327,14 +327,23 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	 * @param type $endDate
 	 * @return type bool
 	 */
-	public function checkDateDuplication($startDate, $endDate)
+	public function checkDateDuplication($startDate, $endDate, UsedDays $usedDays = null)
 	{
-		$duplicatedRecords = UsedDays::where('user_id', $this->id)
+		$duplicatedRecord = UsedDays::where('user_id', $this->id)
 				->where('until', '>=', $startDate)
 				->where('from', '<=', $endDate)
 				->get();
 
-		return $duplicatedRecords->count() > 0;
+		//usedDaysインスタンスが渡って来た時（＝編集のとき）は、自分のレコードを検索対象から外す
+		if ($usedDays) {
+			$duplicatedRecord->map(function ($item, $key) use ($usedDays, $duplicatedRecord) {
+				if ($item->id == $usedDays->id) {
+					$duplicatedRecord->forget($key);
+				}
+			});
+		}
+
+		return $duplicatedRecord->count() > 0;
 	}
 
 	/**

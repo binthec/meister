@@ -1,16 +1,17 @@
 @extends('layouts/master')
+@section('title', '登録済み有給の編集')
 
 @section('content')
 <!-- Content Header (Page header) -->
 <section class="content-header">
-	<h1>有給消化申請</h1>
+	<h1>有給消化登録</h1>
 </section>
 
 <!-- Main content -->
 <section class="content">
 	<div class="box">
 		<div class="box-header with-border">
-			<h3 class="box-title">申請内容の編集</h3>
+			<h3 class="box-title">登録内容の編集</h3>
 		</div>
 		<div class="box-body">
 
@@ -80,7 +81,7 @@
 			<hr>
 
 			<div class="form-group{{ $errors->has('daterange') ? ' has-error' : '' }}">
-				<label for="daterange" class="col-md-2 control-label">有給申請期間</label>
+				<label for="daterange" class="col-md-2 control-label">有給消化登録期間</label>
 				<div class="col-md-6">
 					{!! Form::date('daterange', '', ['class' => 'form-control use_daterange font18', 'placeholder' => '日付を選択してください']) !!}
 					@if($errors->has('daterange'))
@@ -166,22 +167,23 @@
 
 	<div class="box">
 		<div class="box-header with-border">
-			<h3 class="box-title">申請済有給の一覧</h3>
+			<h3 class="box-title">登録済有給の一覧</h3>
 		</div>
 		<div class="box-body">
 
 			<table class="table table-bordered">
-				<thead class="well">
+				<thead class="bg-primary">
 				<th width="5%">№</th><th>期間</th><th>日数</th>
 				</thead>
 				<tbody>
 
 					{{-- 通し番号を付ける --}}
 					<?php $i = ($usedDays->currentPage() - 1) * App\UsedDays::PAGE_NUM + 1 ?>
-					{{-- dd(Auth::user()->usedDays) --}}
 					@foreach ($usedDays as $usedDay)
-					<tr>
-						<td class="middle">{{ $i }}</td>
+					<tr class="{{ ($useRequest->id == $usedDay->id)? 'bg-water-blue' : '' }}">
+						<td class="middle">
+							{{ $i }}
+						</td>
 						<td>
 							@if($usedDay->used_days <= 1)
 							{{ App\User::getJaDate($usedDay->from) }}
@@ -195,6 +197,8 @@
 							{{ App\User::getJaDate($usedDay->until) }}
 							{{ ($usedDay->until_am == 1)? '午前': '' }}
 							@endif
+
+							{!! ($useRequest->id == $usedDay->id)? '&ensp;&ensp;<span class="label label-warning font14">編集中</span>' : '' !!}
 						</td>
 						<td>{{ $usedDay->used_days }} 日間</td>
 						<?php $i += 1 ?>
@@ -203,8 +207,8 @@
 				</tbody>
 			</table>
 			{!! $usedDays->render() !!}
-		</div>
-	</div>
+		</div><!-- /.box-body -->
+	</div><!-- /,box -->
 </section>
 
 @endsection
@@ -217,7 +221,7 @@
     $(function () {
 
         var days = <?php echo $useRequest->used_days; ?>;
-        displayChkBox(days, true);//編集の場合、最初に申請日数を判定してチェックボックスを表示させる
+        displayChkBox(days, true);//編集の場合、最初に登録日数を判定してチェックボックスを表示させる
 
         $(".use_daterange").daterangepicker({
             locale: {

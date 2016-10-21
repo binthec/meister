@@ -30,7 +30,7 @@
     turnOverChkBox('#from_pm', '#from_am');
 
     /**
-     * 申請日が１日の場合に表示される半休ボックスで、
+     * 登録日が１日の場合に表示される半休ボックスで、
      * 片方がチェックされた場合には片方をチェック出来なくする処理
      * 
      * @param {type} start
@@ -47,7 +47,7 @@
     }
 
     /**
-     * daterangeで入力された開始日と終了日をもとに申請日数を計算して表示し、
+     * daterangeで入力された開始日と終了日をもとに登録日数を計算して表示し、
      * formのhidden要素に渡す処理
      * 
      * @type date start
@@ -68,9 +68,9 @@
 
     /**
      * 半休のチェックボックスの表示メソッド
-     * 申請日が1日が複数日かによって表示するチェックボックスを変える
+     * 登録日が1日が複数日かによって表示するチェックボックスを変える
      * 
-     * @type int usedDays 申請日数
+     * @type int usedDays 登録日数
      * @type bool defaultForEdit 編集で最初に表示された時(=true)と処理を区別する
      */
     function displayChkBox(usedDays, defaultForEdit = false) {

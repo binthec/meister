@@ -128,7 +128,7 @@ class UserController extends Controller
 			//2.有給を最初から再計算して、新規に、現在までの有給レコード生成
 			$user->setOriginalPaidVacations();
 
-			//3.既に登録されている有給消化申請の日数を有給レコードから減算
+			//3.既に登録されている有給消化登録の日数を有給レコードから減算
 			$user->recalcRemainingDays();
 
 			\Session::flash('flashMessage', '入社日の変更を完了しました');

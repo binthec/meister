@@ -1,4 +1,5 @@
 @extends('layouts/master')
+@section('title', 'デバイス新規登録')
 
 @section('content')
 <!-- Content Header (Page header) -->

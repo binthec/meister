@@ -4,7 +4,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
 	<h1>
-		有給消化申請・一覧
+		有給消化登録・一覧
 	</h1>
 </section>
 
@@ -12,13 +12,13 @@
 <section class="content">
 	<div class="box">
 		<div class="box-header with-border">
-			<h3 class="box-title">申請済有給一覧</h3>
+			<h3 class="box-title">登録済有給一覧</h3>
 		</div>
 		<div class="box-body">
 
 			@if($usedDays->count())
 			<table class="table table-bordered">
-				<thead class="well">
+				<thead class="bg-primary">
 				<th width="5%">№</th><th>期間</th><th>日数</th><th width="15%">操作</th>
 				</thead>
 				<tbody>
@@ -54,11 +54,11 @@
 									<div class="modal-content">
 										<div class="modal-header bg-red">
 											<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-											<h4 class="modal-title" id="ModalLabel">申請済有給の削除</h4>
+											<h4 class="modal-title" id="ModalLabel">登録済有給の削除</h4>
 										</div>
 										<div class="modal-body">
 											<p class="alert-danger align-center">&ensp;<i class="fa fa-warning"></i> この処理は取り消せません</p>
-											<p>選択した申請済有給を削除します。よろしいですか？</p>
+											<p>選択した登録済有給を削除します。よろしいですか？</p>
 											<p>
 												削除する有給：{{ App\User::getJaDate($usedDay->from) }} 〜 {{ App\User::getJaDate($usedDay->until) }}<br>
 												有給日数：{{ $usedDay->used_days }} 日分

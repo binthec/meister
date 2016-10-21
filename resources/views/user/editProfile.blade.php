@@ -1,4 +1,5 @@
 @extends('layouts/master')
+@section('title', 'プロフィール編集')
 
 @section('content')
 <!-- Content Header (Page header) -->

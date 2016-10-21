@@ -30,7 +30,7 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::match(['get', 'post'], '/user/editDate/{id}', 'UserController@editDate');
 	Route::get('/user/reset/{id}', 'UserController@reset');
 
-	//有給消化申請
+	//有給消化登録
 	Route::match(['get', 'post'], '/use_request', 'UseRequestController@index');
 	Route::match(['get', 'post'], '/use_request/add', 'UseRequestController@add');
 	Route::match(['get', 'post'], '/use_request/edit/{id}', 'UseRequestController@edit');

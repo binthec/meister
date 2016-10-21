@@ -1,4 +1,5 @@
 @extends('layouts/master')
+@section('title', 'ユーザプロフィール')
 
 @section('content')
 <!-- Content Header (Page header) -->
@@ -130,7 +131,7 @@
 
 			<div class="box box-primary">
 				<div class="box-header">
-					<div class="box-title"><i class="fa fa-calendar-check-o"></i> 【申請済】消化予定or消化済 の有給</div>
+					<div class="box-title"><i class="fa fa-calendar-check-o"></i> 【登録済】消化予定or消化済 の有給</div>
 				</div>
 				<div class="box-body">
 					@if($usedDays->count())
@@ -171,11 +172,11 @@
 											<div class="modal-content">
 												<div class="modal-header">
 													<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-													<h4 class="modal-title" id="ModalLabel">申請済有給の削除</h4>
+													<h4 class="modal-title" id="ModalLabel">登録済有給の削除</h4>
 												</div>
 												<div class="modal-body">
 													<p class="alert-danger align-center">この処理は取り消せません</p>
-													<p>選択した申請済有給を削除します。よろしいですか？</p>
+													<p>選択した登録済有給を削除します。よろしいですか？</p>
 													<p>
 														削除する有給：{{ $usedDay->from }} 〜 {{ $usedDay->until }}<br>
 														有給日数：{{ $usedDay->used_days }} 日分

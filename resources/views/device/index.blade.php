@@ -1,4 +1,5 @@
 @extends('layouts/master')
+@section('title', 'デバイス一覧・検索')
 
 @section('content')
 

@@ -1,4 +1,5 @@
 @extends('layouts/master')
+@section('title', 'dashboard')
 
 @section('content')
 
@@ -132,7 +133,7 @@
 
 			@if($usedDays->count())
 			<table class="table table-bordered">
-				<thead class="well">
+				<thead class="bg-primary">
 				<th width="5%">№</th><th>期間</th><th>日数</th><th width="15%">操作</th>
 				</thead>
 				<tbody>
@@ -168,10 +169,10 @@
 									<div class="modal-content">
 										<div class="modal-header bg-red">
 											<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-											<h4 class="modal-title" id="ModalLabel">申請済有給の削除</h4>
+											<h4 class="modal-title" id="ModalLabel">登録済有給の削除</h4>
 										</div>
 										<div class="modal-body">
-											<p>選択した申請済有給を削除します。よろしいですか？</p>
+											<p>選択した登録済有給を削除します。よろしいですか？</p>
 											<p>
 												▼削除する有給<br>
 												<span class="font18">{{ App\User::getJaDate($usedDay->from) }} 〜 {{ App\User::getJaDate($usedDay->until) }}</span> 

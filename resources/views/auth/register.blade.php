@@ -1,4 +1,5 @@
 @extends('layouts/master')
+@section('title', 'ユーザ新規登録')
 
 @section('content')
 

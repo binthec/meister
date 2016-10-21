@@ -42,11 +42,11 @@ class UseRequestController extends Controller
 
 			$validator = Validator::make($request->all(), $this->rules);
 			$validator->after(function($validator) use ($resultRemainingDays, $user, $request) {
-				//申請日数が前借り可能日数すら上回っている時のエラー
+				//登録日数が前借り可能日数すら上回っている時のエラー
 				if (($user->getAdvancedPaidVacaion()->original_paid_vacation + $resultRemainingDays) < 0) {
 					$validator->errors()->add('daterange', '指定した日数は前借り可能日数を上回っています。日程を確認してください');
 				}
-				//申請日が入力されていない場合のエラー
+				//取得日が入力されていない場合のエラー
 				if ($validator->errors()->has('used_days')) {
 					$validator->errors()->add('daterange', $validator->errors()->first('used_days'));
 				}
@@ -66,7 +66,7 @@ class UseRequestController extends Controller
 			//計算後の有給残日数をレコードに保存
 			$user->setRemainingDays($resultRemainingDays);
 
-			//申請した有給の内容をUsedDaysテーブルに保存
+			//登録した有給の内容をUsedDaysテーブルに保存
 			$usedDays = new UsedDays;
 			$usedDays->user_id = $request->user_id;
 			$usedDays->from = $request->from;
@@ -78,12 +78,13 @@ class UseRequestController extends Controller
 			$usedDays->memo = $request->memo;
 			$usedDays->save();
 
-			\Session::flash('flashMessage', '有給消化申請が完了しました');
+			\Session::flash('flashMessage', '有給消化登録が完了しました');
 			return redirect('/dashboard'); //一覧ページに戻る
 		}
 
+		$usedDays = Auth::user()->usedDays()->orderBy('from', 'descs')->paginate(UsedDays::PAGE_NUM); //登録済み有給を取得
 		$validPaidVacations = Auth::user()->getValidPaidVacation(User::getTodayDate());
-		return view('use_request.add', compact('validPaidVacations'));
+		return view('use_request.add', compact('validPaidVacations', 'usedDays'));
 	}
 
 	public function edit(Request $request, $id)
@@ -91,14 +92,14 @@ class UseRequestController extends Controller
 
 		if ($request->isMethod('post')) {
 
-			//現在の申請内容を取得（＝これから更新するレコード）
+			//現在の登録内容を取得（＝これから更新するレコード）
 			$usedDays = UsedDays::find($id);
 			$user = User::find(Auth::user()->id);
 
 			//有給残日数の合計を取得
 			$sumRemainingDays = $user->getSumRemainingDays();
 
-			//1.既に申請している日数を、合計有給日数に加算して、元に戻す
+			//1.既に登録している日数を、合計有給日数に加算して、元に戻す
 			$sumRemainingDays += $usedDays->used_days;
 
 			//2.新規で登録する日数を、残日数から減算
@@ -108,17 +109,17 @@ class UseRequestController extends Controller
 			$resultRemainingDays = $user->getResultRemainingDays($resultRemainingDays);
 
 			$validator = Validator::make($request->all(), $this->rules);
-			$validator->after(function($validator) use ($resultRemainingDays, $user, $request) {
-				//申請日数が前借り可能日数すら上回っている時のエラー
+			$validator->after(function($validator) use ($resultRemainingDays, $user, $request, $usedDays) {
+				//登録日数が前借り可能日数すら上回っている時のエラー
 				if (($user->getAdvancedPaidVacaion()->original_paid_vacation + $resultRemainingDays) < 0) {
-					$validator->errors()->add('daterange', '申請日数が前借り可能日数を上回っています。申請日程を確認してください');
+					$validator->errors()->add('daterange', '登録日数が前借り可能日数を上回っています。登録日程を確認してください');
 				}
-				//申請日が入力されていない場合のエラー
+				//登録日が入力されていない場合のエラー
 				if ($validator->errors()->has('used_days')) {
 					$validator->errors()->add('daterange', $validator->errors()->first('used_days'));
 				}
 				//指定した期間が登録済み有給期間と重複している場合のエラー
-				if ($user->checkDateDuplication($request->from, $request->until)) {
+				if ($user->checkDateDuplication($request->from, $request->until, $usedDays)) {
 					$validator->errors()->add('daterange', '指定した期間は登録済みの有給期間と重複しています。日程を確認してください');
 				}
 			});
@@ -143,12 +144,12 @@ class UseRequestController extends Controller
 			$usedDays->memo = $request->memo;
 			$usedDays->save();
 
-			\Session::flash('flashMessage', '申請済有給の編集が完了しました');
+			\Session::flash('flashMessage', '登録済有給の編集が完了しました');
 			return redirect('/dashboard');
 		}
 
 		$useRequest = UsedDays::find($id);
-		$usedDays = Auth::user()->usedDays()->paginate(UsedDays::PAGE_NUM); //登録済み有給を取得
+		$usedDays = Auth::user()->usedDays()->orderBy('from', 'descs')->paginate(UsedDays::PAGE_NUM); //登録済み有給を取得
 		$validPaidVacations = Auth::user()->getValidPaidVacation(User::getTodayDate());
 		return view('use_request.edit', compact('useRequest', 'usedDays', 'validPaidVacations'));
 	}
@@ -159,14 +160,14 @@ class UseRequestController extends Controller
 		$usedDays->delete();
 
 		$user = User::find($usedDays->user_id);
-		//有給残日数に、削除する分の申請日数を加算して元に戻す
+		//有給残日数に、削除する分の登録日数を加算して元に戻す
 		$resultRemainingDays = $user->getSumRemainingDays() + $usedDays->used_days;
 		//前借りしている場合は、前借り分を計算後の残日数から減算する
 		$resultRemainingDays = $user->getResultRemainingDays($resultRemainingDays);
 		//最終的な計算後の残日数をもとに、有給残日数を計算してレコードを更新する
 		$user->setRemainingDays($resultRemainingDays);
 
-		\Session::flash('flashMessage', '申請済有給を削除しました');
+		\Session::flash('flashMessage', '登録済有給を削除しました');
 		return redirect('/dashboard'); //一覧ページに戻る
 	}
 
