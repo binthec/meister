@@ -45,27 +45,27 @@
 					</ul>
 
 					<div class="row">
-						<div class="col-lg-6{{ (Auth::user()->role !== 1)? ' col-lg-offset-3': '' }}">
+						<div class="col-lg-6">
 							<a href="{{ url('user/editProfile', $user->id) }}" class="btn btn-primary btn-block"><b>プロフィール変更</b></a>	
 						</div>
-						@if(Auth::user()->role === 1)
 						<div class="col-lg-6">
-							<a href="{{ url('user/editDate', $user->id) }}" class="btn btn-primary btn-block"><b>入社日変更</b></a>
+							<a href="{{ url('user/editPassword', $user->id) }}" class="btn btn-primary btn-block"><b>パスワード変更</b></a>	
 						</div>
-						@endif
-					</div>
-					<div class="row space-top20">
-						<div class="col-lg-6 col-lg-offset-3">
+					</div><!-- /.row -->
 
+					@if(Auth::user()->role === 1)
+					<div class="row space-top10">
+						<div class="col-lg-6 col-lg-offset-3">
+							<a href="{{ url('user/editDate', $user->id) }}" class="btn btn-warning btn-block"><b>入社日変更</b></a>
 						</div>
 					</div>
+					@endif
 
 				</div><!-- /.box-body -->
 			</div><!-- /.box -->
-		</div>
+		</div><!-- /col-lg-4 -->
 
 		<div class="col-lg-8">
-
 			<!-- Left col -->
 			<div class="box box-primary">
 				<div class="box-header">
@@ -115,8 +115,6 @@
 									@endif
 									日
 								</td>
-
-
 							</tr>
 
 							@if(Auth::user()->getUsedAdvancedDays())

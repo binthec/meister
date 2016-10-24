@@ -27,6 +27,7 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::match(['get', 'post'], '/user/register', 'Auth\AuthController@register');
 	Route::get('/user/profile/{id}', 'UserController@profile');
 	Route::match(['get', 'post'], '/user/editProfile/{id}', 'UserController@editPofile');
+	Route::match(['get', 'post'], '/user/editPassword/{id}', 'UserController@editPassword');
 	Route::match(['get', 'post'], '/user/editDate/{id}', 'UserController@editDate');
 	Route::get('/user/reset/{id}', 'UserController@reset');
 

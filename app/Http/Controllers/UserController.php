@@ -78,8 +78,6 @@ class UserController extends Controller
 						'last_name' => 'required|max:255',
 						'first_name' => 'required|max:255',
 						'email' => 'required|email|max:255|unique:users,email,' . $userId,
-						'password' => 'confirmed|min:8',
-						'password_confirmation' => 'required_with:password',
 							], self::MESSAGES);
 
 			if ($validator->fails()) {
@@ -104,6 +102,35 @@ class UserController extends Controller
 		}
 
 		return view('user.editProfile', compact('user'));
+	}
+
+	public function editPassword(Request $request, $userId)
+	{
+		$user = User::find($userId);
+
+		if ($request->isMethod('post')) {
+
+			//バリデーションエラーがあればエラーを返す
+			$validator = Validator::make($request->all(), [
+						'password' => 'required|min:8',
+						'password_confirmation' => 'required|same:password',
+							], self::MESSAGES);
+
+			if ($validator->fails()) {
+				return redirect()
+								->back()
+								->withErrors($validator)
+								->withInput();
+			}
+
+			$user->password = bcrypt($request->password);
+			$user->save();
+
+			\Session::flash('flashMessage', 'パスワードの変更を完了しました');
+			return redirect()->action('UserController@profile', $userId);
+		}
+
+		return view('user.editPassword', compact('user'));
 	}
 
 	/**
