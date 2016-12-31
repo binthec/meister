@@ -43,6 +43,19 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	/**
+	 * ユーザの名字と名前のセットを返すメソッド
+	 *  
+	 * @param str $id
+	 * @return str
+	 */
+	public static function getUserName($id)
+	{
+		$lastNames = User::all()->pluck('last_name', 'id');
+		$firstNames = User::all()->pluck('first_name', 'id');
+		return $lastNames->get($id) . ' ' . $firstNames->get($id);
+	}
+
+	/**
 	 * 引数がtrueだったらカーボンのオブジェクトを返す。引数なし、またはfalseだったら日付 'Y-m-d' を返す
 	 * 
 	 * @param type $bool

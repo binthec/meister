@@ -9,6 +9,7 @@
 
 <section class="content">
 
+
 	<div class="box box-primary">
 		<div class="box-header with-border">
 			<h3 class="box-title">ユーザ一覧</h3>

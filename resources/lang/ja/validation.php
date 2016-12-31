@@ -110,5 +110,9 @@ return [
 		'memo' => '備考',
 		'used_days' => '有給登録日数',
 		'date_of_entering' => '入社日',
+		'serial_id' => 'シリアルナンバー',
+		'core' => 'コア数',
+		'memory' => 'メモリ',
+		'size' => 'サイズ',
 	],
 ];

@@ -18,14 +18,13 @@ class Device extends Model
 	const NOTE_PC = '1';
 	const DESKTOP_PC = '2';
 	const TABLET = '20';
-
-//	const DISPLAY = '40';
+	const DISPLAY = '40';
 
 	public static $deviceCategories = [
 		self::NOTE_PC => 'ノートパソコン',
 		self::DESKTOP_PC => 'デスクトップパソコン',
 		self::TABLET => 'タブレット',
-//		self::DISPLAY => 'ディスプレイ',
+		self::DISPLAY => 'ディスプレイ',
 	];
 	public static $deviceIcon = [
 		self::NOTE_PC => 'fa-laptop',
@@ -58,5 +57,40 @@ class Device extends Model
 		self::DEVICE_UNUSED => '使用されていません',
 		self::DISPOSAL => '廃棄済',
 	];
+
+	public static function getSearchQuery(array $data)
+	{
+		//queryインスタンスを生成
+		$query = Device::query();
+
+		//検索欄で文字が渡されればクエリに条件を追加
+		if (!empty($data['category'])) {
+			$query->where('category', $data['category']);
+		}
+		if (!empty($data['os'])) {
+			$query->where('os', $data['os']);
+		}
+		if (!empty($data['name'])) {
+			$query->where('name', 'like', '%' . $data['name'] . '%');
+		}
+		if (!empty($data['after'])) { //複雑な条件を指定する
+			$query->where('bought_at', '>=', User::getStdDate($data['after']));
+		}
+		if (!empty($data['before'])) { //複雑な条件を指定する
+			$query->where('bought_at', '<=', User::getStdDate($data['before']));
+		}
+		if (!empty($data['user_name'])) {
+			$users = User::where(function($query) use ($data) {
+						$query->orWhere('last_name', 'like', $data['user_name'])
+								->orWhere('first_name', 'like', $data['user_name']);
+					})->get();
+			$query->whereIn('user_id', $users->pluck('id'));
+		}
+		if (!isset($data['searchInactive'])) {
+			$query->where('status', '<>', self::DISPOSAL);
+		}
+
+		return $query;
+	}
 
 }

@@ -13,80 +13,16 @@ use App\Device;
 class DeviceController extends Controller
 {
 
-	public function index()
+	const PAGINATION = 10;
+
+	public function index(Request $request)
 	{
-
-		$num = 10; //1ページに表示するレコード数
-
-		if (Input::exists('reset')) { //リセットボタンが押された場合
-			$devices = Device::orderBy('bought_at', 'desc')->paginate($num);
-			$category = 0;
-			$os = '';
-			$name = '';
-			$after = '';
-			$before = '';
-			$user_id = null;
-			$disposal = null;
-		} else {
-
-			//検索ボタンが押された場合、検索欄の値を取得
-			$category = Input::get('category');
-			$os = Input::get('os');
-			$name = Input::get('name');
-			$after = (Input::get('after')) ? User::getStdDate(Input::get('after')) : '';
-			$before = (Input::get('before')) ? User::getStdDate(Input::get('before')) : '';
-			$user_id = Input::get('user_id');
-			$disposal = Input::get('disposal');
-
-			//queryインスタンスを生成
-			$query = Device::query();
-
-			//検索欄で文字が渡されればクエリに条件を追加
-			if (!empty($category)) {
-				$query->where('category', '=', $category);
-			}
-			if (!empty($os)) {
-				$query->where('os', '=', $os);
-			}
-			if (!empty($name)) {
-				$query->where('name', 'like', '%' . $name . '%');
-			}
-			if (!empty($after)) { //複雑な条件を指定する
-				$query->where('bought_at', '>=', $after);
-			}
-			if (!empty($before)) { //複雑な条件を指定する
-				$query->where('bought_at', '<=', $before);
-			}
-			if (!empty($user_id)) {
-				$query->where('user_id', '=', $user_id);
-			}
-			if ($disposal == 1) {
-				$query->where('status', '=', 99);
-			}
-			//指定した条件に当てはまるレコードをpaginate
-			$devices = $query->paginate($num);
-		}
-
-		$users = User::all()->pluck('last_name', 'id');
-		return view('device.index', compact('devices', 'users'))
-						->with('category', $category)
-						->with('os', $os)
-						->with('name', $name)
-						->with('after', $after)
-						->with('before', $before)
-						->with('user_id', $user_id)
-						->with('disposal', $disposal);
+		$query = Device::getSearchQuery($request->input());
+		$devices = $query->paginate(self::PAGINATION);
+		return view('device.index')
+						->with('devices', $devices)
+						->with($request->input());
 	}
-
-	const MESSAGES = [
-		'name.max' => '機器名は :max 文字以内で入力してください',
-		'serial_id.required' => 'シリアルIDは必須項目です',
-		'core.max' => 'コア数は :max 文字以内で入力してください',
-		'core.integer' => 'コア数は数値で入力してください',
-		'memory.max' => 'メモリは :max 文字以内で入力してください',
-		'memory.integer' => 'メモリは数値で入力してください',
-		'size.max' => 'サイズは :max 文字以内で入力してください',
-	];
 
 	public function add(Request $request)
 	{

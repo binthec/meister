@@ -19,56 +19,56 @@
 		</div>
 
 		{!! Form::open(['url' => '/device', 'method' => 'GET', 'class' => 'form-horizontal']) !!}
-		{{ csrf_field() }}
 		<div class="box-body">
 
 			<div class="form-group">
 				<label for="category" class="col-md-2 control-label">分類</label>
 				<div class="col-md-3">
-					{!! Form::select('category', App\Device::$deviceCategories, $category,['class' => 'form-control', 'placeholder' => '']) !!}
+					{!! Form::select('category', App\Device::$deviceCategories, Request::input('category'),['class' => 'form-control', 'placeholder' => '']) !!}
 				</div>
 
 				<label for="os" class="col-md-2 control-label">OS</label>
 				<div class="col-md-3">
-					{!! Form::select('os', App\Device::$osLabels, $os,['class' => 'form-control', 'placeholder' => '']) !!}
+					{!! Form::select('os', App\Device::$osLabels, Request::input('os'),['class' => 'form-control', 'placeholder' => '']) !!}
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label for="name" class="col-md-2 control-label">機器名</label>
 				<div class="col-md-10">
-					{!! Form::text('name', $name, ['class' => 'form-control']) !!}
+					{!! Form::text('name', Request::input('name'), ['class' => 'form-control']) !!}
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label for="bought_at" class="col-md-2 control-label">購入日</label>
 				<div class="col-md-5 form-inline">
-					{!! Form::text('after', ($after)? App\User::getJaDate($after): '', ['class' => 'form-control use_datepicker']) !!}
+					{!! Form::text('after', Request::input('after')? App\User::getJaDate(Request::input('after')): '', ['class' => 'form-control use_datepicker']) !!}
 					&ensp;〜&ensp;
-					{!! Form::text('before', ($before)? App\User::getJaDate($before): '', ['class' => 'form-control use_datepicker']) !!}
+					{!! Form::text('before', Request::input('before')? App\User::getJaDate(Request::input('before')): '', ['class' => 'form-control use_datepicker']) !!}
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label for="user_id" class="col-md-2 control-label">使用者</label>
 				<div class="col-md-4">
-					{!! Form::select('user_id', $users, $user_id, ['class' => 'form-control', 'placeholder' => '']) !!}
+					{!! Form::text('user_name', Request::input('user_name'), ['class' => 'form-control', 'placeholder' => '使用者名の like 検索']) !!}
 				</div>
 
 				<label for="disposal" class="col-md-2 control-label">廃棄</label>
 				<div class="col-md-4">
 					<div class="checkbox">
 						<label>
-							{!! Form::checkbox('disposal', 1, ($disposal == 1)? true: false) !!} 廃棄済み
+							{!! Form::checkbox('searchInactive', 1, Request::input('searchInactive') == 1? true: false) !!} 廃棄済み
 						</label>
 					</div>
 				</div>
 			</div>
+
 		</div><!-- /.box-body -->
 
 		<div class="box-footer">
-			<button class="btn btn-warning" type="submit" name="reset">リセット</button>
+			<a href="{{ url('/device') }}" class="btn btn-warning">リセット</a>
 			<button class="btn btn-primary pull-right" type="submit" name="search"> 検&emsp;索 </button>
 		</div>
 		{!! Form::close() !!}
@@ -105,7 +105,7 @@
 						<td>{{ App\Device::$osLabels[$device->os] }}</td>
 						<td>{{ $device->name }}</td>
 						<td>{{ App\User::getJaDate($device->bought_at) }}</td>
-						<td>{{ ($device->user_id) ? $users[$device->user_id] :'なし' }}</td>
+						<td>{{ ($device->user_id) ? App\User::getUserName($device->user_id) :'なし' }}</td>
 						<td>{{ $device->memory }} GB</td>
 						<td>{{ $device->size }} インチ</td>
 						<td class="text-red">{{ ($device->status == 99) ? '廃棄済' : '' }}</td>
@@ -127,7 +127,7 @@
 											<ul class="nav nav-stacked" id="deviceDetail">
 												<li>
 													<a href="#">
-														<span class="left">{{ ($device->user_id) ? $users[$device->user_id] :'なし' }} </span>
+														<span class="left">{{ $device->user_id ? App\User::getUserName($device->user_id)  :'なし' }} </span>
 														<span class="pull-right text-blue">使用者</span>
 													</a>
 												</li>
@@ -160,9 +160,6 @@
 												@endif
 											</ul>
 										</div>
-										<!--										<div class="modal-footer">
-																					<button type="button" class="btn btn-primary" data-dismiss="modal">閉じる</button>
-																				</div>-->
 									</div>
 								</div>
 							</div>
