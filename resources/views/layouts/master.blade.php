@@ -107,7 +107,7 @@
 							</a>
 							<ul class="treeview-menu">
 								<li class="{{ isActiveUrl('user') }}"><a href="/user"><i class="fa fa-circle-o"></i> ユーザ一覧</a></li>
-								<li class="{{ isActiveUrl('user/register') }}"><a href="/user/register"><i class="fa fa-circle-o"></i> ユーザ新規登録</a></li>
+								<li class="{{ isActiveUrl('user/register') }}"><a href="{{ url('/user/register') }}"><i class="fa fa-circle-o"></i> ユーザ新規登録</a></li>
 							</ul>
 						</li>
 						@endif
@@ -122,8 +122,10 @@
 			<div class="content-wrapper">
 
 				{{-- フラッシュメッセージの表示 --}}
-				@if (Session::has('flashMessage'))
-				<div class="alert alert-primary flashMessage">{{ Session::get('flashMessage') }}</div>
+				@if(session('flashMsg'))
+				<div class="alert alert-primary flashMsg">{{ session('flashMsg') }}</div>
+				@elseif(session('flashErrMsg'))
+				<div class="alert alert-danger flashMsg">{{ session('flashErrMsg') }}</div>
 				@endif
 
 				@yield('content')

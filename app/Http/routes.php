@@ -1,16 +1,5 @@
 <?php
 
-/*
-  |--------------------------------------------------------------------------
-  | Application Routes
-  |--------------------------------------------------------------------------
-  |
-  | Here is where you can register all of the routes for an application.
-  | It's a breeze. Simply tell Laravel the URIs it should respond to
-  | and give it the controller to call when that URI is requested.
-  |
- */
-
 // 認証のルート定義
 Route::get('/', 'Auth\AuthController@getlogin');
 Route::get('/login', 'Auth\AuthController@getLogin');
@@ -23,13 +12,15 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::get('/logout', 'Auth\AuthController@getLogout');
 
 	//ユーザ管理
-	Route::get('/user', 'UserController@index');
-	Route::match(['get', 'post'], '/user/register', 'Auth\AuthController@register');
-	Route::get('/user/profile/{id}', 'UserController@profile');
-	Route::match(['get', 'post'], '/user/editProfile/{id}', 'UserController@editPofile');
-	Route::match(['get', 'post'], '/user/editPassword/{id}', 'UserController@editPassword');
-	Route::match(['get', 'post'], '/user/editDate/{id}', 'UserController@editDate');
+
+	Route::get('/user/register', 'Auth\AuthController@getRegister');
+	Route::post('/user/register', 'Auth\AuthController@postRegister');
+	Route::get('/user/password/{id}/edit', 'UserController@passwordEdit');
+	Route::put('/user/password/{id}', 'UserController@passwordUpdate');
+	Route::get('/user/dateofentering/{id}/edit', 'UserController@dateEdit');
+	Route::put('/user/dateofentering/{id}', 'UserController@dateUpdate');
 	Route::get('/user/reset/{id}', 'UserController@reset');
+	Route::resource('/user', 'UserController');
 
 	//有給消化登録
 	Route::match(['get', 'post'], '/use_request', 'UseRequestController@index');

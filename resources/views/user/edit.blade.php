@@ -18,11 +18,11 @@
 		</div>
 		<div class="box-body">
 
-			{!! Form::open(['method' => 'post', 'url' => ['user/editProfile', $user->id], 'class' => 'form-horizontal']) !!}
+			{!! Form::open(['method' => 'put', 'action' => ['UserController@update', $user->id], 'class' => 'form-horizontal']) !!}
 			{{ csrf_field() }}
 
 			<div class="form-group">
-				<label for="name" class="col-md-2 control-label">名前 </label>
+				<label for="name" class="col-md-2 control-label">名前 <span class="text-danger">*</span></label>
 				<div class="col-md-2">
 					{!! Form::text('last_name',$user->last_name, ['class' => 'form-control', 'placeholder' => '名字']) !!}
 					@if($errors->has('last_name'))
@@ -39,13 +39,10 @@
 					</span>
 					@endif
 				</div>
-				<div class="col-md-2">
-					<span class="label label-danger">必須</span>
-				</div>
 			</div>
 
 			<div class="form-group">
-				<label for="ID" class="col-md-2 control-label">メールアドレス</label>
+				<label for="ID" class="col-md-2 control-label">メールアドレス <span class="text-danger">*</span></label>
 				<div class="col-md-6">
 					{!! Form::email('email',$user->email, ['class' => 'form-control', 'placeholder' => 'メールアドレス']) !!}
 					@if($errors->has('email'))
@@ -54,7 +51,6 @@
 					</span>
 					@endif
 				</div>
-				<span class="label label-danger">必須</span>
 			</div>
 
 			<div class="form-group">
@@ -75,33 +71,6 @@
 				<label for="ID" class="col-md-2 control-label">備考</label>
 				<div class="col-md-8">
 					{!! Form::textarea('memo', $user->memo, ['class' => 'form-control', 'placeholder' => 'なし', 'rows' => 5]) !!}
-				</div>
-			</div>
-
-			<hr>
-
-			<div class="form-group">
-				<label for="ID" class="col-md-2 control-label">パスワード</label>
-				<div class="col-md-4">
-					{!! Form::password('password', ['class' => 'form-control']) !!}
-					※変更の場合のみ入力してください
-					@if($errors->has('password'))
-					<span class="help-block">
-						<strong class="text-danger">{{ $errors->first('password') }}</strong>
-					</span>
-					@endif
-				</div>
-			</div>
-
-			<div class="form-group">
-				<label for="password_confirmation" class="col-md-2 control-label">パスワード再入力</label>
-				<div class="col-md-4">
-					{!! Form::password('password_confirmation', ['class' => 'form-control']) !!}
-					@if($errors->has('password_confirmation'))
-					<span class="help-block">
-						<strong class="text-danger">{{ $errors->first('password_confirmation') }}</strong>
-					</span>
-					@endif
 				</div>
 			</div>
 

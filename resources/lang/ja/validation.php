@@ -109,5 +109,6 @@ return [
 		'content' => '内容',
 		'memo' => '備考',
 		'used_days' => '有給登録日数',
+		'date_of_entering' => '入社日',
 	],
 ];

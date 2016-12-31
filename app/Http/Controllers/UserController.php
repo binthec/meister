@@ -7,6 +7,8 @@ use App\Http\Requests;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Validator;
 use Illuminate\Support\Facades\Route;
 use App\User;
@@ -18,22 +20,6 @@ use Carbon\Carbon;
 class UserController extends Controller
 {
 
-	const MESSAGES = [
-		'last_name.required' => '名字は必須項目です',
-		'last_name.max' => '苗字は最大 :max 文字以内で入力してください',
-		'first_name.required' => '名前は必須項目です',
-		'first_name.max' => '名前は最大 :max 文字以内で入力してください',
-		'email.required' => 'Eメールアドレスを入力してください',
-		'email.email' => '正しいメールアドレスを入力してください',
-		'email.max' => 'メールアドレスは :max 文字以内で入力してください',
-		'email.unique' => '入力したメールアドレスは既に使われています',
-		'password.required' => 'パスワードは必須項目です',
-		'password.min' => 'パスワードは :min 字以上で入力してください',
-		'password.confirmed' => '入力したパスワードが一致しません',
-		'password_confirmation.required_with' => '確認用パスワードを入力してください',
-		'date_of_entering.required' => '入社日は必須項目です',
-	];
-
 	protected $today;
 
 	public function __construct()
@@ -41,6 +27,11 @@ class UserController extends Controller
 		$this->today = Carbon::now()->toDateString(); //今日の日付を取得;
 	}
 
+	/**
+	 * 一覧
+	 * 
+	 * @return ユーザ一覧画面
+	 */
 	public function index()
 	{
 		$users = User::all();
@@ -48,45 +39,56 @@ class UserController extends Controller
 	}
 
 	/**
-	 * ユーザ個人のプロフィール画面へ遷移
+	 * ユーザ詳細
 	 * 
-	 * @param type $userId
+	 * @param str $id
+	 * @return ユーザ詳細画面
 	 */
-	public function profile($userId)
+	public function show($id)
 	{
-		$user = User::find($userId);
+		$user = User::find($id);
 		$validPaidVacations = $user->getValidPaidVacation(User::getTodayDate());
 		$usedDays = $user->usedDays()->orderBy('from', 'descs')->paginate(UsedDays::PAGE_NUM); //登録済み有給を取得
-		return view('user.profile', compact('user', 'validPaidVacations', 'usedDays'));
+		return view('user.show', compact('user', 'validPaidVacations', 'usedDays'));
 	}
 
 	/**
-	 * ユーザの詳細情報変更メソッド
+	 * ユーザ情報編集画面表示
+	 * 
+	 * @param str $id
+	 * @return ユーザ情報編集画面
+	 */
+	public function edit($id)
+	{
+		$user = User::find($id);
+		return view('user.edit', compact('user'));
+	}
+
+	/**
+	 * 編集実行
 	 * 
 	 * @param Request $request
-	 * @param type $id
-	 * @return ユーザのプロフィール画面へ遷移
+	 * @param str $id
+	 * @return ユーザ詳細画面へ戻る
 	 */
-	public function editPofile(Request $request, $userId)
+	public function update(Request $request, $id)
 	{
-		$user = User::find($userId);
+		$validator = Validator::make($request->all(), [
+					'last_name' => 'required|max:255',
+					'first_name' => 'required|max:255',
+					'email' => 'required|email|max:255|unique:users,email,' . $id,
+		]);
+		if ($validator->fails()) {
+			return redirect()
+							->back()
+							->withErrors($validator)
+							->withInput();
+		}
 
-		if ($request->isMethod('post')) {
+		DB::beginTransaction();
 
-			//バリデーションエラーがあればエラーを返す
-			$validator = Validator::make($request->all(), [
-						'last_name' => 'required|max:255',
-						'first_name' => 'required|max:255',
-						'email' => 'required|email|max:255|unique:users,email,' . $userId,
-							], self::MESSAGES);
-
-			if ($validator->fails()) {
-				return redirect()
-								->back()
-								->withErrors($validator)
-								->withInput();
-			}
-
+		try {
+			$user = User::findOrFail($id);
 			$user->last_name = $request->last_name;
 			$user->first_name = $request->first_name;
 			$user->email = $request->email;
@@ -96,61 +98,96 @@ class UserController extends Controller
 			$user->retire_flg = (isset($request->retire_flg)) ? $request->retire_flg : null;
 			$user->memo = $request->memo;
 			$user->save();
+			DB::commit();
 
-			\Session::flash('flashMessage', 'ユーザ情報の変更を完了しました');
-			return redirect()->action('UserController@profile', $userId);
+			return redirect()->action('UserController@show', $id)->with('flashMsg', 'ユーザ情報の変更を完了しました。');
+		} catch (\Exception $e) {
+			DB::rollback();
+			Log::error($e->getMessage());
+			return redirect()->action('UserController@show', $id)->with('flashErrMsg', 'ユーザ情報の変更に失敗しました。');
 		}
-
-		return view('user.editProfile', compact('user'));
-	}
-
-	public function editPassword(Request $request, $userId)
-	{
-		$user = User::find($userId);
-
-		if ($request->isMethod('post')) {
-
-			//バリデーションエラーがあればエラーを返す
-			$validator = Validator::make($request->all(), [
-						'password' => 'required|min:8',
-						'password_confirmation' => 'required|same:password',
-							], self::MESSAGES);
-
-			if ($validator->fails()) {
-				return redirect()
-								->back()
-								->withErrors($validator)
-								->withInput();
-			}
-
-			$user->password = bcrypt($request->password);
-			$user->save();
-
-			\Session::flash('flashMessage', 'パスワードの変更を完了しました');
-			return redirect()->action('UserController@profile', $userId);
-		}
-
-		return view('user.editPassword', compact('user'));
 	}
 
 	/**
-	 * 入社日変更メソッド
+	 * パスワード変更画面
 	 * 
 	 * @param Request $request
-	 * @param type $id
+	 * @param str $id
+	 * @return パスワード変更画面
 	 */
-	public function editDate(Request $request, $userId)
+	public function passwordEdit(Request $request, $id)
 	{
-		$user = User::find($userId);
+		$user = User::find($id);
+		return view('user.password_edit', compact('user'));
+	}
 
-		if ($request->isMethod('post')) {
+	/**
+	 * パスワード変更実行
+	 * 
+	 * @param Request $request
+	 * @param str $id
+	 * @return ユーザ詳細画面に戻る
+	 */
+	public function passwordUpdate(Request $request, $id)
+	{
+		$validator = Validator::make($request->all(), [
+					'password' => 'required|min:8',
+					'password_confirmation' => 'required|same:password',
+		]);
+		if ($validator->fails()) {
+			return redirect()
+							->back()
+							->withErrors($validator)
+							->withInput();
+		}
 
+		DB::beginTransaction();
+
+		try {
+			$user = User::findOrFail($id);
+			$user->password = bcrypt($request->password);
+			$user->save();
+			DB::commit();
+
+			return redirect()->action('UserController@show', $id)->with('flashMsg', 'パスワードの変更を完了しました');
+		} catch (\Exception $e) {
+			DB::rollback();
+			Log::error($e->getMessage());
+			return redirect()->action('UserController@show', $id)->with('flashErrMsg', 'パスワードの変更に失敗しました。');
+		}
+	}
+
+	/**
+	 * 入社日変更
+	 * 
+	 * @param str $id
+	 * @return 入社日変更画面
+	 */
+	public function dateEdit($id)
+	{
+		$user = User::find($id);
+		return view('user.date_edit', compact('user'));
+	}
+
+	/**
+	 * 入社日変更実行
+	 * 
+	 * @param Request $request
+	 * @param str $id
+	 * @return ユーザ詳細画面に戻る
+	 */
+	public function dateUpdate(Request $request, $id)
+	{
+		DB::beginTransaction();
+
+		try {
+			$user = User::findOrFail($id);
 			$user->date_of_entering = User::getStdDate($request->date_of_entering); //入社日
 			$user->base_date = User::getStdDate($request->base_date); //起算日
 			$user->save();
 
 			//1.編集するユーザIDを持つ有給レコードを物理削除
-			PaidVacation::where('user_id', $userId)->delete();
+			PaidVacation::where('user_id', $id)->delete();
 
 			//2.有給を最初から再計算して、新規に、現在までの有給レコード生成
 			$user->setOriginalPaidVacations();
@@ -158,18 +195,25 @@ class UserController extends Controller
 			//3.既に登録されている有給消化登録の日数を有給レコードから減算
 			$user->recalcRemainingDays();
 
-			\Session::flash('flashMessage', '入社日の変更を完了しました');
-			return redirect()->action('UserController@profile', $userId);
+			DB::commit();
+			return redirect()->action('UserController@show', $id)->with('flashMsg', '入社日の変更を完了しました');
+		} catch (\Exception $e) {
+			DB::rollback();
+			Log::error($e->getMessage());
+			return redirect()->action('UserController@show', $id)->with('flashErrMsg', '入社日の変更に失敗しました。');
 		}
-
-		return view('user.editDate', ['user' => $user]);
 	}
 
-	public function reset($userId = null)
+	/**
+	 * 
+	 * @param str $userId
+	 * @return type
+	 */
+	public function reset($id = null)
 	{
-		$user = User::find($userId);
+		$user = User::find($id);
 
-		$paid_vacations = PaidVacation::where('user_id', $userId)->get(); //編集するユーザIDを持つ有給レコードを取得
+		$paid_vacations = PaidVacation::where('user_id', $id)->get(); //編集するユーザIDを持つ有給レコードを取得
 		foreach ($paid_vacations as $paid_vacation) { //レコードが存在する場合、一旦物理削除
 			$paid_vacation->delete();
 		}
@@ -177,9 +221,9 @@ class UserController extends Controller
 		//有給の再計算、データ生成後にレコード保存
 		$user->setOriginalPaidVacations();
 
-		$usedDays = UsedDays::where('user_id', $userId)->delete();
+		$usedDays = UsedDays::where('user_id', $id)->delete();
 
-		\Session::flash('flashMessage', 'リセット完了');
+		\Session::flash('flashMsg', 'リセット完了');
 		return redirect()->back(); //再計算後はdashboardに戻る
 	}
 

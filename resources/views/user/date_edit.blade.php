@@ -17,7 +17,7 @@
 			<h3 class="box-title">入社日編集</h3>
 		</div>
 		<div class="box-body">
-			{!! Form::open(['method' => 'post', 'url' => ['user/editDate', $user->id], 'class' => 'form-horizontal']) !!}
+			{!! Form::open(['method' => 'put', 'action' => ['UserController@dateUpdate', $user->id], 'class' => 'form-horizontal']) !!}
 
 			{{ csrf_field() }}
 

@@ -18,13 +18,13 @@
 		</div>
 		<div class="box-body">
 
-			{!! Form::open(['method' => 'post', 'url' => ['user/editPassword', $user->id], 'class' => 'form-horizontal']) !!}
+			{!! Form::open(['method' => 'put', 'action' => ['UserController@passwordUpdate', $user->id], 'class' => 'form-horizontal']) !!}
 			{{ csrf_field() }}
 
 			<div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-				<label for="ID" class="col-md-2 control-label">パスワード</label>
+				<label for="ID" class="col-md-2 control-label">パスワード <span class="text-danger">*</span></label>
 				<div class="col-md-4">
-					{!! Form::password('password', ['class' => 'form-control']) !!}
+					{!! Form::password('password', ['class' => 'form-control', 'placeholder' => '8文字以上の半角英数字']) !!}
 					@if($errors->has('password'))
 					<span class="help-block">
 						<strong class="text-danger">{{ $errors->first('password') }}</strong>
@@ -34,9 +34,9 @@
 			</div>
 
 			<div class="form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
-				<label for="password_confirmation" class="col-md-2 control-label">パスワード再入力</label>
+				<label for="password_confirmation" class="col-md-2 control-label">パスワード再入力 <span class="text-danger">*</span></label>
 				<div class="col-md-4">
-					{!! Form::password('password_confirmation', ['class' => 'form-control']) !!}
+					{!! Form::password('password_confirmation', ['class' => 'form-control', 'placeholder' => 'パスワードをもう一度入力してください']) !!}
 					@if($errors->has('password_confirmation'))
 					<span class="help-block">
 						<strong class="text-danger">{{ $errors->first('password_confirmation') }}</strong>

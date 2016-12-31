@@ -78,7 +78,7 @@ class UseRequestController extends Controller
 			$usedDays->memo = $request->memo;
 			$usedDays->save();
 
-			\Session::flash('flashMessage', '有給消化登録が完了しました');
+			\Session::flash('flashMsg', '有給消化登録が完了しました');
 			return redirect('/dashboard'); //一覧ページに戻る
 		}
 
@@ -144,7 +144,7 @@ class UseRequestController extends Controller
 			$usedDays->memo = $request->memo;
 			$usedDays->save();
 
-			\Session::flash('flashMessage', '登録済有給の編集が完了しました');
+			\Session::flash('flashMsg', '登録済有給の編集が完了しました');
 			return redirect('/dashboard');
 		}
 
@@ -167,7 +167,7 @@ class UseRequestController extends Controller
 		//最終的な計算後の残日数をもとに、有給残日数を計算してレコードを更新する
 		$user->setRemainingDays($resultRemainingDays);
 
-		\Session::flash('flashMessage', '登録済有給を削除しました');
+		\Session::flash('flashMsg', '登録済有給を削除しました');
 		return redirect('/dashboard'); //一覧ページに戻る
 	}
 

@@ -2,17 +2,14 @@
 @section('title', 'ユーザプロフィール')
 
 @section('content')
-<!-- Content Header (Page header) -->
 <section class="content-header">
 	<h1>ユーザ管理</h1>
 </section>
 
-<!-- Main content -->
 <section class="content" id="profile">
 	<div class="row">
 
 		<div class="col-lg-4">
-			<!-- Profile Image -->
 			<div class="box box-primary">
 				<div class="box-body box-profile">
 					<div class="icon text-center">
@@ -46,17 +43,17 @@
 
 					<div class="row">
 						<div class="col-lg-6">
-							<a href="{{ url('user/editProfile', $user->id) }}" class="btn btn-primary btn-block"><b>プロフィール変更</b></a>	
+							<a href="{{ action('UserController@edit', $user->id) }}" class="btn btn-primary btn-block"><b>プロフィール変更</b></a>	
 						</div>
 						<div class="col-lg-6">
-							<a href="{{ url('user/editPassword', $user->id) }}" class="btn btn-primary btn-block"><b>パスワード変更</b></a>	
+							<a href="{{ action('UserController@passwordEdit', $user->id) }}" class="btn btn-primary btn-block"><b>パスワード変更</b></a>	
 						</div>
 					</div><!-- /.row -->
 
 					@if(Auth::user()->role === 1)
 					<div class="row space-top10">
 						<div class="col-lg-6 col-lg-offset-3">
-							<a href="{{ url('user/editDate', $user->id) }}" class="btn btn-warning btn-block"><b>入社日変更</b></a>
+							<a href="{{ action('UserController@dateEdit', $user->id) }}" class="btn btn-warning btn-block"><b>入社日変更</b></a>
 						</div>
 					</div>
 					@endif

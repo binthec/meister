@@ -3,21 +3,16 @@
 
 @section('content')
 
-<!-- Content Header (Page header) -->
 <section class="content-header">
-	<h1>
-		ユーザ管理
-	</h1>
+	<h1>ユーザ管理</h1>
 </section>
 
-<!-- Main content -->
 <section class="content">
 
 	<div class="box box-primary">
 		<div class="box-header with-border">
 			<h3 class="box-title">ユーザ一覧</h3>
 		</div>
-		<!-- /.box-header -->
 		<div class="box-body">
 			<table id="users" class="table table-bordered table-striped">
                 <thead>
@@ -38,7 +33,7 @@
 						<td>{{ App\User::$roleLabels[$user->role] }}</td>
 						<td>{{ App\User::getJaDate($user->date_of_entering) }}</td>
 						<td class="font18">{{ $user->getSumRemainingDays() }}</td>
-						<td><a href="{{ url('user/profile', $user->id) }}" class="btn btn-primary">詳細表示</a></td>
+						<td><a href="{{ action('UserController@show', $user->id) }}" class="btn btn-primary">詳細表示</a></td>
 					</tr>
 					@endforeach
                 </tbody>

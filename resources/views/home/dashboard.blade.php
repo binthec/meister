@@ -23,7 +23,7 @@
 				<div class="icon">
 					<i class="ion ion-person"></i>
 				</div>
-				<a href="{{ url('user/profile', Auth::user()->id) }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+				<a href="{{ action('UserController@show', Auth::user()->id) }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
 			</div>
 		</div><!-- ./col -->
 

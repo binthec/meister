@@ -121,7 +121,7 @@ class DeviceController extends Controller
 			$device->size = $request->size;
 			$device->save();
 
-			\Session::flash('flashMessage', 'デバイスの新規登録が完了しました');
+			\Session::flash('flashMsg', 'デバイスの新規登録が完了しました');
 			return redirect('/device');
 		}
 
@@ -155,7 +155,7 @@ class DeviceController extends Controller
 			$device->size = $request->size;
 			$device->save();
 
-			\Session::flash('flashMessage', 'デバイスの編集が完了しました');
+			\Session::flash('flashMsg', 'デバイスの編集が完了しました');
 			return redirect('/device');
 		}
 
