@@ -13,9 +13,12 @@
 		<div class="box-header with-border">
 			<h3 class="box-title">ユーザ一覧</h3>
 		</div>
+
+		@if($users->count() > 0)
+
 		<div class="box-body">
 			<table id="users" class="table table-bordered table-striped">
-                <thead>
+                <thead class="bg-primary">
 					<tr>
 						<th>名前</th>
 						<th>メールアドレス</th>
@@ -37,35 +40,18 @@
 					</tr>
 					@endforeach
                 </tbody>
-                <tfoot>
-					<tr>
-						<th>名前</th>
-						<th>メールアドレス</th>
-						<th>U9サイト内権限</th>
-						<th>入社日</th>
-						<th>有給残日数</th>
-						<th>操作</th>
-					</tr>
-                </tfoot>
 			</table>
 		</div><!-- /.box-body -->
+		<div class="box-footer text-center">
+			{!! $users->render() !!}
+		</div>
+
+		@else
+		<div class="box-body">
+			<p>ユーザが存在しません。</p>
+		</div>
+		@endif
 	</div><!-- /.box -->
 
 </section>
-@endsection
-
-@section('js')
-@include('elements.for_datatables')
-<script>
-    $(function () {
-        $("#users").DataTable({
-            "stateSave": true, // 状態を保存する機能をつける
-            "order": [[3, 'asc']], //初期表示の際はメアドの昇順
-            "columnDefs": [{
-                    "orderable": false,
-                    "targets": [4] //操作カラムのソートを不可に設定
-                }],
-        });
-    });
-</script>
 @endsection

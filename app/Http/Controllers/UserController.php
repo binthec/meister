@@ -22,6 +22,8 @@ class UserController extends Controller
 
 	protected $today;
 
+	const PAGINATION = 10;
+
 	public function __construct()
 	{
 		$this->today = Carbon::now()->toDateString(); //今日の日付を取得;
@@ -34,7 +36,7 @@ class UserController extends Controller
 	 */
 	public function index()
 	{
-		$users = User::all();
+		$users = User::orderBy('last_name', 'asc')->paginate(self::PAGINATION);
 		return view('user.index', ['users' => $users, 'today' => $this->today]);
 	}
 
