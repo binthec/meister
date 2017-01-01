@@ -31,11 +31,11 @@
 			</div>
 
 			<div class="form-group">
-				<label for="disposal" class="col-md-2 control-label">退社済</label>
+				<label for="disposal" class="col-md-2 control-label">退職済</label>
 				<div class="col-md-3">
 					<div class="checkbox">
 						<label>
-							{!! Form::checkbox('searchInactive', 1, Request::input('searchInactive') == 1? true: false) !!} 退社済みも含める
+							{!! Form::checkbox('searchInactive', 1, Request::input('searchInactive') == 1? true: false) !!} 退職済みも含める
 						</label>
 					</div>
 				</div>
@@ -78,7 +78,7 @@
 						<td>{{ App\User::$roleLabels[$user->role] }}</td>
 						<td>{{ App\User::getJaDate($user->date_of_entering) }}</td>
 						<td class="{{ ($user->status == App\User::RETIRED)? 'text-red': '' }}">{{ App\User::$status[$user->status] }}</td>
-						<td class="font18">{{ $user->getSumRemainingDays() }}</td>
+						<td class="font18">{{ ($user->status == App\User::RETIRED)? '-': $user->getSumRemainingDays() }}</td>
 						<td><a href="{{ action('UserController@show', $user->id) }}" class="btn btn-primary">詳細表示</a></td>
 					</tr>
 					@endforeach

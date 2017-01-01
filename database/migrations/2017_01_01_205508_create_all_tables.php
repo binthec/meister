@@ -24,6 +24,7 @@ class CreateAllTables extends Migration
 			$table->integer('status')->nullable();
 			$table->integer('core')->nullable();
 			$table->integer('memory')->nullable();
+			$table->integer('capacity')->nullable();
 			$table->float('size')->nullable();
 			$table->timestamps();
 		});

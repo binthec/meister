@@ -133,6 +133,19 @@
 				</div>
 			</div>
 
+			<div class="form-group forComputer{{ $errors->has('capacity') ? ' has-error' : '' }}">
+				<label for="capacity" class="col-md-2 control-label">ストレージ容量</label>
+				<div class="col-md-8 form-inline">
+					{!! Form::text('capacity', $device->capacity, ['class' => 'form-control']) !!}
+					<span class="form-control-static"> GB</span>
+					@if($errors->has('capacity'))
+					<span class="help-block">
+						<strong class="text-danger">{{ $errors->first('capacity') }}</strong>
+					</span>
+					@endif
+				</div>
+			</div>
+
 			<div class="form-group{{ $errors->has('size') ? ' has-error' : '' }}">
 				<label for="size" class="col-md-2 control-label">サイズ</label>
 				<div class="col-md-8  form-inline">

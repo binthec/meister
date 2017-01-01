@@ -151,6 +151,12 @@
 														<span class="pull-right text-blue">メモリ</span>
 													</a>
 												</li>
+												<li>
+													<a href="#">
+														<span class="left">{{ $device->capacity }} GB </span>
+														<span class="pull-right text-blue">ストレージ</span>
+													</a>
+												</li>
 												@endif
 
 												<li>

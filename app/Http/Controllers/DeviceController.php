@@ -80,6 +80,7 @@ class DeviceController extends Controller
 			$device->status = ($request->user_id != '') ? Device::DEVICE_USED : DEVICE_USED::DEVICE_UNUSED;
 			$device->core = ($device->category === Device::DISPLAY) ? null : $request->core;
 			$device->memory = ($device->category === Device::DISPLAY) ? null : $request->memory;
+			$device->capacity = ($device->category === Device::DISPLAY) ? null : $request->capacity;
 			$device->size = $request->size;
 			$device->save();
 			DB::commit();
@@ -140,14 +141,15 @@ class DeviceController extends Controller
 
 			$device = Device::find($id);
 			$device->category = $request->category;
-			$device->os = $request->os;
+			$device->os = ($device->category === Device::DISPLAY) ? null : $request->os;
 			$device->name = $request->name;
 			$device->serial_id = $request->serial_id;
 			$device->bought_at = User::getStdDate($request->bought_at);
 			$device->user_id = ($request->user_id != '') ? $request->user_id : null;
 			$device->status = $status;
-			$device->core = $request->core;
-			$device->memory = $request->memory;
+			$device->core = ($device->category === Device::DISPLAY) ? null : $request->core;
+			$device->memory = ($device->category === Device::DISPLAY) ? null : $request->memory;
+			$device->capacity = ($device->category === Device::DISPLAY) ? null : $request->capacity;
 			$device->size = $request->size;
 			$device->save();
 			DB::commit();
