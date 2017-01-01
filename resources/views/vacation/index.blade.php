@@ -44,7 +44,7 @@
 						</td>
 						<td>{{ $usedDay->used_days }} 日間</td>
 						<td>
-							<a type="button" class="btn btn-primary btn-sm" name="edit" href="{{ url('use_request/edit', $usedDay->id) }}">編集</a>
+							<a type="button" class="btn btn-primary btn-sm" name="edit" href="{{ url('vacation/edit', $usedDay->id) }}">編集</a>
 							&ensp;
 							<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal{{ $usedDay->id }}">削除</button>
 
@@ -65,7 +65,7 @@
 											</p>
 										</div>
 										<div class="modal-footer">
-											{!! Form::open(['method' => 'delete', 'url' => '/use_request']) !!}
+											{!! Form::open(['method' => 'delete', 'url' => '/vacation']) !!}
 											<button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
 											{!! Form::submit('削除実行', ['class' => 'btn btn-danger btn-sm']) !!}
 											{!! Form::close() !!}

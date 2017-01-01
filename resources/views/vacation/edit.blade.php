@@ -15,7 +15,7 @@
 		</div>
 		<div class="box-body">
 
-			{!! Form::open(['method' => 'PUT', 'action' => ['UseRequestController@update', $useRequest->id], 'class' => 'form-horizontal']) !!}
+			{!! Form::open(['method' => 'PUT', 'action' => ['VacationController@update', $useRequest->id], 'class' => 'form-horizontal']) !!}
 			{{ csrf_field() }}
 			<div class="form-group">
 				<label for="ID" class="col-md-2 control-label">名前</label>

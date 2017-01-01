@@ -14,7 +14,7 @@ use App\UsedDays;
 use App\PaidVacation;
 use App\User;
 
-class UseRequestController extends Controller
+class VacationController extends Controller
 {
 
 	const PAGINATION = 10;
@@ -32,7 +32,7 @@ class UseRequestController extends Controller
 	public function index()
 	{
 		$usedDays = Auth::user()->usedDays()->orderBy('from', 'descs')->paginate(self::PAGINATION); //登録済み有給を取得
-		return view('use_request.index', compact('usedDays'));
+		return view('vacation.index', compact('usedDays'));
 	}
 
 	/**
@@ -44,7 +44,7 @@ class UseRequestController extends Controller
 	{
 		$usedDays = Auth::user()->usedDays()->orderBy('from', 'descs')->paginate(self::PAGINATION); //登録済み有給を取得
 		$validPaidVacations = Auth::user()->getValidPaidVacation(User::getTodayDate());
-		return view('use_request.create', compact('validPaidVacations', 'usedDays', 'useRequest'));
+		return view('vacation.create', compact('validPaidVacations', 'usedDays', 'useRequest'));
 	}
 
 	/**
@@ -124,7 +124,7 @@ class UseRequestController extends Controller
 		$useRequest = UsedDays::find($id);
 		$usedDays = Auth::user()->usedDays()->orderBy('from', 'descs')->paginate(self::PAGINATION); //登録済み有給を取得
 		$validPaidVacations = Auth::user()->getValidPaidVacation(User::getTodayDate());
-		return view('use_request.edit', compact('useRequest', 'usedDays', 'validPaidVacations'));
+		return view('vacation.edit', compact('useRequest', 'usedDays', 'validPaidVacations'));
 	}
 
 	/**

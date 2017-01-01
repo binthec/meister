@@ -20,7 +20,7 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::resource('/user', 'UserController');
 
 	//有給消化登録
-	Route::resource('/use_request', 'UseRequestController', ['except' => 'show']);
+	Route::resource('/vacation', 'VacationController', ['except' => 'show']);
 
 	//デバイス管理
 	Route::resource('/device', 'DeviceController');

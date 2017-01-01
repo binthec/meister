@@ -76,8 +76,8 @@
 							</a>
 						</li>
 
-						<li class="treeview {{ isActiveUrl('use_request*') }}">
-							<a href="{{ url('use_request/create') }}">
+						<li class="treeview {{ isActiveUrl('vacation*') }}">
+							<a href="{{ url('vacation/create') }}">
 								<i class="fa fa-calendar-check-o"></i> <span>有給消化登録</span>
 							</a>
 						</li>
@@ -106,7 +106,7 @@
 								</span>
 							</a>
 							<ul class="treeview-menu">
-								<li class="{{ isActiveUrl('user') }}"><a href="/user"><i class="fa fa-circle-o"></i> ユーザ一覧</a></li>
+								<li class="{{ isActiveUrl('user') }}"><a href="/user"><i class="fa fa-circle-o"></i> ユーザ一覧・検索</a></li>
 								<li class="{{ isActiveUrl('user/register') }}"><a href="{{ url('/user/register') }}"><i class="fa fa-circle-o"></i> ユーザ新規登録</a></li>
 							</ul>
 						</li>

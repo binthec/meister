@@ -9,13 +9,13 @@
 
 <!-- Main content -->
 <section class="content">
-	<div class="box">
+	<div class="box box-primary">
 		<div class="box-header with-border">
 			<h3 class="box-title">新規登録</h3>
 		</div>
 		<div class="box-body">
 
-			{!! Form::open(['url' => '/use_request', 'method' => 'POST', 'class' => 'form-horizontal']) !!}
+			{!! Form::open(['url' => '/vacation', 'method' => 'POST', 'class' => 'form-horizontal']) !!}
 			{{ csrf_field() }}
 
 			<div class="form-group">
@@ -167,12 +167,13 @@
 		</div>
 	</div>
 
-	<div class="box">
+	<div class="box box-primary">
 		<div class="box-header with-border">
 			<h3 class="box-title">登録済有給の一覧</h3>
 		</div>
 		<div class="box-body">
 
+			@if($usedDays->count() > 0)
 			<table class="table table-bordered">
 				<thead class="bg-primary">
 				<th width="5%">№</th><th>期間</th><th>日数</th>
@@ -180,7 +181,7 @@
 				<tbody>
 
 					{{-- 通し番号を付ける --}}
-					<?php $i = ($usedDays->currentPage() - 1) * App\UsedDays::PAGE_NUM + 1 ?>
+					<?php $i = ($usedDays->currentPage() - 1) * App\User::PAGINATION + 1 ?>
 					{{-- dd(Auth::user()->usedDays) --}}
 					@foreach ($usedDays as $usedDay)
 					<tr>
@@ -205,6 +206,9 @@
 					@endforeach
 				</tbody>
 			</table>
+			@else
+			<p>登録済みの有給はありません。</p>
+			@endif
 			{!! $usedDays->render() !!}
 		</div><!-- /.box-body -->
 	</div><!-- /,box -->

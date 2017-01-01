@@ -121,17 +121,15 @@
 </section><!-- /.content -->
 
 
-
-<!-- Main content -->
 <section class="content">
-	<div class="box">
+	<div class="box box-primary">
 		<div class="box-header with-border">
 			<h3 class="box-title">登録済有給一覧</h3>
-			<a href="{{ url('use_request/create') }}" class="btn btn-primary pull-right">有給消化新規登録</a>
+			<a href="{{ url('vacation/create') }}" class="btn btn-primary pull-right">有給消化新規登録</a>
 		</div>
 		<div class="box-body">
 
-			@if($usedDays->count())
+			@if($usedDays->count() > 0)
 			<table class="table table-bordered">
 				<thead class="bg-primary">
 				<th width="5%">№</th><th>期間</th><th>日数</th><th width="15%">操作</th>
@@ -159,7 +157,7 @@
 						</td>
 						<td>{{ $usedDay->used_days }} 日間</td>
 						<td>
-							<a type="button" class="btn btn-primary btn-sm" name="edit" href="{{ action('UseRequestController@edit', $usedDay->id) }}">編集</a>
+							<a type="button" class="btn btn-primary btn-sm" name="edit" href="{{ action('VacationController@edit', $usedDay->id) }}">編集</a>
 							&ensp;
 							<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal{{ $usedDay->id }}">削除</button>
 
@@ -185,7 +183,7 @@
 										</div>
 
 										<div class="modal-footer">
-											{!! Form::open(['method' => 'delete', 'action' => ['UseRequestController@destroy', $usedDay->id]]) !!}
+											{!! Form::open(['method' => 'delete', 'action' => ['VacationController@destroy', $usedDay->id]]) !!}
 											<button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
 											{!! Form::submit('削除実行', ['class' => 'btn btn-danger btn-sm']) !!}
 											{!! Form::close() !!}
@@ -203,12 +201,16 @@
 			</table>
 
 			@else
-			<p>現在、登録済み有給はありません。</p>
+			<p>登録済みの有給はありません。</p>
 			@endif
 		</div>
+
+		@if($usedDays->count() > 0)
 		<div class="box-footer text-center">
 			{!! $usedDays->render() !!}
 		</div>
+		@endif
+
 	</div>
 </section>
 @endsection
