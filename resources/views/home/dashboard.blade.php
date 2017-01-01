@@ -60,7 +60,7 @@
 		</div>
 
 		<div class="col-lg-1 text-center">
-			<p class="font18">＋</p>
+			<p class="font18 calc-symbol">＋</p>
 		</div>
 
 		<div class="col-lg-3">
@@ -85,7 +85,7 @@
 		</div>
 
 		<div class="col-lg-1 text-center">
-			<p class="font18">＝</p>
+			<p class="font18 calc-symbol">＝</p>
 		</div>
 
 		<div class="col-lg-4">

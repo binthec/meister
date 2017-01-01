@@ -61,8 +61,13 @@ table.profile td{
 #deviceDetail .left{
     font-weight: bold;
 }
+
+
 @media (min-width: 1200px) {
     .space-top10{
         margin-top: 10px;
+    }
+    .calc-symbol{
+        line-height: 5em;
     }
 }
