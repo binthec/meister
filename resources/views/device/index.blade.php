@@ -41,9 +41,9 @@
 
 				<label for="bought_at" class="col-md-2 control-label">購入日</label>
 				<div class="col-md-3 form-inline">
-					{!! Form::text('after', Request::input('after')? App\User::getJaDate(Request::input('after')): '', ['class' => 'form-control use_datepicker']) !!}
+					{!! Form::text('after', Request::has('after')? Request::input('after'): '', ['class' => 'form-control use_datepicker']) !!}
 					&ensp;〜&ensp;
-					{!! Form::text('before', Request::input('before')? App\User::getJaDate(Request::input('before')): '', ['class' => 'form-control use_datepicker']) !!}
+					{!! Form::text('before', Request::has('before')? Request::input('before'): '', ['class' => 'form-control use_datepicker']) !!}
 				</div>
 			</div>
 
@@ -77,6 +77,7 @@
 	<div class="box box-primary">
 		<div class="box-header with-border">
 			<h3 class="box-title">デバイス一覧</h3>
+			<span class="pull-right"><span class="font18 text-blue">{{ ($devices->count() > 0)? $devices->total() : '0' }}</span> 件</span>
 		</div>
 		<!-- /.box-header -->
 		<div class="box-body">
@@ -180,7 +181,7 @@
 
 		@if($devices->count() > 0)
 		<div class="box-footer text-center">
-			{!! $devices->render() !!}
+			{!! $devices->appends(Request::all())->render() !!}
 		</div>
 		@endif
 	</div><!-- /.box -->

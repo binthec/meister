@@ -78,11 +78,10 @@
 			<hr>
 
 			<div class="form-group">
-				<label for="ID" class="col-md-2 control-label">権限</label>
+				<label for="ID" class="col-md-2 control-label">権限 <span class="text-danger">*</span></label>
 				<div class="col-md-2">
 					{!! Form::select('role', App\User::$roleLabels, $user->role,['class' => 'form-control']) !!}
 				</div>
-				<span class="label label-danger">必須</span>
 			</div>
 
 			<div class="form-group">

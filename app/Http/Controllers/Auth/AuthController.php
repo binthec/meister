@@ -82,7 +82,8 @@ class AuthController extends Controller
 		$user->last_name = $request->last_name;
 		$user->first_name = $request->first_name;
 		$user->email = $request->email;
-		$user->status = $request->status;
+		$user->status = User::ACTIVE;
+		$user->type_of_employment = $request->type_of_employment;
 		$user->department = $request->department;
 		$user->password = bcrypt($request->password);
 		$user->date_of_entering = User::getStdDate($request->date_of_entering); //入社日

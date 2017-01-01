@@ -3,14 +3,10 @@
 
 @section('content')
 
-<!-- Content Header (Page header) -->
 <section class="content-header">
-	<h1>
-		ユーザ管理
-	</h1>
+	<h1>ユーザ管理</h1>
 </section>
 
-<!-- Main content -->
 <section class="content">
 
 	{!! Form::open(['method' => 'post', 'action' => 'Auth\AuthController@postRegister', 'class' => 'form-horizontal']) !!}
