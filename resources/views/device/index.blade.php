@@ -22,27 +22,25 @@
 		<div class="box-body">
 
 			<div class="form-group">
-				<label for="category" class="col-md-2 control-label">分類</label>
+				<label for="category" class="col-md-2 control-label">デバイスの分類</label>
 				<div class="col-md-3">
-					{!! Form::select('category', App\Device::$deviceCategories, Request::input('category'),['class' => 'form-control', 'placeholder' => '']) !!}
+					{!! Form::select('category', App\Device::$deviceCategories, Request::input('category'),['class' => 'form-control', 'placeholder' => '---']) !!}
 				</div>
 
 				<label for="os" class="col-md-2 control-label">OS</label>
 				<div class="col-md-3">
-					{!! Form::select('os', App\Device::$osLabels, Request::input('os'),['class' => 'form-control', 'placeholder' => '']) !!}
+					{!! Form::select('os', App\Device::$osLabels, Request::input('os'),['class' => 'form-control', 'placeholder' => '---']) !!}
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label for="name" class="col-md-2 control-label">機器名</label>
-				<div class="col-md-10">
-					{!! Form::text('name', Request::input('name'), ['class' => 'form-control']) !!}
+				<div class="col-md-3">
+					{!! Form::text('name', Request::input('name'), ['class' => 'form-control', 'placeholder' => '機器名の like 検索']) !!}
 				</div>
-			</div>
 
-			<div class="form-group">
 				<label for="bought_at" class="col-md-2 control-label">購入日</label>
-				<div class="col-md-5 form-inline">
+				<div class="col-md-3 form-inline">
 					{!! Form::text('after', Request::input('after')? App\User::getJaDate(Request::input('after')): '', ['class' => 'form-control use_datepicker']) !!}
 					&ensp;〜&ensp;
 					{!! Form::text('before', Request::input('before')? App\User::getJaDate(Request::input('before')): '', ['class' => 'form-control use_datepicker']) !!}
@@ -51,15 +49,15 @@
 
 			<div class="form-group">
 				<label for="user_id" class="col-md-2 control-label">使用者</label>
-				<div class="col-md-4">
+				<div class="col-md-3">
 					{!! Form::text('user_name', Request::input('user_name'), ['class' => 'form-control', 'placeholder' => '使用者名の like 検索']) !!}
 				</div>
 
 				<label for="disposal" class="col-md-2 control-label">廃棄</label>
-				<div class="col-md-4">
+				<div class="col-md-3">
 					<div class="checkbox">
 						<label>
-							{!! Form::checkbox('searchInactive', 1, Request::input('searchInactive') == 1? true: false) !!} 廃棄済み
+							{!! Form::checkbox('searchInactive', 1, Request::input('searchInactive') == 1? true: false) !!} 廃棄済みも含める
 						</label>
 					</div>
 				</div>
@@ -101,17 +99,18 @@
 
 					@foreach($devices as $device)
 					<tr>
-						<td>{{ App\Device::$deviceCategories[$device->category] }}</td>
-						<td>{{ App\Device::$osLabels[$device->os] }}</td>
+						<td><i class="fa {{ App\Device::$deviceIcon[$device->category] }}"></i> {{ App\Device::$deviceCategories[$device->category] }}</td>
+						<td>{{ ($device->os) ? App\Device::$osLabels[$device->os]: '-' }}</td>
 						<td>{{ $device->name }}</td>
 						<td>{{ App\User::getJaDate($device->bought_at) }}</td>
 						<td>{{ ($device->user_id) ? App\User::getUserName($device->user_id) :'なし' }}</td>
-						<td>{{ $device->memory }} GB</td>
+						<td>{{ ($device->memory)? $device->memory . ' GB' : '-' }}</td>
 						<td>{{ $device->size }} インチ</td>
 						<td class="text-red">{{ ($device->status == 99) ? '廃棄済' : '' }}</td>
 						<td>
-							<a href="{{ url('device/edit', $device->id) }}" class="btn btn-primary">編集</a>
-							<a href="{{ url('device/detail', $device->id) }}" class="btn btn-success" data-toggle="modal" data-target="#detailModal{{ $device->id }}">詳細</a>
+							<a href="{{ action('DeviceController@edit', $device->id) }}" class="btn btn-primary">編集</a>
+							&emsp;
+							<a href="#" class="btn btn-default bg-purple" data-toggle="modal" data-target="#detailModal{{ $device->id }}">詳細</a>
 
 							<!-- deleteModalWindow -->
 							<div class="modal fade" id="detailModal{{ $device->id }}" tabindex="-1" role="dialog" aria-labelledby="ModalLabel">
@@ -121,7 +120,7 @@
 											<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 											<i class="fa fa-4x {{ App\Device::$deviceIcon[$device->category] }}"></i>
 											<h5>【 {{ $device->name }} 】</h5>
-											<p>{{ App\Device::$osLabels[$device->os] }} / {{ App\Device::$deviceCategories[$device->category] }}</p>
+											<p>{{ ($device->os)? App\Device::$osLabels[$device->os] . ' / ' : '' }}{{ App\Device::$deviceCategories[$device->category] }}</p>
 										</div>
 										<div class="modal-body">
 											<ul class="nav nav-stacked" id="deviceDetail">
@@ -137,6 +136,8 @@
 														<span class="pull-right text-blue">購入日</span>
 													</a>
 												</li>
+
+												@if($device->category != App\Device::DISPLAY)
 												<li>
 													<a href="#">
 														<span class="left">{{ $device->core }}コア </span>
@@ -149,6 +150,8 @@
 														<span class="pull-right text-blue">メモリ</span>
 													</a>
 												</li>
+												@endif
+
 												<li>
 													<a href="#">
 														<span class="left">{{ $device->size }} インチ </span>
@@ -175,9 +178,11 @@
 			@endif
 		</div><!-- /.box-body -->
 
+		@if($devices->count() > 0)
 		<div class="box-footer text-center">
 			{!! $devices->render() !!}
 		</div>
+		@endif
 	</div><!-- /.box -->
 
 </section>
@@ -194,5 +199,6 @@
             orientation: "top left"
         });
     });
+
 </script>
 @endsection

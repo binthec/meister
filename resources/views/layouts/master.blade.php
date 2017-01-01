@@ -91,7 +91,7 @@
 							</a>
 							<ul class="treeview-menu">
 								<li class="{{ isActiveUrl('device') }}"><a href="{{ url('device') }}"><i class="fa fa-circle-o"></i> デバイス一覧・検索</a></li>
-								<li class="{{ isActiveUrl('device/add') }}"><a href="{{ url('device/add') }}"><i class="fa fa-circle-o"></i> デバイス新規登録</a></li>
+								<li class="{{ isActiveUrl('device/create') }}"><a href="{{ url('device/create') }}"><i class="fa fa-circle-o"></i> デバイス新規登録</a></li>
 							</ul>
 						</li>
 

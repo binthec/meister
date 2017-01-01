@@ -1,28 +1,29 @@
 @extends('layouts/master')
-@section('title', 'デバイス情報編集')
+@section('title', 'U9 | デバイス管理')
 
 @section('content')
-<!-- Content Header (Page header) -->
 <section class="content-header">
 	<h1>デバイス管理</h1>
 </section>
 
-<!-- Main content -->
 <section class="content">
 	<div class="box">
 		<div class="box-header with-border">
-			<h3 class="box-title">デバイス編集</h3>
+			<h3 class="box-title">デバイス{{ $device->id === null ? '新規登録': '編集' }}</h3>
 		</div>
 		<div class="box-body">
 
-			{!! Form::open(['url' => ['/device/edit', $device->id], 'method' => 'POST', 'class' => 'form-horizontal']) !!}
+			@if($device->id === null) <!-- 新規作成 -->
+			{!! Form::open(['url' => ['/device', $device->id], 'method' => 'POST', 'class' => 'form-horizontal']) !!}
+			@else <!-- 編集 -->
+			{!! Form::open(['url' => ['/device', $device->id], 'method' => 'PUT', 'class' => 'form-horizontal']) !!}
+			@endif
 			{{ csrf_field() }}
-
 
 			<div class="form-group{{ $errors->has('category') ? ' has-error' : '' }}">
 				<label for="category" class="col-md-2 control-label">分類</label>
 				<div class="col-md-3">
-					{!! Form::select('category', App\Device::$deviceCategories, $device->category,['class' => 'form-control']) !!}
+					{!! Form::select('category', App\Device::$deviceCategories, $device->category,['class' => 'form-control', 'id' => 'category']) !!}
 					@if($errors->has('category'))
 					<span class="help-block">
 						<strong class="text-danger">{{ $errors->first('category') }}</strong>
@@ -31,7 +32,8 @@
 				</div>
 			</div>
 
-			<div class="form-group{{ $errors->has('category') ? ' has-error' : '' }}">
+
+			<div class="form-group forComputer{{ $errors->has('category') ? ' has-error' : '' }}">
 				<label for="os" class="col-md-2 control-label">OS</label>
 				<div class="col-md-3">
 					{!! Form::select('os', App\Device::$osLabels, $device->os,['class' => 'form-control']) !!}
@@ -44,9 +46,9 @@
 			</div>
 
 			<div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
-				<label for="name" class="col-md-2 control-label">機器名</label>
+				<label for="name" class="col-md-2 control-label">機器名 <span class="text-danger">*</span></label>
 				<div class="col-md-8">
-					{!! Form::text('name', $device->name, ['class' => 'form-control']) !!}
+					{!! Form::text('name', $device->name, ['class' => 'form-control', 'placeholder' => '任意の機器名。なんでもいい。']) !!}
 					@if($errors->has('name'))
 					<span class="help-block">
 						<strong class="text-danger">{{ $errors->first('name') }}</strong>
@@ -56,9 +58,9 @@
 			</div>
 
 			<div class="form-group{{ $errors->has('serial_id') ? ' has-error' : '' }}">
-				<label for="serial_id" class="col-md-2 control-label">シリアルID</label>
+				<label for="serial_id" class="col-md-2 control-label">シリアルID <span class="text-danger">*</span></label>
 				<div class="col-md-8">
-					{!! Form::text('serial_id', $device->serial_id, ['class' => 'form-control']) !!}
+					{!! Form::text('serial_id', $device->serial_id, ['class' => 'form-control', 'placeholder' => 'ユニークな値']) !!}
 					@if($errors->has('serial_id'))
 					<span class="help-block">
 						<strong class="text-danger">{{ $errors->first('serial_id') }}</strong>
@@ -82,7 +84,7 @@
 			<div class="form-group{{ $errors->has('user_id') ? ' has-error' : '' }}">
 				<label for="user_id" class="col-md-2 control-label">使用者</label>
 				<div class="col-md-8">
-					{!! Form::select('user_id', $users, ($device->user_id)? $device->user_id: '', ['class' => 'form-control', 'placeholder' => 'なし']) !!}
+					{!! Form::select('user_id', App\User::getUsers(), ($device->user_id)? $device->user_id: '', ['class' => 'form-control', 'placeholder' => 'なし']) !!}
 					@if($errors->has('user_id'))
 					<span class="help-block">
 						<strong class="text-danger">{{ $errors->first('user_id') }}</strong>
@@ -91,6 +93,7 @@
 				</div>
 			</div>
 
+			@if($device->id !== null)
 			<div class="form-group">
 				<label for="disposal" class="col-md-2 control-label">廃棄フラグ</label>
 				<div class="col-md-8">
@@ -101,12 +104,12 @@
 					</div>
 				</div>
 			</div>
-
+			@endif
 
 			<hr>
 			<h4><i class="fa fa-wrench"></i> スペック</h4>
 
-			<div class="form-group{{ $errors->has('core') ? ' has-error' : '' }}">
+			<div class="form-group forComputer{{ $errors->has('core') ? ' has-error' : '' }}">
 				<label for="core" class="col-md-2 control-label">コア数</label>
 				<div class="col-md-2">
 					{!! Form::text('core', $device->core, ['class' => 'form-control']) !!}
@@ -118,7 +121,7 @@
 				</div>
 			</div>
 
-			<div class="form-group{{ $errors->has('memory') ? ' has-error' : '' }}">
+			<div class="form-group forComputer{{ $errors->has('memory') ? ' has-error' : '' }}">
 				<label for="memory" class="col-md-2 control-label">メモリ</label>
 				<div class="col-md-8 form-inline">
 					{!! Form::text('memory', $device->memory, ['class' => 'form-control']) !!}
@@ -168,5 +171,19 @@
             orientation: "top left"
         });
     });
+
+    changeForComputer();
+    $("#category").change(function () {
+        changeForComputer();
+    });
+
+    //ディスプレイの時はOSとコア、メモリは必要無いので隠すためのメソッド
+    function changeForComputer() {
+        if ($("#category option:selected").val() == '{{ App\Device::DISPLAY }}') {
+            $(".forComputer").hide();
+        } else {
+            $(".forComputer").show();
+        }
+    }
 </script>
 @endsection

@@ -30,6 +30,7 @@ class Device extends Model
 		self::NOTE_PC => 'fa-laptop',
 		self::DESKTOP_PC => 'fa-desktop',
 		self::TABLET => 'fa-tablet',
+		self::DISPLAY => 'fa-television',
 	];
 
 	/**
@@ -63,6 +64,9 @@ class Device extends Model
 		//queryインスタンスを生成
 		$query = Device::query();
 
+		//購入日の新しい順に並べる
+		$query->orderBy('bought_at', 'desc');
+
 		//検索欄で文字が渡されればクエリに条件を追加
 		if (!empty($data['category'])) {
 			$query->where('category', $data['category']);
@@ -73,10 +77,10 @@ class Device extends Model
 		if (!empty($data['name'])) {
 			$query->where('name', 'like', '%' . $data['name'] . '%');
 		}
-		if (!empty($data['after'])) { //複雑な条件を指定する
+		if (!empty($data['after'])) {
 			$query->where('bought_at', '>=', User::getStdDate($data['after']));
 		}
-		if (!empty($data['before'])) { //複雑な条件を指定する
+		if (!empty($data['before'])) {
 			$query->where('bought_at', '<=', User::getStdDate($data['before']));
 		}
 		if (!empty($data['user_name'])) {

@@ -50,9 +50,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	 */
 	public static function getUserName($id)
 	{
-		$lastNames = User::all()->pluck('last_name', 'id');
-		$firstNames = User::all()->pluck('first_name', 'id');
-		return $lastNames->get($id) . ' ' . $firstNames->get($id);
+		$user = User::find($id);
+		return $user->last_name . ' ' . $user->first_name;
+	}
+
+	/**
+	 * IDとユーザ名の全セットを返すメソッド
+	 * 
+	 * @return Illuminate\Database\Eloquent\Collection
+	 */
+	public static function getUsers()
+	{
+		return User::all()->pluck('last_name', 'id');
 	}
 
 	/**
