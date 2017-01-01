@@ -1,14 +1,12 @@
 <?php
 
-// 認証のルート定義
 Route::get('/', 'Auth\AuthController@getlogin');
 Route::get('/login', 'Auth\AuthController@getLogin');
 Route::post('/login', 'Auth\AuthController@authenticate');
 
 Route::group(['middleware' => 'auth'], function() {
 	//ログイン後のroute
-	Route::match(['get', 'post'], '/dashboard', 'HomeController@dashboard');
-
+	Route::get('/dashboard', 'HomeController@dashboard');
 	Route::get('/logout', 'Auth\AuthController@getLogout');
 
 	//ユーザ管理
@@ -23,8 +21,6 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::resource('/user', 'UserController');
 
 	//有給消化登録
-//	Route::match(['get', 'post'], '/use_request/edit/{id}', 'UseRequestController@edit');
-//	Route::get('/use_request/delete/{id}', 'UseRequestController@delete');
 	Route::resource('/use_request', 'UseRequestController', ['except' => 'show']);
 
 	//デバイス管理
