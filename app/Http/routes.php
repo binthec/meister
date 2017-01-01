@@ -10,7 +10,6 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::get('/logout', 'Auth\AuthController@getLogout');
 
 	//ユーザ管理
-
 	Route::get('/user/register', 'Auth\AuthController@getRegister');
 	Route::post('/user/register', 'Auth\AuthController@postRegister');
 	Route::get('/user/password/{id}/edit', 'UserController@passwordEdit');
@@ -26,10 +25,3 @@ Route::group(['middleware' => 'auth'], function() {
 	//デバイス管理
 	Route::resource('/device', 'DeviceController');
 });
-
-
-
-//管理者
-//Route::group(['middleware' => 'role:admin', 'prefix' => 'admin'], function () {
-//	Route::get('/', 'AdminController@index');
-//});
