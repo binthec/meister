@@ -32,7 +32,6 @@
 				</div>
 			</div>
 
-
 			<div class="form-group forComputer{{ $errors->has('category') ? ' has-error' : '' }}">
 				<label for="os" class="col-md-2 control-label">OS</label>
 				<div class="col-md-3">

@@ -370,6 +370,30 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $duplicatedRecord->count() > 0;
 	}
 
+	public static function getSearchQuery(array $data)
+	{
+		$query = User::query();
+		$query->orderBy('date_of_entering', 'desc');
+
+		if (!empty($data['name'])) {
+			$query->where(function($query) use ($data) {
+				$query->orWhere('last_name', 'like', $data['name'])
+						->orWhere('first_name', 'like', $data['name']);
+			});
+		}
+		if (!empty($data['after'])) {
+			$query->where('date_of_entering', '>=', User::getStdDate($data['after']));
+		}
+		if (!empty($data['before'])) {
+			$query->where('date_of_entering', '<=', User::getStdDate($data['before']));
+		}
+		if (!isset($data['searchInactive'])) {
+			$query->where('status', '<>', self::RETIRED);
+		}
+
+		return $query;
+	}
+
 	/**
 	 * ユーザの権限用のラベル
 	 */
@@ -382,13 +406,24 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	];
 
 	/**
-	 * 社員区分
+	 * ステータス
+	 */
+	const ACTIVE = 1;
+	const RETIRED = 99;
+
+	public static $status = [
+		self::ACTIVE => '有効',
+		self::RETIRED => '退職済',
+	];
+
+	/**
+	 * 雇用形態
 	 */
 	const REGULAR_EMPLOYEE = 1;
 	const CONTRACT_EMPLOYEE = 2;
 	const DIRECTOR = 50;
 
-	public static $memberStatus = [
+	public static $typeOfEmployments = [
 		self::REGULAR_EMPLOYEE => '正社員',
 		self::CONTRACT_EMPLOYEE => '契約社員',
 		self::DIRECTOR => '役員',

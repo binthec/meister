@@ -199,6 +199,5 @@
             orientation: "top left"
         });
     });
-
 </script>
 @endsection

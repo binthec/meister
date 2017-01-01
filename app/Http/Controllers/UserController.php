@@ -34,9 +34,12 @@ class UserController extends Controller
 	 * 
 	 * @return ユーザ一覧画面
 	 */
-	public function index()
+	public function index(Request $request)
 	{
-		$users = User::orderBy('last_name', 'asc')->paginate(self::PAGINATION);
+
+		$query = User::getSearchQuery($request->input());
+		$users = $query->paginate(self::PAGINATION);
+//		$users = User::orderBy('date_of_entering', 'desc')->paginate(self::PAGINATION);
 		return view('user.index', ['users' => $users, 'today' => $this->today]);
 	}
 
@@ -95,9 +98,10 @@ class UserController extends Controller
 			$user->first_name = $request->first_name;
 			$user->email = $request->email;
 			$user->status = $request->status;
+			$user->type_of_employment = $request->type;
 			$user->department = $request->department;
 			$user->role = ($request->role) ? $request->role : $user->role;
-			$user->retire_flg = (isset($request->retire_flg)) ? $request->retire_flg : null;
+//			$user->retire_flg = (isset($request->retire_flg)) ? $request->retire_flg : null;
 			$user->memo = $request->memo;
 			$user->save();
 			DB::commit();

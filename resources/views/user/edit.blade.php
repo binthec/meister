@@ -56,7 +56,7 @@
 			<div class="form-group">
 				<label for="status" class="col-md-2 control-label">区分</label>
 				<div class="col-md-4">
-					{!! Form::select('status', App\User::$memberStatus, $user->status, ['class' => 'form-control']) !!}
+					{!! Form::select('type_of_employment', App\User::$typeOfEmployments, $user->type_of_employment, ['class' => 'form-control']) !!}
 				</div>
 			</div>
 

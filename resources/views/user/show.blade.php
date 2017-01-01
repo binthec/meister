@@ -19,7 +19,7 @@
 					<h3 class="profile-username text-center">{{ $user->last_name }} {{ $user->first_name }}</h3>
 
 					<p class="text-muted text-center">
-						{{($user->status)? App\User::$memberStatus[$user->status]: '未設定' }} @ {{ App\User::$departments[$user->department] }}
+						{{($user->status)? App\User::$typeOfEmployments[$user->type_of_employment]: '未設定' }} @ {{ App\User::$departments[$user->department] }}
 					</p>
 
 					<ul class="list-group list-group-unbordered">
@@ -216,12 +216,8 @@
 					@endif
 				</div>
 			</div><!-- /.box -->
-
 		</div>
-
-
 	</div>
-
 </section>
 
 @endsection
