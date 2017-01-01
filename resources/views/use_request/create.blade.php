@@ -15,7 +15,7 @@
 		</div>
 		<div class="box-body">
 
-			{!! Form::open(['url' => '/use_request/add', 'method' => 'POST', 'class' => 'form-horizontal']) !!}
+			{!! Form::open(['url' => '/use_request', 'method' => 'POST', 'class' => 'form-horizontal']) !!}
 			{{ csrf_field() }}
 
 			<div class="form-group">

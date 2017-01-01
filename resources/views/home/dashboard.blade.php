@@ -127,7 +127,7 @@
 	<div class="box">
 		<div class="box-header with-border">
 			<h3 class="box-title">登録済有給一覧</h3>
-			<a href="{{ url('use_request/add') }}" class="btn btn-primary pull-right">有給消化新規登録</a>
+			<a href="{{ url('use_request/create') }}" class="btn btn-primary pull-right">有給消化新規登録</a>
 		</div>
 		<div class="box-body">
 
@@ -159,7 +159,7 @@
 						</td>
 						<td>{{ $usedDay->used_days }} 日間</td>
 						<td>
-							<a type="button" class="btn btn-primary btn-sm" name="edit" href="{{ url('use_request/edit', $usedDay->id) }}">編集</a>
+							<a type="button" class="btn btn-primary btn-sm" name="edit" href="{{ action('UseRequestController@edit', $usedDay->id) }}">編集</a>
 							&ensp;
 							<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal{{ $usedDay->id }}">削除</button>
 
@@ -183,9 +183,12 @@
 											</p>
 											<p class="text-red pull-right">&ensp;<i class="fa fa-warning"></i> この処理は取り消せません</p><br>
 										</div>
+
 										<div class="modal-footer">
+											{!! Form::open(['method' => 'delete', 'action' => ['UseRequestController@destroy', $usedDay->id]]) !!}
 											<button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
-											<a type="button" class="btn btn-danger btn-sm" name="delete" href="/use_request/delete/{{ $usedDay->id }}">削除実行</a>
+											{!! Form::submit('削除実行', ['class' => 'btn btn-danger btn-sm']) !!}
+											{!! Form::close() !!}
 										</div>
 									</div>
 								</div>

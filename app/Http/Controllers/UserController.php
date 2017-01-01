@@ -50,7 +50,7 @@ class UserController extends Controller
 	{
 		$user = User::find($id);
 		$validPaidVacations = $user->getValidPaidVacation(User::getTodayDate());
-		$usedDays = $user->usedDays()->orderBy('from', 'descs')->paginate(UsedDays::PAGE_NUM); //登録済み有給を取得
+		$usedDays = $user->usedDays()->orderBy('from', 'descs')->paginate(self::PAGINATION); //登録済み有給を取得
 		return view('user.show', compact('user', 'validPaidVacations', 'usedDays'));
 	}
 

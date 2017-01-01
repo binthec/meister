@@ -17,6 +17,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	use Authenticatable,
 	 CanResetPassword;
 
+	const PAGINATION = 10;
+
 	protected $table = 'users';
 	protected $fillable = ['email', 'password'];
 	protected $hidden = ['password', 'remember_token'];

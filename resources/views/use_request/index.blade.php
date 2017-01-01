@@ -65,8 +65,10 @@
 											</p>
 										</div>
 										<div class="modal-footer">
+											{!! Form::open(['method' => 'delete', 'url' => '/use_request']) !!}
 											<button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
-											<a type="button" class="btn btn-danger btn-sm" name="delete" href="/use_request/delete/{{ $usedDay->id }}">削除実行</a>
+											{!! Form::submit('削除実行', ['class' => 'btn btn-danger btn-sm']) !!}
+											{!! Form::close() !!}
 										</div>
 									</div>
 								</div>

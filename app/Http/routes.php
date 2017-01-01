@@ -23,10 +23,9 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::resource('/user', 'UserController');
 
 	//有給消化登録
-	Route::match(['get', 'post'], '/use_request', 'UseRequestController@index');
-	Route::match(['get', 'post'], '/use_request/add', 'UseRequestController@add');
-	Route::match(['get', 'post'], '/use_request/edit/{id}', 'UseRequestController@edit');
-	Route::get('/use_request/delete/{id}', 'UseRequestController@delete');
+//	Route::match(['get', 'post'], '/use_request/edit/{id}', 'UseRequestController@edit');
+//	Route::get('/use_request/delete/{id}', 'UseRequestController@delete');
+	Route::resource('/use_request', 'UseRequestController', ['except' => 'show']);
 
 	//デバイス管理
 	Route::resource('/device', 'DeviceController');
