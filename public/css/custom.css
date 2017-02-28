@@ -62,6 +62,10 @@ table.profile td{
     font-weight: bold;
 }
 
+#deviceDetail > li{
+    padding: 10px 15px;
+}
+
 
 @media (min-width: 1200px) {
     .space-top10{

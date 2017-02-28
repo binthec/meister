@@ -27,8 +27,9 @@
 			</div>
 		</div><!-- ./col -->
 
-		<div class="col-md-2 col-md-offset-4">
+		<div class="col-md-2 col-md-offset-4 text-center">
 			<a href="/user/reset/{{ Auth::user()->id }}" class="btn btn-danger col-md-12"type="button">リセット</a>
+			<span class="text-sm">※本番リリース時にこのボタンは削除します</span>
 		</div>
 	</div><!-- /.row -->
 
@@ -190,8 +191,7 @@
 										</div>
 									</div>
 								</div>
-							</div>
-							<!-- /deleteModalWindow -->
+							</div><!-- /deleteModalWindow -->
 						</td>
 						<?php $i += 1 ?>
 					</tr>

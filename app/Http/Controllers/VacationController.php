@@ -218,7 +218,7 @@ class VacationController extends Controller
 		//最終的な計算後の残日数をもとに、有給残日数を計算してレコードを更新する
 		$user->setRemainingDays($resultRemainingDays);
 
-		return redirect('/dashboard')->with('flashMsg', '登録済有給を削除しました');
+		return redirect()->back()->with('flashMsg', '登録済有給を削除しました');
 	}
 
 }

@@ -126,44 +126,32 @@
 										<div class="modal-body">
 											<ul class="nav nav-stacked" id="deviceDetail">
 												<li>
-													<a href="#">
-														<span class="left">{{ $device->user_id ? App\User::getUserName($device->user_id)  :'なし' }} </span>
-														<span class="pull-right text-blue">使用者</span>
-													</a>
+													<span class="left">{{ $device->user_id ? App\User::getUserName($device->user_id)  :'なし' }} </span>
+													<span class="pull-right text-blue">使用者</span>
 												</li>
 												<li>
-													<a href="#">
-														<span class="left">{{ App\User::getJaDate($device->bought_at) }} </span>
-														<span class="pull-right text-blue">購入日</span>
-													</a>
+													<span class="left">{{ App\User::getJaDate($device->bought_at) }} </span>
+													<span class="pull-right text-blue">購入日</span>
 												</li>
 
 												@if($device->category != App\Device::DISPLAY)
 												<li>
-													<a href="#">
-														<span class="left">{{ $device->core }}コア </span>
-														<span class="pull-right text-blue">コア数</span>
-													</a>
+													<span class="left">{{ $device->core }}コア </span>
+													<span class="pull-right text-blue">コア数</span>
 												</li>
 												<li>
-													<a href="#">
-														<span class="left">{{ $device->memory }} GB </span>
-														<span class="pull-right text-blue">メモリ</span>
-													</a>
+													<span class="left">{{ $device->memory }} GB </span>
+													<span class="pull-right text-blue">メモリ</span>
 												</li>
 												<li>
-													<a href="#">
-														<span class="left">{{ $device->capacity }} GB </span>
-														<span class="pull-right text-blue">ストレージ</span>
-													</a>
+													<span class="left">{{ $device->capacity }} GB </span>
+													<span class="pull-right text-blue">ストレージ</span>
 												</li>
 												@endif
 
 												<li>
-													<a href="#">
-														<span class="left">{{ $device->size }} インチ </span>
-														<span class="pull-right text-blue">サイズ</span>
-													</a>
+													<span class="left">{{ $device->size }} インチ </span>
+													<span class="pull-right text-blue">サイズ</span>
 												</li>
 												@if($device->status == 99)
 												<div class="text-center font16 bg-red">廃棄済</div>

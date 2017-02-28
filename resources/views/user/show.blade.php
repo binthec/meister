@@ -181,26 +181,32 @@
 									<div class="modal fade" id="deleteModal{{ $usedDay->id }}" tabindex="-1" role="dialog" aria-labelledby="ModalLabel">
 										<div class="modal-dialog" role="document">
 											<div class="modal-content">
-												<div class="modal-header">
+												<div class="modal-header bg-red">
 													<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 													<h4 class="modal-title" id="ModalLabel">登録済有給の削除</h4>
 												</div>
 												<div class="modal-body">
-													<p class="alert-danger align-center">この処理は取り消せません</p>
 													<p>選択した登録済有給を削除します。よろしいですか？</p>
 													<p>
-														削除する有給：{{ $usedDay->from }} 〜 {{ $usedDay->until }}<br>
-														有給日数：{{ $usedDay->used_days }} 日分
+														▼削除する有給<br>
+														<span class="font18">{{ App\User::getJaDate($usedDay->from) }} 〜 {{ App\User::getJaDate($usedDay->until) }}</span> 
 													</p>
+													<p>
+														▼有給日数<br>
+														<span class="font18">{{ $usedDay->used_days }} 日分</span>
+													</p>
+													<p class="text-red pull-right">&ensp;<i class="fa fa-warning"></i> この処理は取り消せません</p><br>
 												</div>
+
 												<div class="modal-footer">
+													{!! Form::open(['method' => 'delete', 'action' => ['VacationController@destroy', $usedDay->id]]) !!}
 													<button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
-													<a type="button" class="btn btn-danger btn-sm" name="delete" href="/vacation/delete/{{ $usedDay->id }}">削除実行</a>
+													{!! Form::submit('削除実行', ['class' => 'btn btn-danger btn-sm']) !!}
+													{!! Form::close() !!}
 												</div>
 											</div>
 										</div>
-									</div>
-									<!-- /deleteModalWindow -->
+									</div><!-- /deleteModalWindow -->
 								</td>
 								@endif
 							</tr>
