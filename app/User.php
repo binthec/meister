@@ -24,6 +24,56 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	protected $hidden = ['password', 'remember_token'];
 	public $today;
 
+	/**
+	 * ユーザの権限用のラベル
+	 */
+	const USER = 20;
+	const ADMIN = 1;
+
+	public static $roleLabels = [
+		self::USER => 'ユーザ',
+		self::ADMIN => '管理者',
+	];
+
+	/**
+	 * ステータス
+	 */
+	const ACTIVE = 1;
+	const RETIRED = 99;
+
+	public static $status = [
+		self::ACTIVE => '有効',
+		self::RETIRED => '退職済',
+	];
+
+	/**
+	 * 雇用形態
+	 */
+	const REGULAR_EMPLOYEE = 1;
+	const CONTRACT_EMPLOYEE = 2;
+	const DIRECTOR = 50;
+
+	public static $typeOfEmployments = [
+		self::REGULAR_EMPLOYEE => '正社員',
+		self::CONTRACT_EMPLOYEE => '契約社員',
+		self::DIRECTOR => '役員',
+	];
+
+	/**
+	 * 部署
+	 */
+	const NO_DEPARTMENT = 0;
+	const DEPARTMENT_SYSTEM = 1;
+	const DEPARTMENT_FRONT = 2;
+	const GENERAL_AFFAIRS = 50;
+
+	public static $departments = [
+		self::NO_DEPARTMENT => '部署なし',
+		self::DEPARTMENT_SYSTEM => 'システムチーム',
+		self::DEPARTMENT_FRONT => 'フロントチーム',
+		self::GENERAL_AFFAIRS => '総務',
+	];
+
 	public function __construct()
 	{
 		$this->today = Carbon::now()->toDateString(); //今日の日付を取得;
@@ -205,8 +255,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	/**
 	 * 有効な有給レコードを取得して、残日数を合算するメソッド
 	 * 
-	 * @param type $baseDate 'Y-m-d'の日付。省略した場合は今日日付で有効な有給の合算を出す
-	 * @return type
+	 * @param date $baseDate 'Y-m-d'の日付。省略した場合は今日日付で有効な有給の合算を出す
+	 * @return string
 	 */
 	public function getSumRemainingDays($baseDate = null)
 	{
@@ -286,8 +336,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	 * 既に登録されている有給消化登録の日数を、
 	 * オリジナルのまっさらな状態の全有給レコードから減算していくメソッド
 	 * 入社日を変更した場合など、全部の再計算が必要な際に行う
-	 * 
-	 * @param type $userId
 	 */
 	public function recalcRemainingDays()
 	{
@@ -305,7 +353,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	/**
 	 * 前借り用レコード（＝前借りしてくるための未来の有給レコード）を取得するメソッド
 	 * 
-	 * @return type PaidVacation
+	 * @return PaidVacation
 	 */
 	public function getAdvancedPaidVacaion()
 	{
@@ -328,7 +376,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	/**
 	 * 計算後の有給残日数から前借り分の日数を減算して、
-	 * 最終的な計算後の有給残に日数を算出するメソッド
+	 * 最終的な計算後の有給残日数を算出するメソッド
 	 * それぞれで有効な有給レコードの残日数を計算した後に、このメソッドを通す
 	 * 
 	 * @param float $resultRemainingDays
@@ -336,7 +384,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	 */
 	public function getResultRemainingDays($resultRemainingDays)
 	{
-		//前借りしている日数が1日以上の場合、残日数から前借り日数を減算する
+		//前借りしている日数が0.5日以上の場合、残日数から前借り日数を減算する
 		if ($this->getUsedAdvancedDays() > 0) {
 			$resultRemainingDays -= $this->getUsedAdvancedDays();
 		}
@@ -349,7 +397,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	 * 
 	 * @param type $startDate
 	 * @param type $endDate
-	 * @return type bool
+	 * @return bool
 	 */
 	public function checkDateDuplication($startDate, $endDate, UsedDays $usedDays = null)
 	{
@@ -370,10 +418,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $duplicatedRecord->count() > 0;
 	}
 
+	/**
+	 * ユーザ一覧画面で、検索用のqueryを吐き出すメソッド
+	 *  
+	 * @param array $data
+	 * @return $query
+	 */
 	public static function getSearchQuery(array $data)
 	{
 		$query = User::query();
-		$query->orderBy('date_of_entering', 'desc');
+		$query->orderBy('date_of_entering', 'asc'); //入社日の古い順に並べる
 
 		if (!empty($data['name'])) {
 			$query->where(function($query) use ($data) {
@@ -393,55 +447,5 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 		return $query;
 	}
-
-	/**
-	 * ユーザの権限用のラベル
-	 */
-	const USER = 20;
-	const ADMIN = 1;
-
-	public static $roleLabels = [
-		self::USER => 'ユーザ',
-		self::ADMIN => '管理者',
-	];
-
-	/**
-	 * ステータス
-	 */
-	const ACTIVE = 1;
-	const RETIRED = 99;
-
-	public static $status = [
-		self::ACTIVE => '有効',
-		self::RETIRED => '退職済',
-	];
-
-	/**
-	 * 雇用形態
-	 */
-	const REGULAR_EMPLOYEE = 1;
-	const CONTRACT_EMPLOYEE = 2;
-	const DIRECTOR = 50;
-
-	public static $typeOfEmployments = [
-		self::REGULAR_EMPLOYEE => '正社員',
-		self::CONTRACT_EMPLOYEE => '契約社員',
-		self::DIRECTOR => '役員',
-	];
-
-	/**
-	 * 部署
-	 */
-	const NO_DEPARTMENT = 0;
-	const DEPARTMENT_SYSTEM = 1;
-	const DEPARTMENT_FRONT = 2;
-	const GENERAL_AFFAIRS = 50;
-
-	public static $departments = [
-		self::NO_DEPARTMENT => '部署なし',
-		self::DEPARTMENT_SYSTEM => 'システムチーム',
-		self::DEPARTMENT_FRONT => 'フロントチーム',
-		self::GENERAL_AFFAIRS => '総務',
-	];
 
 }
