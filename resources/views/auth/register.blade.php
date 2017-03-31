@@ -97,7 +97,7 @@
 						<div class="input-group-addon">
 							<i class="fa fa-calendar"></i>
 						</div>
-						{!! Form::date('date_of_entering','', ['class' => 'form-control pull-right use_datepicker', 'id' => 'date_of_entering']) !!}
+						{!! Form::text('date_of_entering','', ['class' => 'form-control pull-right use_datepicker', 'id' => 'date_of_entering']) !!}
 
 					</div>
 					@if($errors->has('date_of_entering'))
