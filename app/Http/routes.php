@@ -18,7 +18,6 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::put('/user/password/{id}', 'UserController@passwordUpdate');
 	Route::get('/user/dateofentering/{id}/edit', 'UserController@dateEdit');
 	Route::put('/user/dateofentering/{id}', 'UserController@dateUpdate');
-	Route::get('/user/reset/{id}', 'UserController@reset');
 	Route::resource('/user', 'UserController');
 
 	//有給消化登録
@@ -26,4 +25,7 @@ Route::group(['middleware' => 'auth'], function() {
 
 	//デバイス管理
 	Route::resource('/device', 'DeviceController');
+
+	//隠しコマンド。登録してる分全てリセット出来る機能。危ないので隠しときます。
+	//Route::get('/user/reset/{id}', 'UserController@reset');
 });
