@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -26,21 +26,19 @@
 	</head>
 	<body class="hold-transition login-page">
 
-		@if (count($errors) > 0)
-		<div class="alert alert-danger">
-			<strong>Whoops!</strong> There were some problems with your input.<br><br>
-			<ul>
-				@foreach ($errors->all() as $error)
-				<li>{{ $error }}</li>
-				@endforeach
-			</ul>
-		</div>
-		@endif
-
 		<div class="login-box">
 			<div class="login-logo">
-				<a href="/dashboard"><b>U9</b> Admin</a>
+				<b>U9</b> Admin
 			</div>
+
+			@if (count($errors) > 0)
+			<div class="alert alert-danger text-center">
+				@foreach ($errors->all() as $error)
+				<i class="fa fa-exclamation-triangle"></i> {{ $error }}<br>
+				@endforeach
+			</div>
+			@endif
+
 			<!-- /.login-logo -->
 			<div class="login-box-body">
 				<p class="login-box-msg">ログイン</p>

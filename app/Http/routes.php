@@ -1,8 +1,10 @@
 <?php
 
-Route::get('/', 'Auth\AuthController@getlogin');
-Route::get('/login', 'Auth\AuthController@getLogin');
-Route::post('/login', 'Auth\AuthController@authenticate');
+Route::group(['middleware' => 'guest'], function() {
+	Route::get('/', 'Auth\AuthController@getlogin');
+	Route::get('/login', 'Auth\AuthController@getLogin');
+	Route::post('/login', 'Auth\AuthController@authenticate');
+});
 
 Route::group(['middleware' => 'auth'], function() {
 	//ログイン後のroute

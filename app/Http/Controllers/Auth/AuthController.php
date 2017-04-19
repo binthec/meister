@@ -22,14 +22,7 @@ class AuthController extends Controller
 	protected $redirectPath = '/dashboard';
 	protected $redirectTo = '/dashboard';
 	//認証されていないユーザのリダイレクト先
-	protected $loginPath = '/';
-	//ログアウト後のパス
-	protected $redirectAfterLogout = '/login';
-
-	public function getLogin()
-	{
-		return view('auth.login');
-	}
+	protected $loginPath = '/login';
 
 	/**
 	 * @param Request $request
@@ -42,6 +35,13 @@ class AuthController extends Controller
 			$user = User::find(Auth::user()->id);
 			$user->setOriginalPaidVacations();
 			return redirect()->intended('dashboard');
+		} else {
+			//認証に失敗した場合
+			return redirect($this->loginPath())
+							->withInput($request->only($this->loginUsername(), 'remember'))
+							->withErrors([
+								$this->loginUsername() => $this->getFailedLoginMessage(),
+			]);
 		}
 	}
 

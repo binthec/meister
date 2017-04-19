@@ -32,7 +32,7 @@
 
 			<header class="main-header">
 				<!-- Logo -->
-				<a href="/" class="logo">
+				<a href="{{ url('/') }}" class="logo">
 					<!-- mini logo for sidebar mini 50x50 pixels -->
 					<span class="logo-mini"><b>U9</b></span>
 					<!-- logo for regular state and mobile devices -->
@@ -54,7 +54,7 @@
 								</a>
 							</li>
 							<li>
-								<a href="/logout">ログアウト</a>
+								<a href="{{ url('logout') }}">ログアウト</a>
 							</li>
 						</ul>
 					</div>
@@ -71,7 +71,7 @@
 						<li class="header">メインメニュー</li>
 
 						<li class="treeview {{ isActiveUrl('dashboard') }}">
-							<a href="/dashboard">
+							<a href="{{ url('/dashboard') }}">
 								<i class="fa fa-dashboard"></i> <span>Dashboard</span>
 							</a>
 						</li>
