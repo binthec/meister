@@ -28,7 +28,7 @@
 
 		<div class="login-box">
 			<div class="login-logo">
-				<b>U9</b> Admin
+				<b>Meister</b> Admin
 			</div>
 
 			@if (count($errors) > 0)

@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>U9 | @yield('title')</title>
+		<title>Meister | @yield('title')</title>
 		<!-- Tell the browser to be responsive to screen width -->
 		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 		<!-- Bootstrap 3.3.6 -->
@@ -95,6 +95,20 @@
 							</ul>
 						</li>
 
+						<li class="treeview {{ isActiveUrl('license*') }}">
+							<a href="#">
+								<i class="fa fa-laptop"></i> <span>ライセンス管理</span>
+								<span class="pull-right-container">
+									<i class="fa fa-angle-left pull-right"></i>
+								</span>
+							</a>
+							<ul class="treeview-menu">
+								<li class="{{ isActiveUrl('license') }}"><a href="{{ url('license') }}"><i class="fa fa-circle-o"></i> ライセンス一覧・検索</a></li>
+								<li class="{{ isActiveUrl('maker') }}"><a href="{{ url('maker') }}"><i class="fa fa-circle-o"></i> メーカー一覧・追加</a></li>
+								<li class="{{ isActiveUrl('license/create') }}"><a href="{{ url('license/create') }}"><i class="fa fa-circle-o"></i> ライセンス新規登録</a></li>
+							</ul>
+						</li>
+
 						@if(Auth::user()->role === 1)
 						<li class="header">管理メニュー</li>
 
@@ -106,8 +120,8 @@
 								</span>
 							</a>
 							<ul class="treeview-menu">
-								<li class="{{ isActiveUrl('user') }}"><a href="/user"><i class="fa fa-circle-o"></i> ユーザ一覧・検索</a></li>
-								<li class="{{ isActiveUrl('user/register') }}"><a href="{{ url('/user/register') }}"><i class="fa fa-circle-o"></i> ユーザ新規登録</a></li>
+								<li class="{{ isActiveUrl('user') }}"><a href="/user"><i class="fa fa-circle-o"></i> ライセンス一覧・検索</a></li>
+								<li class="{{ isActiveUrl('user/register') }}"><a href="{{ url('/user/register') }}"><i class="fa fa-circle-o"></i> ライセンス新規登録</a></li>
 							</ul>
 						</li>
 						@endif
@@ -133,10 +147,9 @@
 			<!-- /.content-wrapper -->
 			<footer class="main-footer">
 				<div class="pull-right hidden-xs">
-					<b>Version</b> 1.0.0
+					<b>Version</b> 1.1.0
 				</div>
-				<strong>Copyright &copy; since 2016 ishi</strong> All rights
-				reserved.
+				<strong>Copyright &copy; since 2017 ishi</strong> All rights reserved.
 			</footer>
 
 		</div>

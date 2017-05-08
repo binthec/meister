@@ -26,6 +26,12 @@ Route::group(['middleware' => 'auth'], function() {
 	//デバイス管理
 	Route::resource('/device', 'DeviceController');
 
+	//ライセンス管理
+	Route::resource('/license', 'LicenseController');
+
+	//ベンダー管理
+	Route::resource('/maker', 'MakerController', ['except' => 'show']);
+
 	//隠しコマンド。登録してる分全てリセット出来る機能。危ないので隠しときます。
 	//Route::get('/user/reset/{id}', 'UserController@reset');
 });
