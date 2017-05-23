@@ -82,14 +82,11 @@
 			<table id="users" class="table table-bordered table-striped">
 				<thead>
 					<tr class="bg-blue">
-						<th>分類</th>
-						<th>OS</th>
-						<th>機器名</th>
-						<th>購入日</th>
-						<th>使用者</th>
-						<th>メモリ</th>
-						<th>サイズ</th>
-						<th>廃棄済</th>
+						<th>ライセンス名</th>
+						<th>メーカー</th>
+						<th>プロダクトキー</th>
+						<th>ライセンス数</th>
+						<th>有効期限</th>
 						<th>操作</th>
 					</tr>
 				</thead>
@@ -97,16 +94,13 @@
 
 					@foreach($licenses as $license)
 					<tr>
-						<td><i class="fa {{ App\Device::$deviceIcon[$license->category] }}"></i> {{ App\Device::$deviceCategories[$license->category] }}</td>
-						<td>{{ ($license->os) ? App\Device::$osLabels[$license->os]: '-' }}</td>
 						<td>{{ $license->name }}</td>
-						<td>{{ App\User::getJaDate($license->bought_at) }}</td>
-						<td>{{ ($license->user_id) ? App\User::getUserName($license->user_id) :'なし' }}</td>
-						<td>{{ ($license->memory)? $license->memory . ' GB' : '-' }}</td>
-						<td>{{ $license->size }} インチ</td>
-						<td class="text-red">{{ ($license->status == 99) ? '廃棄済' : '' }}</td>
+						<td>{{ App\Maker::getNames()[$license->maker_id] }}</td>
+						<td>{{ $license->product_key }}</td>
+						<td>{{ $license->number }}</td>
+						<td>{{ App\User::getJaDate($license->expired_on) }}</td>
 						<td>
-							<a href="{{ action('DeviceController@edit', $license->id) }}" class="btn btn-primary">編集</a>
+							<a href="{{ action('LicenseController@edit', $license->id) }}" class="btn btn-primary">編集</a>
 							&emsp;
 							<a href="#" class="btn btn-default bg-purple" data-toggle="modal" data-target="#detailModal{{ $license->id }}">詳細</a>
 

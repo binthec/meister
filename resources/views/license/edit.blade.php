@@ -33,7 +33,7 @@
 			</div>
 
 			<div class="form-group forComputer{{ $errors->has('maker_id') ? ' has-error' : '' }}">
-				<label for="os" class="col-md-2 control-label">メーカー名 <span class="text-danger">*</span></label>
+				<label for="maker_id" class="col-md-2 control-label">メーカー名 <span class="text-danger">*</span></label>
 				<div class="col-md-6">
 					{!! Form::select('maker_id', App\Maker::getNames(), $license->maker_id,['class' => 'form-control']) !!}
 					@if($errors->has('maker_id'))
@@ -57,7 +57,7 @@
 			</div>
 
 			<div class="form-group{{ $errors->has('number') ? ' has-error' : '' }}">
-				<label for="serial_id" class="col-md-2 control-label">ライセンス数 <span class="text-danger">*</span></label>
+				<label for="number" class="col-md-2 control-label">ライセンス数 <span class="text-danger">*</span></label>
 				<div class="col-md-2">
 					{!! Form::text('number', $license->number, ['class' => 'form-control', 'placeholder' => '1']) !!}
 					@if($errors->has('number'))

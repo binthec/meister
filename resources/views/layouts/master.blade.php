@@ -96,16 +96,41 @@
 						</li>
 
 						<li class="treeview {{ isActiveUrl('license*') }}">
-							<a href="#">
-								<i class="fa fa-laptop"></i> <span>ライセンス管理</span>
+							<a href="{{ url('license') }}">
+								<i class="fa fa-user"></i> ライセンス管理
 								<span class="pull-right-container">
 									<i class="fa fa-angle-left pull-right"></i>
 								</span>
 							</a>
 							<ul class="treeview-menu">
-								<li class="{{ isActiveUrl('license') }}"><a href="{{ url('license') }}"><i class="fa fa-circle-o"></i> ライセンス一覧・検索</a></li>
-								<li class="{{ isActiveUrl('maker') }}"><a href="{{ url('maker') }}"><i class="fa fa-circle-o"></i> メーカー一覧・追加</a></li>
-								<li class="{{ isActiveUrl('license/create') }}"><a href="{{ url('license/create') }}"><i class="fa fa-circle-o"></i> ライセンス新規登録</a></li>
+								<li class="{{ isActiveUrl('license*') }}">
+									<a href="{{ url('license') }}"><i class="fa fa-circle-o"></i> ラインセンス本体操作
+										<span class="pull-right-container">
+											<i class="fa fa-angle-left pull-right"></i>
+										</span>
+									</a>
+									<ul class="treeview-menu">
+										<li class="{{ isActiveUrl('license/maker') }}">
+											<a href="{{ url('license/maker') }}"><i class="fa fa-circle-o"></i> メーカー一覧・追加</a>
+										</li>
+										<li class="{{ isActiveUrl('license/create') }}">
+											<a href="{{ url('license/create') }}"><i class="fa fa-circle-o"></i> ライセンス新規登録</a>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<a href="{{ url('license/use/create') }}"><i class="fa fa-circle-o"></i> ユーザ利用登録
+										<span class="pull-right-container">
+											<i class="fa fa-angle-left pull-right"></i>
+										</span>
+									</a>
+									<ul class="treeview-menu">
+										<li class="{{ isActiveUrl('license/use/create') }}">
+											<a href="{{ url('license/use/create') }}"><i class="fa fa-circle-o"></i> ライセンス使用登録</a>
+										</li>
+									</ul>
+								</li>
+								<li><a href="#"><i class="fa fa-circle-o"></i> Level One</a></li>
 							</ul>
 						</li>
 

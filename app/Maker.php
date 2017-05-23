@@ -27,7 +27,7 @@ class Maker extends Model
 	 */
 	public static function getNames()
 	{
-		return (self::pluck('name')) ? self::pluck('name')->toArray() : ['先にメーカーを登録してください'];
+		return (self::get()) ? self::get()->pluck('name', 'id')->toArray() : ['先にメーカーを登録してください'];
 	}
 
 }

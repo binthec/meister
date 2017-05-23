@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Validator;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -12,6 +15,11 @@ class LicenseController extends Controller
 {
 
 	/**
+	 * １ページに表示する数
+	 */
+	const PAGINATION = 20;
+
+	/**
 	 * 一覧と検索
 	 * 
 	 * @param Request $request
@@ -19,7 +27,7 @@ class LicenseController extends Controller
 	 */
 	public function index()
 	{
-		$licenses = License::all();
+		$licenses = License::paginate(self::PAGINATION);
 //		$makers = Maker::getSearchQuery($request->input())->paginate(self::PAGINATION);
 		return view('license.index', compact('licenses'));
 	}
@@ -44,13 +52,7 @@ class LicenseController extends Controller
 	 */
 	public function store(Request $request)
 	{
-		$validator = Validator::make($request->all(), [
-					'name' => 'required|max:200',
-					'serial_id' => 'required',
-					'core' => 'max:50|integer',
-					'memory' => 'max:50|integer',
-					'size' => 'max:50',
-		]);
+		$validator = Validator::make($request->all(), License::getValidationRule());
 		if ($validator->fails()) {
 			return redirect()
 							->back()
@@ -61,26 +63,16 @@ class LicenseController extends Controller
 		DB::beginTransaction();
 
 		try {
+
 			$license = new License;
-			$license->category = $request->category;
-			$license->os = ($license->category === License::DISPLAY) ? null : $request->os;
-			$license->name = $request->name;
-			$license->serial_id = $request->serial_id;
-			$license->bought_at = User::getStdDate($request->bought_at);
-			$license->user_id = ($request->user_id != '') ? $request->user_id : null;
-			$license->status = ($request->user_id != '') ? License::DEVICE_USED : DEVICE_USED::DEVICE_UNUSED;
-			$license->core = ($license->category === License::DISPLAY) ? null : $request->core;
-			$license->memory = ($license->category === License::DISPLAY) ? null : $request->memory;
-			$license->capacity = ($license->category === License::DISPLAY) ? null : $request->capacity;
-			$license->size = $request->size;
-			$license->save();
+			$license->saveAll($request);
 			DB::commit();
 
-			return redirect('/device')->with('flashMsg', 'デバイスの新規登録が完了しました。');
+			return redirect('/license')->with('flashMsg', '新規登録が完了しました。');
 		} catch (\Exception $e) {
 			DB::rollback();
 			Log::error($e->getMessage());
-			return redirect('/device')->with('flashErrMsg', 'デバイスの新規作成に失敗しました。時間をおいて再度お試しください。');
+			return redirect('/license')->with('flashErrMsg', '新規作成に失敗しました。時間をおいて再度お試しください。');
 		}
 	}
 
@@ -93,7 +85,7 @@ class LicenseController extends Controller
 	public function edit($id)
 	{
 		$license = License::find($id);
-		return view('device.edit', compact('device'));
+		return view('license.edit', compact('license'));
 	}
 
 	/**
@@ -105,13 +97,7 @@ class LicenseController extends Controller
 	 */
 	public function update(Request $request, $id)
 	{
-		$validator = Validator::make($request->all(), [
-					'name' => 'required|max:200',
-					'serial_id' => 'required',
-					'core' => 'max:50|integer',
-					'memory' => 'max:50|integer',
-					'size' => 'max:50',
-		]);
+		$validator = Validator::make($request->all(), License::getValidationRule());
 		if ($validator->fails()) {
 			return redirect()
 							->back()
@@ -122,34 +108,16 @@ class LicenseController extends Controller
 		DB::beginTransaction();
 
 		try {
-			//ステータスを先に判定
-			$status = 1;
-			if (isset($request->disposal)) {
-				$status = 99;
-			} elseif (!$request->user_id) {
-				$status = 2;
-			}
 
 			$license = License::find($id);
-			$license->category = $request->category;
-			$license->os = ($license->category === License::DISPLAY) ? null : $request->os;
-			$license->name = $request->name;
-			$license->serial_id = $request->serial_id;
-			$license->bought_at = User::getStdDate($request->bought_at);
-			$license->user_id = ($request->user_id != '') ? $request->user_id : null;
-			$license->status = $status;
-			$license->core = ($license->category === License::DISPLAY) ? null : $request->core;
-			$license->memory = ($license->category === License::DISPLAY) ? null : $request->memory;
-			$license->capacity = ($license->category === License::DISPLAY) ? null : $request->capacity;
-			$license->size = $request->size;
-			$license->save();
+			$license->saveAll($request);
 			DB::commit();
 
-			return redirect('/device')->with('flashMsg', 'デバイスの編集が完了しました');
+			return redirect('/license')->with('flashMsg', '編集が完了しました');
 		} catch (\Exception $e) {
 			DB::rollback();
 			Log::error($e->getMessage());
-			return redirect('/device')->with('flashErrMsg', 'デバイスの編集に失敗しました。時間をおいて再度お試しください。');
+			return redirect('/license')->with('flashErrMsg', '編集に失敗しました。時間をおいて再度お試しください。');
 		}
 	}
 
