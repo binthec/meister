@@ -103,7 +103,10 @@
 								</span>
 							</a>
 							<ul class="treeview-menu">
-								<li class="{{ isActiveUrl('license*') }}">
+								<li class="{{ isActiveUrl('license') }}">
+									<a href="{{ url('license') }}"><i class="fa fa-circle-o"></i> ライセンス一覧・検索</a>
+								</li>
+								<li class="{{ isActiveUrl('license/*') }}">
 									<a href="{{ url('license') }}"><i class="fa fa-circle-o"></i> ラインセンス本体操作
 										<span class="pull-right-container">
 											<i class="fa fa-angle-left pull-right"></i>
@@ -118,7 +121,7 @@
 										</li>
 									</ul>
 								</li>
-								<li>
+								<li class="{{ isActiveUrl('license/use/*') }}">
 									<a href="{{ url('license/use/create') }}"><i class="fa fa-circle-o"></i> ユーザ利用登録
 										<span class="pull-right-container">
 											<i class="fa fa-angle-left pull-right"></i>
@@ -130,7 +133,6 @@
 										</li>
 									</ul>
 								</li>
-								<li><a href="#"><i class="fa fa-circle-o"></i> Level One</a></li>
 							</ul>
 						</li>
 
