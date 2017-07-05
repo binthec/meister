@@ -40,10 +40,10 @@
 				</div>
 
 				<label for="bought_at" class="col-md-2 control-label">購入日</label>
-				<div class="col-md-3 form-inline">
-					{!! Form::text('after', Request::has('after')? Request::input('after'): '', ['class' => 'form-control use_datepicker']) !!}
+				<div class="col-md-4 form-inline">
+					{!! Form::text('after', Request::has('after')? Request::input('after'): '', ['class' => 'form-control use_datepicker date']) !!}
 					&ensp;〜&ensp;
-					{!! Form::text('before', Request::has('before')? Request::input('before'): '', ['class' => 'form-control use_datepicker']) !!}
+					{!! Form::text('before', Request::has('before')? Request::input('before'): '', ['class' => 'form-control use_datepicker date']) !!}
 				</div>
 			</div>
 
