@@ -121,7 +121,7 @@
 			<hr>
 
 			<div class="form-group{{ $errors->has('role') ? ' has-error': '' }}">
-				<label for="role" class="col-md-2 control-label">U9サイト内権限</label>
+				<label for="role" class="col-md-2 control-label">サイト内権限</label>
 				<div class="col-md-2">
 					{!! Form::select('role', App\User::$roleLabels, null,['class' => 'form-control']) !!}
 				</div>

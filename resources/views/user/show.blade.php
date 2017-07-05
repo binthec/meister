@@ -27,7 +27,7 @@
 							<b>{{ $user->email }}</b> <a class="pull-right">Email</a>
 						</li>
 						<li class="list-group-item">
-							<b>{{ App\User::$roleLabels[$user->role] }}</b> <a class="pull-right">U9サイト内権限</a>
+							<b>{{ App\User::$roleLabels[$user->role] }}</b> <a class="pull-right">サイト内権限</a>
 						</li>
 						<li class="list-group-item">
 							<b>{{ App\User::getJaDate($user->date_of_entering) }}</b> <a class="pull-right">入社日</a>

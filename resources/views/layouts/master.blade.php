@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>U9 | @yield('title')</title>
+		<title>Meister | @yield('title')</title>
 		<!-- Tell the browser to be responsive to screen width -->
 		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 		<!-- Bootstrap 3.3.6 -->
@@ -34,9 +34,9 @@
 				<!-- Logo -->
 				<a href="{{ url('/') }}" class="logo">
 					<!-- mini logo for sidebar mini 50x50 pixels -->
-					<span class="logo-mini"><b>U9</b></span>
+					<span class="logo-mini"><b>M</b></span>
 					<!-- logo for regular state and mobile devices -->
-					<span class="logo-lg"><b>U9</b></span>
+					<span class="logo-lg"><b>Meister</b></span>
 				</a>
 				<!-- Header Navbar: style can be found in header.less -->
 				<nav class="navbar navbar-static-top">

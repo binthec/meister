@@ -1,5 +1,5 @@
 @extends('layouts/master')
-@section('title', 'U9 | デバイス管理')
+@section('title', 'Meister | デバイス管理')
 
 @section('content')
 <section class="content-header">
