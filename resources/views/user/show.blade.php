@@ -35,6 +35,11 @@
 						<li class="list-group-item">
 							<b>{{ App\User::getJaDate($user->base_date) }}</b> <a class="pull-right">起算日</a>
 						</li>
+                        @if($user->status === App\User::RETIRED)
+                        <li class="list-group-item">
+                            <b class="text-danger">退職済</b> <a class="pull-right">ステータス</a>
+                        </li>
+                        @endif
 						<li class="list-group-item">
 							<a>備考</a>
 							<p>{!! nl2br($user->memo) !!}</p>
