@@ -178,7 +178,7 @@
 
 								@if(Auth::user()->role === 1)
 								<td>
-									<a type="button" class="btn btn-primary btn-sm" name="edit" href="{{ url('vacation/edit', $usedDay->id) }}">編集</a>
+									<a type="button" class="btn btn-primary btn-sm" name="edit" href="{{ action('VacationController@edit', $usedDay->id) }}">編集</a>
 									&ensp;
 									<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal{{ $usedDay->id }}">削除</button>
 
