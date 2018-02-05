@@ -26,6 +26,10 @@ Route::group(['middleware' => 'auth'], function() {
 	//デバイス管理
 	Route::resource('/device', 'DeviceController');
 
+	//お知らせ管理
+    Route::get('/info/{id}', 'HomeController@info');
+	Route::resource('/info', 'InformationController', ['except' => 'show']);
+
 	//隠しコマンド。登録してる分全てリセット出来る機能。危ないので隠しときます。
 	//Route::get('/user/reset/{id}', 'UserController@reset');
 });

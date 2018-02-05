@@ -94,5 +94,13 @@ table.profile td{
     height: 32px !important;
 }
 
-
-
+/* information at dashbaord */
+ul.info-list li{
+    margin: 15px 0;
+}
+ul.info-list li:last-child{
+    margin-bottom: 0;
+}
+.content{
+    min-height: 50px;
+}

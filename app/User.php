@@ -165,6 +165,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return date('Y年m月d日', strtotime($date));
     }
 
+	/**
+	 * 'Y-m-d'の形式のデータを'Y年m月d日'に変換するメソッド
+	 *
+	 * @param type $date
+	 * @return Y-m-d H:i:s
+	 */
+	public static function getJaDateTime($datetime)
+	{
+		return date('Y年m月d日 H:i:s', strtotime($datetime));
+	}
+
     /**
      * 付与されている有給日数の計算
      * @param type $baseDate 起算日
