@@ -109,7 +109,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     /**
      * IDとユーザ名の全セットを返すメソッド
      *
-     * @return Illuminate\Database\Eloquent\Collection
+     * @return static
      */
     public static function getUsers()
     {
@@ -279,7 +279,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $paidVacations = $this->getValidPaidVacation($baseDate);
         $remainingDays = 0;
         foreach ($paidVacations as $paidVacation) {
-            if ($paidVacation->start_date < $baseDate && $paidVacation->limit_date > $baseDate) {
+            if ($paidVacation->start_date <= $baseDate && $paidVacation->limit_date >= $baseDate) {
                 $remainingDays += $paidVacation->remaining_days;
             }
         }

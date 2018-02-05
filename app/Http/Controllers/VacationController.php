@@ -58,8 +58,8 @@ class VacationController extends Controller
 		$user = User::findOrFail($request->user_id);
 
 		//有給残日数の合計を取得
-		$sumRemainingDays = $user->getSumRemainingDays();
-		//登録する日数を残日数から減算した値（＝登録後の有給残日数）を取得
+		$sumRemainingDays = $user->getSumRemainingDays($request->from);
+        //登録する日数を残日数から減算した値（＝登録後の有給残日数）を取得
 		$resultRemainingDays = $sumRemainingDays - $request->used_days;
 		//前借りしている場合は、前借り分も計算後の残日数から減算する
 		$resultRemainingDays = $user->getResultRemainingDays($resultRemainingDays);
@@ -90,7 +90,7 @@ class VacationController extends Controller
 
 		try {
 			//計算後の有給残日数をレコードに保存
-			$user->setRemainingDays($resultRemainingDays);
+			$user->setRemainingDays($resultRemainingDays, $request->from);
 
 			//登録した有給の内容をUsedDaysテーブルに保存
 			$usedDays = new UsedDays;
@@ -141,7 +141,7 @@ class VacationController extends Controller
 		$user = User::find(Auth::user()->id);
 
 		//有給残日数の合計を取得
-		$sumRemainingDays = $user->getSumRemainingDays();
+		$sumRemainingDays = $user->getSumRemainingDays($request->from);
 
 		//1.既に登録している日数を、合計有給日数に加算して、元に戻す
 		$sumRemainingDays += $usedDays->used_days;
@@ -178,7 +178,7 @@ class VacationController extends Controller
 
 		try {
 			//3.計算後の有給残日数をレコードに保存
-			$user->setRemainingDays($resultRemainingDays);
+			$user->setRemainingDays($resultRemainingDays, $request->from);
 
 			//編集されたデータで既存レコードを更新
 			$usedDays->from = $request->from;
@@ -208,15 +208,17 @@ class VacationController extends Controller
 	public function destroy($id)
 	{
 		$usedDays = UsedDays::find($id);
-		$usedDays->delete();
-
 		$user = User::find($usedDays->user_id);
+
 		//有給残日数に、削除する分の登録日数を加算して元に戻す
-		$resultRemainingDays = $user->getSumRemainingDays() + $usedDays->used_days;
+		$resultRemainingDays = $user->getSumRemainingDays($usedDays->from) + $usedDays->used_days;
 		//前借りしている場合は、前借り分を計算後の残日数から減算する
 		$resultRemainingDays = $user->getResultRemainingDays($resultRemainingDays);
 		//最終的な計算後の残日数をもとに、有給残日数を計算してレコードを更新する
-		$user->setRemainingDays($resultRemainingDays);
+		$user->setRemainingDays($resultRemainingDays, $usedDays->from);
+
+		//物理削除実行
+        $usedDays->delete();
 
 		return redirect()->back()->with('flashMsg', '登録済有給を削除しました');
 	}
