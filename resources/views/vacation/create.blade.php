@@ -89,7 +89,7 @@
 			<div class="form-group{{ $errors->has('daterange') ? ' has-error' : '' }}">
 				<label for="daterange" class="col-md-2 control-label">有給消化登録期間</label>
 				<div class="col-md-6">
-					{!! Form::date('daterange', '', ['class' => 'form-control use_daterange font18', 'placeholder' => '日付を選択してください']) !!}
+					{!! Form::text('daterange', '', ['class' => 'form-control use_daterange font18', 'placeholder' => '日付を選択してください']) !!}
 					@if($errors->has('daterange'))
 					<span class="help-block">
 						<strong class="text-danger">{{ $errors->first('daterange') }}</strong>
