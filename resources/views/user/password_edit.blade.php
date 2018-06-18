@@ -21,6 +21,12 @@
 			{!! Form::open(['method' => 'put', 'action' => ['UserController@passwordUpdate', $user->id], 'class' => 'form-horizontal']) !!}
 			{{ csrf_field() }}
 
+			@if($errors->has('permission'))
+				<span class="help-block">
+						<strong class="text-danger">{{ $errors->first('permission') }}</strong>
+                </span>
+			@endif
+
 			<div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
 				<label for="ID" class="col-md-2 control-label">パスワード <span class="text-danger">*</span></label>
 				<div class="col-md-4">

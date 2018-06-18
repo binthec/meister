@@ -76,12 +76,20 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (Auth::user()->role !== User::ADMIN && Auth::user()->id !== (int)$id) {
+
+            return redirect()
+                ->back()
+                ->withErrors(['permission' => '自身以外のユーザ情報変更することはできません']);
+        }
+
         $validator = Validator::make($request->all(), [
             'last_name' => 'required|max:255',
             'first_name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $id,
         ]);
         if ($validator->fails()) {
+
             return redirect()
                 ->back()
                 ->withErrors($validator)
@@ -133,6 +141,14 @@ class UserController extends Controller
      */
     public function passwordUpdate(Request $request, $id)
     {
+
+        if (Auth::user()->role !== User::ADMIN && Auth::user()->id !== (int)$id) {
+
+            return redirect()
+                ->back()
+                ->withErrors(['permission' => '自身以外のユーザ情報変更することはできません']);
+        }
+
         $validator = Validator::make($request->all(), [
             'password' => 'required|min:8',
             'password_confirmation' => 'required|same:password',
