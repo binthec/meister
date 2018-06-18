@@ -82,6 +82,12 @@
 							</a>
 						</li>
 
+						<li class="treeview {{ isActiveUrl('vacation*') }}">
+							<a href="{{ url('substitute_holiday/create') }}">
+								<i class="fa fa-calendar-times-o"></i> <span>振替休日登録</span>
+							</a>
+						</li>
+
 						<li class="treeview {{ isActiveUrl('device*') }}">
 							<a href="#">
 								<i class="fa fa-laptop"></i> <span>デバイス管理</span>

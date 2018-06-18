@@ -23,6 +23,9 @@ Route::group(['middleware' => 'auth'], function() {
 	//有給消化登録
 	Route::resource('/vacation', 'VacationController', ['except' => 'show']);
 
+    //振替休日登録
+    Route::resource('/substitute_holiday', 'SubstituteHolidayController', ['except' => 'show']);
+
 	//デバイス管理
 	Route::resource('/device', 'DeviceController');
 
