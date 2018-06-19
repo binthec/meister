@@ -81,12 +81,15 @@ class SubstituteHolidayController extends Controller
 
             DB::commit();
 
-            return redirect('substitute_holiday/create');
+            return redirect('dashboard')->with('flashMsg', '振替休日の登録が完了しました');
 
         } catch (\Exception $e) {
 
             DB::rollback();
             Log::error($e->getMessage());
+
+            return redirect('/dashboard')->with('flashErrMsg', '振替休日の登録に失敗しました。時間をおいて再度お試しください。');
+
         }
     }
 
@@ -109,12 +112,9 @@ class SubstituteHolidayController extends Controller
      */
     public function edit($id)
     {
-        /**
-        $useRequest = UsedDays::find($id);
-        $usedDays = Auth::user()->usedDays()->orderBy('from', 'descs')->paginate(self::PAGINATION); //登録済み有給を取得
-        $validPaidVacations = Auth::user()->getValidPaidVacation(User::getTodayDate());
-        return view('vacation.edit', compact('useRequest', 'usedDays', 'validPaidVacations'));
-         **/
+        $substituteHoliday = SubstituteHoliday::find($id);
+
+        return view('substitute_holiday.edit', compact('substituteHoliday'));
     }
 
     /**
@@ -126,7 +126,35 @@ class SubstituteHolidayController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make($request->all(), $this->rules);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $substituteHoliday  = SubstituteHoliday::find($id);
+
+            $substituteHoliday->user_id = (int)$request->get('user_id');
+            $substituteHoliday->workday = User::getStdDate($request->get('workday'));
+            $substituteHoliday->holiday = User::getStdDate($request->get('holiday'));
+            $substituteHoliday->memo = $request->get('memo');
+            $substituteHoliday->save();
+
+            DB::commit();
+
+            return redirect('/dashboard')->with('flashMsg', '振替休日の編集が完了しました');
+
+        } catch (\Exception $e) {
+
+            DB::rollback();
+            Log::error($e->getMessage());
+
+            return redirect('/dashboard')->with('flashErrMsg', '振替休日の編集に失敗しました。時間をおいて再度お試しください。');
+
+        }
     }
 
     /**
@@ -140,6 +168,6 @@ class SubstituteHolidayController extends Controller
         $substituteHoliday = SubstituteHoliday::find($id);
         $substituteHoliday->delete();
 
-        return redirect()->back()->with('flashMsg', '出勤振替を削除しました');
+        return redirect()->back()->with('flashMsg', '振替休日を削除しました');
     }
 }

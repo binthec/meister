@@ -80,7 +80,7 @@
                 @if($substituteHolidays->count())
                     <table class="table table-bordered">
                         <thead class="bg-primary">
-                        <th width="5%">№</th><th>概要</th><th>営業日外出勤日</th><th>振替休日</th><th width="15%">操作</th>
+                        <th width="5%">№</th><th>出勤理由</th><th>営業日外出勤日</th><th>振替休日</th><th width="15%">操作</th>
                         </thead>
                         <tbody>
                         <?php $i = ($substituteHolidays->currentPage() - 1) * \App\SubstituteHoliday::PAGE_NUM + 1 ?>
@@ -92,7 +92,7 @@
                                 <td>{{ App\User::getJaDate($substituteHoliday->workday) }}</td>
                                 <td>{{ App\User::getJaDate($substituteHoliday->holiday) }}</td>
                                 <td>
-                                    <a type="button" class="btn btn-primary btn-sm" name="edit" href="{{ url('substitute_holiday/edit', $substituteHoliday->id) }}">編集</a>
+                                    <a type="button" class="btn btn-primary btn-sm" name="edit" href="{{ url('substitute_holiday/' .  $substituteHoliday->id . '/edit') }}">編集</a>
                                     &ensp;
                                     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal{{ $substituteHoliday->id }}">削除</button>
 
@@ -102,13 +102,13 @@
                                             <div class="modal-content">
                                                 <div class="modal-header bg-red">
                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                    <h4 class="modal-title" id="ModalLabel">登録済有給の削除</h4>
+                                                    <h4 class="modal-title" id="ModalLabel">振替休日の削除</h4>
                                                 </div>
                                                 <div class="modal-body">
                                                     <p class="alert-danger align-center">&ensp;<i class="fa fa-warning"></i> この処理は取り消せません</p>
                                                     <p>選択した振替休日を削除します。よろしいですか？</p>
                                                     <p>
-                                                        営業外日出勤日：{{ App\User::getJaDate($substituteHoliday->workday) }}<br>
+                                                        営業日外出勤日：{{ App\User::getJaDate($substituteHoliday->workday) }}<br>
                                                         振替休日：{{ App\User::getJaDate($substituteHoliday->holiday) }}<br>
                                                     </p>
                                                 </div>
