@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use App\PaidVacation;
 use App\UsedDays;
 use Carbon\Carbon;
+use App\SubstituteHoliday;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract
 {
@@ -92,6 +93,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function devices()
     {
         return $this->hasMany('App\Device');
+    }
+
+    public function substituteHolidays()
+    {
+        return $this->hasMany(SubstituteHoliday::class);
     }
 
     /**
