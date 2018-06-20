@@ -11,7 +11,7 @@
 
 <!-- Main content -->
 <section class="content">
-	<div class="box">
+	<div class="box box-primary">
 		<div class="box-header with-border">
 			<h3 class="box-title">振替休日一覧</h3>
 		</div>
@@ -33,8 +33,7 @@
 						<td>{{ App\User::getJaDate($substituteHoliday->workday) }}</td>
 						<td>{{ App\User::getJaDate($substituteHoliday->holiday) }}</td>
 						<td>
-							<a type="button" class="btn btn-primary btn-sm" name="edit" href="{{ url('/substitute_holiday' . $substituteHoliday->id . '/edit') }}">編集</a>
-							&ensp;
+							<a type="button" class="btn btn-primary btn-sm" name="edit" href="{{ action('SubstituteHolidayController@edit', $substituteHoliday->id) }}">編集</a>&ensp;
 							<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal{{ $substituteHoliday->id }}">削除</button>
 
 							<!-- deleteModalWindow -->
@@ -54,7 +53,7 @@
 											</p>
 										</div>
 										<div class="modal-footer">
-											{!! Form::open(['method' => 'delete', 'url' => '/substitute_holiday']) !!}
+											{!! Form::open(['method' => 'delete', 'action' => ['SubstituteHolidayController@destroy', $substituteHoliday->id]]) !!}
 											<button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
 											{!! Form::submit('削除実行', ['class' => 'btn btn-danger btn-sm']) !!}
 											{!! Form::close() !!}
@@ -72,7 +71,7 @@
 			</table>
 
 			@else
-			<p>現在、登録済み有給はありません。</p>
+			<p>現在、登録済み振替休日はありません。</p>
 			@endif
 
 			{!! $substituteHolidays->render() !!}

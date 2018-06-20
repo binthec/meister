@@ -131,7 +131,7 @@
                     </table>
 
                 @else
-                    <p>現在、振替休日はありません。</p>
+                    <p>現在、登録済み振替休日はありません。</p>
                 @endif
 
                 {!! $substituteHolidays->render() !!}

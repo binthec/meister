@@ -52,7 +52,9 @@ class UserController extends Controller
         $user = User::find($id);
         $validPaidVacations = $user->getValidPaidVacation(User::getTodayDate());
         $usedDays = $user->usedDays()->orderBy('from', 'descs')->paginate(self::PAGINATION); //登録済み有給を取得
-        return view('user.show', compact('user', 'validPaidVacations', 'usedDays'));
+        $substituteHolidays = $user->substituteHolidays()->orderBy('created_at', 'desc')->paginate(self::PAGINATION); //登録済み有給を取得
+
+        return view('user.show', compact('user', 'validPaidVacations', 'usedDays', 'substituteHolidays'));
     }
 
     /**
@@ -72,7 +74,7 @@ class UserController extends Controller
      *
      * @param Request $request
      * @param str $id
-     * @return ユーザ詳細画面へ戻る
+     * @return RedirectResponse ユーザ詳細画面へ戻る
      */
     public function update(Request $request, $id)
     {

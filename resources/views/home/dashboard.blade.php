@@ -220,6 +220,7 @@
 	<div class="box box-primary">
 		<div class="box-header with-border">
 			<h3 class="box-title">振替休日一覧</h3>
+			<a href="{{ url('substitute_holiday/create') }}" class="btn btn-primary pull-right">振替休日新規登録</a>
 		</div>
 		<div class="box-body">
 			@if($substituteHolidays->count())
@@ -276,7 +277,7 @@
 				</table>
 
 			@else
-				<p>現在、振替休日はありません。</p>
+				<p>現在、登録済み振替休日はありません。</p>
 			@endif
 
 			{!! $substituteHolidays->render() !!}

@@ -67,6 +67,7 @@
 						<th>入社日</th>
 						<th>ステータス</th>
 						<th>有給残日数</th>
+						<th>振替休日数</th>
 						<th>操作</th>
 					</tr>
 				</thead>
@@ -79,6 +80,7 @@
 						<td>{{ App\User::getJaDate($user->date_of_entering) }}</td>
 						<td class="{{ ($user->status == App\User::RETIRED)? 'text-red': '' }}">{{ App\User::$status[$user->status] }}</td>
 						<td class="font18">{{ ($user->status == App\User::RETIRED)? '-': $user->getSumRemainingDays() }}</td>
+						<td class="font18">{{ ($user->status == App\User::RETIRED)? '-': $user->substituteHolidays()->count() }}</td>
 						<td><a href="{{ action('UserController@show', $user->id) }}" class="btn btn-primary">詳細表示</a></td>
 					</tr>
 					@endforeach
