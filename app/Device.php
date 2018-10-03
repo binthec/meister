@@ -19,18 +19,21 @@ class Device extends Model
 	const DESKTOP_PC = '2';
 	const TABLET = '20';
 	const DISPLAY = '40';
+	const OTHER = '100';
 
 	public static $deviceCategories = [
 		self::NOTE_PC => 'ノートパソコン',
 		self::DESKTOP_PC => 'デスクトップパソコン',
 		self::TABLET => 'タブレット',
 		self::DISPLAY => 'ディスプレイ',
+		self::OTHER => '周辺機器',
 	];
 	public static $deviceIcon = [
 		self::NOTE_PC => 'fa-laptop',
 		self::DESKTOP_PC => 'fa-desktop',
 		self::TABLET => 'fa-tablet',
 		self::DISPLAY => 'fa-television',
+		self::OTHER => 'fa-usb',
 	];
 
 	/**

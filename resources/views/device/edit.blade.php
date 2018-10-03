@@ -201,7 +201,7 @@
 
         //ディスプレイの時はOSとコア、メモリは必要無いので隠すためのメソッド
         function changeForComputer() {
-            if ($("#category option:selected").val() == '{{ App\Device::DISPLAY }}') {
+            if ($("#category option:selected").val() == '{{ App\Device::DISPLAY }}' || $("#category option:selected").val() == '{{ App\Device::OTHER }}') {
                 $(".forComputer").hide();
             } else {
                 $(".forComputer").show();
