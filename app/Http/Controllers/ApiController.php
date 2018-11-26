@@ -72,12 +72,12 @@ class ApiController extends Controller
         ];
 
         if (count(array_filter($wordsOfStartWorking, function ($keyword) use ($text) {
-            return mb_strpos($text, $keyword) !== 0;
+            return mb_strpos($text, $keyword) !== false;
         })) > 0) {
             return Attendance::STATUS_STRAT_WORKING;
         }
         if (count(array_filter($wordsOfEndWorking, function ($keyword) use ($text) {
-                return mb_strpos($text, $keyword) !== 0;
+                return mb_strpos($text, $keyword) !== false;
             })) > 0) {
             return Attendance::STATUS_END_WORKING;
         }
