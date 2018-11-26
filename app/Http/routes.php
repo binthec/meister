@@ -4,6 +4,8 @@ Route::group(['middleware' => 'guest'], function() {
 	Route::get('/', 'Auth\AuthController@getlogin');
 	Route::get('/login', 'Auth\AuthController@getLogin');
 	Route::post('/login', 'Auth\AuthController@authenticate');
+
+    Route::post('/api/timecard', 'ApiController@timecard');
 });
 
 Route::group(['middleware' => 'auth'], function() {
@@ -32,5 +34,6 @@ Route::group(['middleware' => 'auth'], function() {
 	//隠しコマンド。登録してる分全てリセット出来る機能。危ないので隠しときます。
 	//Route::get('/user/reset/{id}', 'UserController@reset');
 
-    Route::post('/api/timecard', 'ApiController@timecard');
+
 });
+
