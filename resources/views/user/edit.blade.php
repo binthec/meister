@@ -60,6 +60,18 @@
 			</div>
 
 			<div class="form-group">
+				<label for="slack_user_id" class="col-md-2 control-label">Slack User ID </label>
+				<div class="col-md-6">
+					{!! Form::text('slack_user_id',$user->slack_user_id, ['class' => 'form-control', 'placeholder' => 'Slack User ID']) !!}
+					@if($errors->has('slack_user_id'))
+						<span class="help-block">
+						<strong class="text-danger">{{ $errors->first('slack_user_id') }}</strong>
+					</span>
+					@endif
+				</div>
+			</div>
+
+			<div class="form-group">
 				<label for="status" class="col-md-2 control-label">区分</label>
 				<div class="col-md-4">
 					{!! Form::select('type_of_employment', App\User::$typeOfEmployments, $user->type_of_employment, ['class' => 'form-control']) !!}

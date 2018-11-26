@@ -31,4 +31,6 @@ Route::group(['middleware' => 'auth'], function() {
 
 	//隠しコマンド。登録してる分全てリセット出来る機能。危ないので隠しときます。
 	//Route::get('/user/reset/{id}', 'UserController@reset');
+
+    Route::post('/api/timecard', 'ApiController@timecard');
 });

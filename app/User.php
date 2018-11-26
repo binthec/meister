@@ -75,6 +75,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         self::GENERAL_AFFAIRS => '総務',
     ];
 
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
     public function __construct()
     {
         $this->today = Carbon::now()->toDateString(); //今日の日付を取得;

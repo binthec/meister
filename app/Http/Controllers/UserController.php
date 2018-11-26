@@ -110,6 +110,7 @@ class UserController extends Controller
             $user->department = $request->department;
             $user->role = ($request->role) ? $request->role : $user->role;
             $user->memo = $request->memo;
+            $user->slack_user_id = $request->slack_user_id;
             $user->save();
             DB::commit();
 
