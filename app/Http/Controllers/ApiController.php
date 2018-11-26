@@ -58,7 +58,8 @@ class ApiController extends Controller
             'はじめます',
             '始めます',
             '出社しました',
-            '出勤しました'
+            '出勤しました',
+            'Start'
         ];
 
         $wordsOfEndWorking = [
@@ -68,7 +69,8 @@ class ApiController extends Controller
             'おえます',
             '終えます',
             '退社します',
-            '退勤します'
+            '退勤します',
+            'End'
         ];
 
         if (count(array_filter($wordsOfStartWorking, function ($keyword) use ($text) {
