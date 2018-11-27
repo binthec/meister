@@ -37,12 +37,14 @@ class ApiController extends Controller
             $attendance->raw_data = json_encode($request->all());
             $attendance->save();
 
-            switch ($status) {
-                case Attendance::STATUS_STRAT_WORKING:
-                    return response($user->last_name .' '. $user->first_name . 'さん、お疲れ様です。' . "\n[ ". date('H:i') . ' 出勤 ] で打刻しました。', 200);
-                case Attendance::STATUS_END_WORKING:
-                    return response($user->last_name .' '. $user->first_name . 'さん、お疲れ様です。' . "\n[ ". date('H:i') . ' 退勤 ] で打刻しました。', 200);
-            }
+            $statusLabel = $attendance->getStatusLabel();
+
+            $response = [
+                'response_type' => 'in_channel',
+                'text' => $user->last_name . ' ' . $user->first_name . 'さんが'. $statusLabel .'しました。 ['.date('H:i').' '.$statusLabel.']',
+            ];
+
+            return response()->json($response, 200);
 
         } catch (\Exception $e) {
 
