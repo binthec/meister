@@ -97,7 +97,16 @@ class AttendanceController extends Controller
         //
     }
 
+    /**
+     * リクエストの条件で検索した後、結果をJSON形式で返す
+     *
+     * @return JSON形式のデータ
+     */
 
+    public function getJSON(Request $request){
+        $query = Attendance::getSearchQuery($request->input());
+        return json_encode($query->get());
+    }
 
     /**
      * CSVファイルを生成し、ファイルパスへのレスポンスを返す

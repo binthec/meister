@@ -38,6 +38,8 @@ Route::group(['middleware' => 'auth'], function() {
     //CSVファイルのエクスポート機能用
     Route::get('/attendance/csv/export', 'AttendanceController@downloadCsv');
 
+    //出退勤データをJSON形式で取得
+    Route::get('/attendance/json', 'AttendanceController@getJSON');
 
     //タイムカード管理
     Route::resource('/attendance', 'AttendanceController');
