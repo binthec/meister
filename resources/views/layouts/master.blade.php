@@ -88,6 +88,12 @@
 							</a>
 						</li>
 
+						<li class="treeview {{ isActiveUrl('vacation*') }}">
+							<a href="{{ url('attendance') }}">
+								<i class="fa fa-calendar-times-o"></i> <span>タイムカード</span>
+							</a>
+						</li>
+
 						<li class="treeview {{ isActiveUrl('device*') }}">
 							<a href="#">
 								<i class="fa fa-laptop"></i> <span>デバイス管理</span>
