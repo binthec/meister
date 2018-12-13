@@ -80,8 +80,9 @@
 		<!-- 各タブの名前を表示 -->
 		<ul class="nav nav-tabs">
 			<li class="pull-left header"><i class="fa fa-th"></i> タイムカード </li>
-			<li class="{{ !Request::has('focus_tab') ? 'active' :  Request::input('focus_tab') === 'tab_list' ? 'active' : ''}}"><a href="#tab_list" data-toggle="tab" aria-expanded="true">一覧</a></li>
-			<li class="{{ !Request::has('focus_tab') ? '' :  Request::input('focus_tab') === 'tab_calendar' ? 'active' : ''  }}"><a href="#tab_calendar" data-toggle="tab" aria-expanded="true">カレンダー</a></li>
+			<li class="{{ !Request::has('focus_tab') ? 'active' :  Request::input('focus_tab') === 'tab_list' ? 'active' : ''}} btn_tab btn_tab_list"><a href="#tab_list" data-toggle="tab" aria-expanded="true">一覧</a></li>
+			<li class="{{ !Request::has('focus_tab') ? '' :  Request::input('focus_tab') === 'tab_calendar' ? 'active' : ''  }} btn_tab btn_tab_calendar"><a href="#tab_calendar" data-toggle="tab" aria-expanded="true">カレンダー</a></li>
+			<li class="{{ !Request::has('focus_tab') ? '' :  Request::input('focus_tab') === 'tab_chart' ? 'active' : ''  }} btn_tab btn_tab_chart"><a href="#tab_chart" data-toggle="tab" aria-expanded="true">グラフ</a></li>
 			<!-- 設定メニュー -->
 			<li class="dropdown">
 				<a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">　設定 <span class="caret"></span></a>
@@ -151,6 +152,13 @@
 			<!-- カレンダー表示 -->
 			<div id="tab_calendar" class="tab-pane {{ !Request::has('focus_tab') ? '' :  Request::input('focus_tab') === 'tab_calendar' ? 'active' : ''}}">
 				<div id="calendar"></div>
+			</div>
+			<!-- グラフ表示 -->
+			<div id="tab_chart" class="tab-pane {{ !Request::has('focus_tab') ? '' :  Request::input('focus_tab') === 'tab_chart' ? 'active' : ''}}" >
+				<div id="box_chart">
+					<div class="menu_chart"></div>
+					<canvas id="chart"></canvas>
+				</div>
 			</div>
 		</div>
 

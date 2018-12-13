@@ -1,10 +1,13 @@
 $(function() {
 
-    //フォームのをリセットする（リセットボタンの親要素にあるフォームが対象）
+    //フォームのリセット処理（リセットボタンを含むフォームが対象）
     $('.reset_form').on('click', function () {
         let $form = $(this).closest('form');
-        if ($form[0]) {
-            $form.find('input[name],select[name],textarea[name]').prop('checked', false).val('');
+        /* 入力可能なname属性をもつ要素に絞り込む */
+        let $children = $form.find('input,select,textarea').filter('[name]').not('[type="hidden"],[disabled],[readonly]');
+        if ($children[0]) {
+            /* 値とチェックマークをクリア */
+            $children.prop('checked', false).val('');
         }
     });
 
@@ -27,28 +30,46 @@ $(function() {
         }).timepicker('setTime', this.value)
     });
 
-    /* 選択したタブの名称をフォームに入力（検索後の初期表示のタブに使用） */
-    $('[data-toggle="tab"]').on('click', function () {
-        $('input[name="focus_tab"]').val(this.getAttribute('href').replace('#', ''))
-        loadCalendarResource();
+    /*  タブクリック時に、タブにタブ名をフォームに入力（検索後の初期表示のタブに使用） */
+    $('.btn_tab').on('click', function () {
+        /* タブ名を取得 */
+        let tab_name = $(this).find('a').attr('href').replace('#', '');
+        /* フォームに表示しているタブ名を入力 */
+        $('input[name="focus_tab"]').val( tab_name );
+
+        if (tab_name === 'tab_calendar'){
+            loadCalendarResource();
+        } else if (tab_name === 'tab_chart'){
+            loadChartResource()
+        }
+
     });
 
-    /* カレンダーの設置 */
-    if ( $('input[name="focus_tab"]').val() === 'tab_calendar' ) {
+
+    let focus_tab = $('input[name="focus_tab"]').val();
+    /* ロード時のタブがカレンダーなら、カレンダー生成・データ読み込みを実行 */
+    if ( focus_tab === 'tab_calendar' )
+    {
         setFullCalendar();
         loadCalendarResource();
-    } else {
-        $('[data-toggle="tab"]').one('click',function (){
-
+    }
+    /* ロード時のタブがカレンダー以外なら、タブクリック時に処理を一度だけ実行 */
+    else
+    {
+        $('.btn_tab_calendar').one('click',function (){
+            /* 非表示時ではうまくいかないため、スタイルで表示しておく */
             $('#tab_calendar').css({display : 'block'});
-
             /* タブの切り替えがされた後にカレンダーを適用する */
             setFullCalendar();
-            loadCalendarResource();
         });
     }
+    /* ロード時のタブがグラフなら、グラフ生成・データ読み込みを実行 */
+    if ( focus_tab　== 'tab_chart' ) {
+        loadChartResource();
+    }
 
-    /* fullcalendar.jsを要素に適用 */
+
+    /* タブ中ににカレンダーを生成する（データ未入力） */
     function setFullCalendar() {
         $('#calendar').fullCalendar({
             lazyFetching: true,
@@ -105,18 +126,20 @@ $(function() {
         $('#calendar').fullCalendar('render');
     }
 
-    /* jsonデータから出退勤データを取得し*/
-    function loadCalendarResource(){
+    /* 検索フォームの値を取得し、連想配列として渡す */
+    function getSearchFormRequest(){
         let request = {};
-
-        /* 検索条件 */
         $('form[name="search_form"] input[name]').each(function(){
             if($(this).val()){
                 request[ this.name ] = $(this).val();
             }
         });
+        return request
+    }
 
-        getJSON(request);
+    /* jsonデータから出退勤データを取得し*/
+    function loadCalendarResource(){
+        getJSON( getSearchFormRequest() );
     }
 
     /* jsonデータで出退勤データを取得する*/
@@ -127,16 +150,16 @@ $(function() {
             data: request,
             dataType: 'json'
         })
-            .then(
-                function(json) {
-                    addEventsToCalendor(json);
-                    return true;
-                },
-                function() {
-                    alert('フォームの取得に失敗しました。サイト管理者にお問い合わせ下さい。');
-                    return false;
-                }
-            );
+        .then(
+            function(json) {
+                addEventsToCalendor(json);
+                return true;
+            },
+            function() {
+                alert('フォームの取得に失敗しました。サイト管理者にお問い合わせ下さい。');
+                return false;
+            }
+        );
     }
     /* jsonデータから出退勤データを取得し、カレンダーに読み込ませる */
     function addEventsToCalendor(json){
@@ -170,6 +193,99 @@ $(function() {
         }
         $('#calendar').fullCalendar('removeEvents');
         $('#calendar').fullCalendar('addEventSource',events);
+    }
+
+
+    /* 出退勤データを取得し、総勤務時間データをグラフに適用 */
+    function loadChartResource() {
+
+        $.ajax({
+            url: '/attendance/json',
+            type: 'GET',
+            data: getSearchFormRequest(),
+            dataType: 'json'
+        })
+        .then(
+            function (json) {
+
+                let usersData = [];
+                let startTime=null;
+                /* jsonデータからユーザ毎の総勤務時間を計算 */
+                for (let i = 0 ;i < json.length; i++){
+                    if ( json[i]['status'] === 10 ) {
+                        startTime = json[i]['created_at'];
+                    } else {
+
+                        if (startTime){
+                            let user_id = json[i]['user_id']
+                            /* 出勤・退勤時刻の差分を時で取得 */
+                            let wokingHours = ( new Date(json[i]['created_at']) - new Date(startTime) )/ 3600000 ;
+
+                            if ( usersData[user_id] ){
+                                usersData[user_id] += wokingHours
+                            } else {
+                                usersData[user_id] = wokingHours;
+                            }
+                        }
+                        startTime=null;
+                    }
+                }
+                console.log(usersData);
+                setChartData( usersData );
+                return true;
+            },
+            function () {
+                alert('フォームの取得に失敗しました。サイト管理者にお問い合わせ下さい。');
+                return false;
+            }
+        );
+
+
+    }
+    /* 総勤務時間をグラフに適用 */
+    function setChartData( usersData ){
+
+        let $canvas = $("#chart");
+        let chartData = {
+            labels   : [],
+            datasets : [
+                {
+                    data:[],
+                    backgroundColor: "#00b0ff"
+                }
+            ],
+        };
+        if ( !$canvas[0] ) {
+            return false;
+        }
+
+        for (let i = 0 ;i < usersData.length; i++){
+            if ( usersData[i] ) {
+                chartData.labels.push( 'ユーザ' + i );
+                chartData.datasets[0].data.push( usersData[i] );
+            }
+        }
+
+        let ctx = $canvas[0].getContext("2d");
+        let chart = new Chart(ctx, {
+            type: "bar",
+            data:chartData,
+            options:{
+                scales:{
+                    xAxes:[{
+                        stacked: true
+                    }],
+                    yAxes:[{
+                        stacked: true,
+                        scaleLabel: {              //軸ラベル設定
+                            display: true,          //表示設定
+                            labelString: '総勤務時間 (時間単位)',  //ラベル
+                            fontSize: 18               //フォントサイズ
+                        },
+                    }]
+                }
+            }
+        });
     }
 
 });
