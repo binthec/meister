@@ -35,6 +35,9 @@ Route::group(['middleware' => 'auth'], function() {
 	//Route::get('/user/reset/{id}', 'UserController@reset');
 
 
+    //CSVファイルのエクスポート機能用
+    Route::get('/attendance/csv/export', 'AttendanceController@downloadCsv');
+
 
     //タイムカード管理
     Route::resource('/attendance', 'AttendanceController');

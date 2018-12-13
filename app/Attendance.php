@@ -32,7 +32,27 @@ class Attendance extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * csv用にデータを形成を吐き出すメソッド
+     *
+     * @param array $data
+     * @return $query
+     */
+    static function exportAttendancesToCsv()
+    {
+        $fileUrl = storage_path('app/test.csv');
+        $file = new \splFileObject($fileUrl, 'w');
 
+        $header['user_name'] = 'ユーザ名';
+        $header['status'] = '状態';
+        $header['created_at'] = '日付';
+
+        $internalEncoding = mb_internal_encoding();
+        mb_convert_variables('SJIS-win', $internalEncoding, $header);
+        $file->fputcsv($header);
+
+        return $fileUrl;
+    }
 
 
     /**

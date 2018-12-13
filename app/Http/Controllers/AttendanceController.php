@@ -99,4 +99,19 @@ class AttendanceController extends Controller
 
 
 
+    /**
+     * CSVファイルを生成し、ファイルパスへのレスポンスを返す
+     *
+     * @return CSVファイルへのレスポンス
+     */
+
+    public function downloadCsv()
+    {
+        $fileUrl = Attendance::exportAttendancesToCsv();
+
+        $date = Carbon::today()->format('Ymd');
+        return response()->download($fileUrl, 'sample' . $date . '.csv')
+            ->deleteFileAfterSend(true);
+    }
+
 }
