@@ -14,10 +14,10 @@
             <div class="box-body">
 
             @if($device->id === null) <!-- 新規作成 -->
-            {!! Form::open(['url' => ['/device', $device->id], 'method' => 'POST', 'class' => 'form-horizontal']) !!}
+                {!! Form::open(['url' => ['/device', $device->id], 'method' => 'POST', 'class' => 'form-horizontal']) !!}
             @else <!-- 編集 -->
                 {!! Form::open(['url' => ['/device', $device->id], 'method' => 'PUT', 'class' => 'form-horizontal']) !!}
-                @endif
+            @endif
                 {{ csrf_field() }}
 
                 <div class="form-group{{ $errors->has('category') ? ' has-error' : '' }}">
@@ -57,8 +57,7 @@
                 </div>
 
                 <div class="form-group{{ $errors->has('serial_id') ? ' has-error' : '' }}">
-                    <label for="serial_id" class="col-md-2 control-label">シリアルID <span
-                                class="text-danger">*</span></label>
+                    <label for="serial_id" class="col-md-2 control-label">シリアルID <span class="text-danger">*</span></label>
                     <div class="col-md-8">
                         {!! Form::text('serial_id', $device->serial_id, ['class' => 'form-control', 'placeholder' => 'ユニークな値']) !!}
                         @if($errors->has('serial_id'))
@@ -81,6 +80,18 @@
                     </div>
                 </div>
 
+                <div class="form-group{{ $errors->has('price') ? ' has-error' : '' }}">
+                    <label for="price" class="col-md-2 control-label">購入金額</label>
+                    <div class="col-md-8">
+                        {!! Form::text('price', $device->price, ['class' => 'form-control']) !!}
+                        @if($errors->has('price'))
+                            <span class="help-block">
+						<strong class="text-danger">{{ $errors->first('price') }}</strong>
+					</span>
+                        @endif
+                    </div>
+                </div>
+
                 <div class="form-group{{ $errors->has('user_id') ? ' has-error' : '' }}">
                     <label for="user_id" class="col-md-2 control-label">使用者</label>
                     <div class="col-md-8">
@@ -88,6 +99,42 @@
                         @if($errors->has('user_id'))
                             <span class="help-block">
 						<strong class="text-danger">{{ $errors->first('user_id') }}</strong>
+					</span>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="form-group{{ $errors->has('rented_at') ? ' has-error' : '' }}">
+                    <label for="rented_at" class="col-md-2 control-label">貸出日</label>
+                    <div class="col-md-8">
+                        {!! Form::text('rented_at', App\User::getJaDate($device->rented_at), ['class' => 'form-control use_datepicker']) !!}
+                        @if($errors->has('rented_at'))
+                            <span class="help-block">
+						<strong class="text-danger">{{ $errors->first('rented_at') }}</strong>
+					</span>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="form-group forComputer{{ $errors->has('condition') ? ' has-error' : '' }}">
+                    <label for="condition" class="col-md-2 control-label">状態</label>
+                    <div class="col-md-3">
+                        {!! Form::select('condition', App\Device::$conditionLabels, $device->condition,['class' => 'form-control', 'placeholder' => '---']) !!}
+                        @if($errors->has('condition'))
+                            <span class="help-block">
+						<strong class="text-danger">{{ $errors->first('condition') }}</strong>
+					</span>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="form-group{{ $errors->has('rental_number') ? ' has-error' : '' }}">
+                    <label for="rental_number" class="col-md-2 control-label">モア貸出番号</label>
+                    <div class="col-md-8">
+                        {!! Form::text('rental_number', $device->rental_number, ['class' => 'form-control']) !!}
+                        @if($errors->has('rental_number'))
+                            <span class="help-block">
+						<strong class="text-danger">{{ $errors->first('rental_number') }}</strong>
 					</span>
                         @endif
                     </div>
@@ -105,6 +152,18 @@
                         </div>
                     </div>
                 @endif
+
+                <div class="form-group{{ $errors->has('memo') ? ' has-error' : '' }}">
+                    <label for="memo" class="col-md-2 control-label">備考</label>
+                    <div class="col-md-8">
+                        {!! Form::textarea('memo', $device->memo, ['class' => 'form-control', 'rows' => 5]) !!}
+                        @if($errors->has('memo'))
+                            <span class="help-block">
+						<strong class="text-danger">{{ $errors->first('memo') }}</strong>
+					</span>
+                        @endif
+                    </div>
+                </div>
 
                 <hr>
                 <h4><i class="fa fa-wrench"></i> スペック</h4>

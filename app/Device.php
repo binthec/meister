@@ -20,6 +20,7 @@ class Device extends Model
 	const TABLET = '20';
 	const DISPLAY = '40';
 	const OTHER = '100';
+    const CATEGORY_OTHERS = '200';
 
 	public static $deviceCategories = [
 		self::NOTE_PC => 'ノートパソコン',
@@ -27,6 +28,7 @@ class Device extends Model
 		self::TABLET => 'タブレット',
 		self::DISPLAY => 'ディスプレイ',
 		self::OTHER => '周辺機器',
+        self::CATEGORY_OTHERS => 'その他',
 	];
 	public static $deviceIcon = [
 		self::NOTE_PC => 'fa-laptop',
@@ -34,6 +36,7 @@ class Device extends Model
 		self::TABLET => 'fa-tablet',
 		self::DISPLAY => 'fa-television',
 		self::OTHER => 'fa-usb',
+        self::CATEGORY_OTHERS => 'fa-cube',
 	];
 
 	/**
@@ -42,11 +45,13 @@ class Device extends Model
 	const MAC = '1';
 	const WIN = '2';
 	const LINUX = '3';
+	const OS_OTHERS = '4';
 
 	public static $osLabels = [
 		self::MAC => 'Mac',
 		self::WIN => 'Windows',
 		self::LINUX => 'Linux',
+        self::OS_OTHERS => 'その他',
 	];
 
 	/**
@@ -62,6 +67,44 @@ class Device extends Model
 		self::DISPOSAL => '廃棄済',
 	];
 
+    /**
+     * デバイスの状態
+     */
+	const CONDITION_NEW = '1';
+	const CONDITION_USED = '2';
+    const CONDITION_HAND_OVER = '3';
+    const CONDITION_OTHERS = '4';
+
+    public static $conditionLabels = [
+        self::CONDITION_NEW => '新品',
+        self::CONDITION_USED => '中古',
+        self::CONDITION_HAND_OVER => '受け入れ',
+        self::CONDITION_OTHERS => 'その他',
+    ];
+
+    /**
+     * バリデーションルールの配列を返す
+     *
+     * @return array
+     */
+    public static function getValidationRules(){
+
+        return [
+            'name' => 'required|max:200',
+            'serial_id' => 'required',
+            'core' => 'max:50|integer',
+            'memory' => 'max:50|integer',
+            'size' => 'max:50',
+        ];
+
+    }
+
+    /**
+     * 検索用のクエリビルダを返すメソッド
+     *
+     * @param array $data
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
 	public static function getSearchQuery(array $data)
 	{
 		//queryインスタンスを生成

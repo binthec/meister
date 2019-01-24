@@ -42,6 +42,7 @@ class DeviceController extends Controller
 	{
 		$device = new Device();
 		$device->bought_at = Carbon::now();
+        $device->rented_at = Carbon::now();
 		return view('device.edit', compact('device'));
 	}
 
@@ -53,13 +54,7 @@ class DeviceController extends Controller
 	 */
 	public function store(Request $request)
 	{
-		$validator = Validator::make($request->all(), [
-					'name' => 'required|max:200',
-					'serial_id' => 'required',
-					'core' => 'max:50|integer',
-					'memory' => 'max:50|integer',
-					'size' => 'max:50',
-		]);
+		$validator = Validator::make($request->all(), Device::getValidationRules());
 		if ($validator->fails()) {
 			return redirect()
 							->back()
@@ -71,13 +66,20 @@ class DeviceController extends Controller
 
 		try {
 			$device = new Device;
+
 			$device->category = $request->category;
 			$device->os = ($device->category === Device::DISPLAY || $device->category === Device::OTHER) ? null : $request->os;
 			$device->name = $request->name;
 			$device->serial_id = $request->serial_id;
 			$device->bought_at = User::getStdDate($request->bought_at);
+            $device->price = ($request->price != '') ? $request->price : null;
 			$device->user_id = ($request->user_id != '') ? $request->user_id : null;
+            $device->rented_at = ($request->rented_at != '') ? User::getStdDate($request->rented_at) : null;
+            $device->condition = ($request->condition != '') ? $request->condition : null;
+            $device->rental_number = ($request->rental_number != '') ? $request->rental_number : null;
 			$device->status = ($request->user_id != '') ? Device::DEVICE_USED : Device::DEVICE_UNUSED;
+            $device->memo = ($request->memo != '') ? $request->memo : null;
+
 			$device->core = ($device->category === Device::DISPLAY || $device->category === Device::OTHER) ? null : $request->core;
 			$device->memory = ($device->category === Device::DISPLAY || $device->category === Device::OTHER) ? null : $request->memory;
 			$device->capacity = ($device->category === Device::DISPLAY || $device->category === Device::OTHER) ? null : $request->capacity;
@@ -114,13 +116,7 @@ class DeviceController extends Controller
 	 */
 	public function update(Request $request, $id)
 	{
-		$validator = Validator::make($request->all(), [
-					'name' => 'required|max:200',
-					'serial_id' => 'required',
-					'core' => 'max:50|integer',
-					'memory' => 'max:50|integer',
-					'size' => 'max:50',
-		]);
+		$validator = Validator::make($request->all(), Device::getValidationRules());
 		if ($validator->fails()) {
 			return redirect()
 							->back()
@@ -145,8 +141,14 @@ class DeviceController extends Controller
 			$device->name = $request->name;
 			$device->serial_id = $request->serial_id;
 			$device->bought_at = User::getStdDate($request->bought_at);
+            $device->price = ($request->price != '') ? $request->price : null;
 			$device->user_id = ($request->user_id != '') ? $request->user_id : null;
+            $device->rented_at = ($request->rented_at != '') ? User::getStdDate($request->rented_at) : null;
+            $device->condition = ($request->condition != '') ? $request->condition : null;
+            $device->rental_number = ($request->rental_number != '') ? $request->rental_number : null;
 			$device->status = $status;
+            $device->memo = ($request->memo != '') ? $request->memo : null;
+
 			$device->core = ($device->category === Device::DISPLAY || $device->category === Device::OTHER) ? null : $request->core;
 			$device->memory = ($device->category === Device::DISPLAY || $device->category === Device::OTHER) ? null : $request->memory;
 			$device->capacity = ($device->category === Device::DISPLAY || $device->category === Device::OTHER) ? null : $request->capacity;
