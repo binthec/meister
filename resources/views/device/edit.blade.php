@@ -26,8 +26,8 @@
                         {!! Form::select('category', App\Device::$deviceCategories, $device->category,['class' => 'form-control', 'id' => 'category']) !!}
                         @if($errors->has('category'))
                             <span class="help-block">
-						<strong class="text-danger">{{ $errors->first('category') }}</strong>
-					</span>
+                                <strong class="text-danger">{{ $errors->first('category') }}</strong>
+                            </span>
                         @endif
                     </div>
                 </div>
@@ -38,8 +38,8 @@
                         {!! Form::select('os', App\Device::$osLabels, $device->os,['class' => 'form-control']) !!}
                         @if($errors->has('os'))
                             <span class="help-block">
-						<strong class="text-danger">{{ $errors->first('os') }}</strong>
-					</span>
+                                <strong class="text-danger">{{ $errors->first('os') }}</strong>
+                            </span>
                         @endif
                     </div>
                 </div>
@@ -50,8 +50,8 @@
                         {!! Form::text('name', $device->name, ['class' => 'form-control', 'placeholder' => '任意の機器名。なんでもいい。']) !!}
                         @if($errors->has('name'))
                             <span class="help-block">
-						<strong class="text-danger">{{ $errors->first('name') }}</strong>
-					</span>
+                                <strong class="text-danger">{{ $errors->first('name') }}</strong>
+                            </span>
                         @endif
                     </div>
                 </div>
@@ -62,8 +62,8 @@
                         {!! Form::text('serial_id', $device->serial_id, ['class' => 'form-control', 'placeholder' => 'ユニークな値']) !!}
                         @if($errors->has('serial_id'))
                             <span class="help-block">
-						<strong class="text-danger">{{ $errors->first('serial_id') }}</strong>
-					</span>
+                                <strong class="text-danger">{{ $errors->first('serial_id') }}</strong>
+                            </span>
                         @endif
                     </div>
                 </div>
@@ -74,8 +74,8 @@
                         {!! Form::text('bought_at', App\User::getJaDate($device->bought_at), ['class' => 'form-control use_datepicker']) !!}
                         @if($errors->has('bought_at'))
                             <span class="help-block">
-						<strong class="text-danger">{{ $errors->first('bought_at') }}</strong>
-					</span>
+                                <strong class="text-danger">{{ $errors->first('bought_at') }}</strong>
+                            </span>
                         @endif
                     </div>
                 </div>
@@ -86,8 +86,8 @@
                         {!! Form::text('price', $device->price, ['class' => 'form-control']) !!}
                         @if($errors->has('price'))
                             <span class="help-block">
-						<strong class="text-danger">{{ $errors->first('price') }}</strong>
-					</span>
+                                <strong class="text-danger">{{ $errors->first('price') }}</strong>
+                            </span>
                         @endif
                     </div>
                 </div>
@@ -98,8 +98,8 @@
                         {!! Form::select('user_id', App\User::getFullNames(), ($device->user_id)? $device->user_id: '', ['class' => 'form-control', 'placeholder' => 'なし', 'id' => 'user_id']) !!}
                         @if($errors->has('user_id'))
                             <span class="help-block">
-						<strong class="text-danger">{{ $errors->first('user_id') }}</strong>
-					</span>
+                                <strong class="text-danger">{{ $errors->first('user_id') }}</strong>
+                            </span>
                         @endif
                     </div>
                 </div>
@@ -110,8 +110,8 @@
                         {!! Form::text('rented_at', App\User::getJaDate($device->rented_at), ['class' => 'form-control use_datepicker']) !!}
                         @if($errors->has('rented_at'))
                             <span class="help-block">
-						<strong class="text-danger">{{ $errors->first('rented_at') }}</strong>
-					</span>
+                                <strong class="text-danger">{{ $errors->first('rented_at') }}</strong>
+                            </span>
                         @endif
                     </div>
                 </div>
@@ -122,8 +122,8 @@
                         {!! Form::select('condition', App\Device::$conditionLabels, $device->condition,['class' => 'form-control', 'placeholder' => '---']) !!}
                         @if($errors->has('condition'))
                             <span class="help-block">
-						<strong class="text-danger">{{ $errors->first('condition') }}</strong>
-					</span>
+                                <strong class="text-danger">{{ $errors->first('condition') }}</strong>
+                            </span>
                         @endif
                     </div>
                 </div>
@@ -134,8 +134,8 @@
                         {!! Form::text('rental_number', $device->rental_number, ['class' => 'form-control']) !!}
                         @if($errors->has('rental_number'))
                             <span class="help-block">
-						<strong class="text-danger">{{ $errors->first('rental_number') }}</strong>
-					</span>
+                                <strong class="text-danger">{{ $errors->first('rental_number') }}</strong>
+                            </span>
                         @endif
                     </div>
                 </div>
@@ -159,8 +159,8 @@
                         {!! Form::textarea('memo', $device->memo, ['class' => 'form-control', 'rows' => 5]) !!}
                         @if($errors->has('memo'))
                             <span class="help-block">
-						<strong class="text-danger">{{ $errors->first('memo') }}</strong>
-					</span>
+                                <strong class="text-danger">{{ $errors->first('memo') }}</strong>
+                            </span>
                         @endif
                     </div>
                 </div>
@@ -174,8 +174,8 @@
                         {!! Form::text('core', $device->core, ['class' => 'form-control']) !!}
                         @if($errors->has('core'))
                             <span class="help-block">
-						<strong class="text-danger">{{ $errors->first('core') }}</strong>
-					</span>
+                                <strong class="text-danger">{{ $errors->first('core') }}</strong>
+                            </span>
                         @endif
                     </div>
                 </div>
@@ -187,8 +187,8 @@
                         <span class="form-control-static"> GB</span>
                         @if($errors->has('memory'))
                             <span class="help-block">
-						<strong class="text-danger">{{ $errors->first('memory') }}</strong>
-					</span>
+                                <strong class="text-danger">{{ $errors->first('memory') }}</strong>
+                            </span>
                         @endif
                     </div>
                 </div>
@@ -200,8 +200,8 @@
                         <span class="form-control-static"> GB</span>
                         @if($errors->has('capacity'))
                             <span class="help-block">
-						<strong class="text-danger">{{ $errors->first('capacity') }}</strong>
-					</span>
+                                <strong class="text-danger">{{ $errors->first('capacity') }}</strong>
+                            </span>
                         @endif
                     </div>
                 </div>
@@ -213,8 +213,8 @@
                         <span class="form-control-static"> インチ</span>
                         @if($errors->has('size'))
                             <span class="help-block">
-						<strong class="text-danger">{{ $errors->first('size') }}</strong>
-					</span>
+                                <strong class="text-danger">{{ $errors->first('size') }}</strong>
+                            </span>
                         @endif
                     </div>
                 </div>
@@ -249,7 +249,7 @@
             //select2を使ってセレクトボックスを検索可能に
             var data = [];
             $("#user_id").select2({
-               data: data
+                data: data
             });
         });
 
