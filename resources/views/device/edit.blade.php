@@ -107,7 +107,7 @@
                 <div class="form-group{{ $errors->has('rented_at') ? ' has-error' : '' }}">
                     <label for="rented_at" class="col-md-2 control-label">貸出日</label>
                     <div class="col-md-8">
-                        {!! Form::text('rented_at', App\User::getJaDate($device->rented_at), ['class' => 'form-control use_datepicker']) !!}
+                        {!! Form::text('rented_at', ($device->rented_at != null)? App\User::getJaDate($device->rented_at) : '', ['class' => 'form-control use_datepicker']) !!}
                         @if($errors->has('rented_at'))
                             <span class="help-block">
                                 <strong class="text-danger">{{ $errors->first('rented_at') }}</strong>
