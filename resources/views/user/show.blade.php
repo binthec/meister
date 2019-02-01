@@ -119,11 +119,11 @@
 								</td>
 							</tr>
 
-							@if(Auth::user()->getUsedAdvancedDays())
+							@if($user->getUsedAdvancedDays())
 							<tr>
 								<td>前借り日数</td>
 								<td class="text-center text-red font18">
-									{{ Auth::user()->getUsedAdvancedDays() }} 日
+									{{ $user->getUsedAdvancedDays() }} 日
 								</td>
 							</tr>
 							@endif
@@ -132,7 +132,7 @@
 								<td>
 									<span class="pull-right text-bold">合計有給残日数</span>
 								</td>
-								<?php $sum = $user->getSumRemainingDays() - Auth::user()->getUsedAdvancedDays() ?>
+								<?php $sum = $user->getSumRemainingDays() - $user->getUsedAdvancedDays() ?>
 								<td class="text-center font18 text-bold{{ ($sum >= 0) ? ' text-blue': ' text-red' }}">
 									{{ $sum }} 日
 								</td>
